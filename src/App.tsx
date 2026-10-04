@@ -142,7 +142,17 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F4F7FA] text-[#172B4D]">
+    <div className="min-h-screen flex bg-[#F4F7FA] text-[#172B4D]">
+      {/* Barre de navigation verticale des onglets */}
+      <NavigationTabs
+        ongletActif={ongletActif}
+        onSelectOnglet={setOngletActif}
+        nombreSalaries={salaries.length}
+        nombreMissions={missions.length}
+        afficherEspaceFormateur={estFormateur}
+      />
+
+      <div className="flex-1 min-w-0 flex flex-col">
       {/* Toast Notification */}
       {notification && (
         <div
@@ -177,15 +187,6 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         role={role}
         onSignOut={onSignOut}
         cloudStatus={!cloudEnabled ? 'off' : cloudOk ? 'ok' : 'error'}
-      />
-
-      {/* Barre de navigation des onglets */}
-      <NavigationTabs
-        ongletActif={ongletActif}
-        onSelectOnglet={setOngletActif}
-        nombreSalaries={salaries.length}
-        nombreMissions={missions.length}
-        afficherEspaceFormateur={estFormateur}
       />
 
       {/* Contenu principal de la vue active */}
@@ -346,6 +347,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
           </span>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
