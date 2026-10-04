@@ -4,6 +4,8 @@ import { ClassePedagogique, MissionExercice, TentativeExercice } from '../../typ
 import { exporterJSON } from '../../services/exportService';
 import { cloudEnabled } from '../../services/cloudSync';
 import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
+import { fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
+import type { MembreClasseLive } from '../../types';
 
 interface TrainerViewProps {
   classes: ClassePedagogique[];
@@ -65,6 +67,51 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       prev.map((c) => (c.id === classeActive.id ? { ...c, stagiaires: c.stagiaires.filter((s) => s.matricule !== matricule) } : c))
     );
     showNotification('Stagiaire retiré de la classe.', 'info');
+  };
+
+  // Effectif réellement rattaché à la classe (stagiaires ayant saisi le code d'invitation)
+  const [effectifLive, setEffectifLive] = useState<MembreClasseLive[]>([]);
+  const [effectifLoading, setEffectifLoading] = useState(false);
+
+  useEffect(() => {
+    if (!cloudEnabled || !classeActive) {
+      setEffectifLive([]);
+      return;
+    }
+    let cancelled = false;
+    setEffectifLoading(true);
+    fetchEffectifLive(classeActive.id)
+      .then((m) => {
+        if (!cancelled) setEffectifLive(m);
+      })
+      .catch((e) => showNotification(`Chargement de l'effectif impossible : ${e.message}`, 'error'))
+      .finally(() => {
+        if (!cancelled) setEffectifLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classeActive?.id]);
+
+  const handleRetirerMembreLive = async (stagiaireUserId: string) => {
+    try {
+      await retirerDuEffectif(stagiaireUserId);
+      setEffectifLive((prev) => prev.filter((m) => m.stagiaireUserId !== stagiaireUserId));
+      showNotification('Stagiaire retiré de la classe.', 'info');
+    } catch (e: any) {
+      showNotification(`Échec : ${e.message}`, 'error');
+    }
+  };
+
+  const handleCopierCode = async () => {
+    if (!classeActive?.codeInvitation) return;
+    try {
+      await navigator.clipboard.writeText(classeActive.codeInvitation);
+      showNotification('Code copié dans le presse-papiers.', 'success');
+    } catch {
+      showNotification('Copie impossible, copiez le code manuellement.', 'warning');
+    }
   };
 
   // Suivi en direct des tentatives de tous les stagiaires (via Supabase, policies formateur)
@@ -134,6 +181,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       anneeScolaire: nouvelleClasse.anneeScolaire || '2024 / 2025',
       formateurNom: nouvelleClasse.formateurNom || 'Formateur OFPPT',
       etablissement: nouvelleClasse.etablissement || 'ISTA OFPPT',
+      codeInvitation: genererCodeInvitation(),
       stagiaires: nouvelleClasse.stagiaires || []
     };
     setClasses([...classes, c]);
@@ -229,30 +277,82 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               <Users className="w-4 h-4 text-[#149D92]" />
               <span>Effectif de « {classeActive.nom} »</span>
             </h3>
-            <span className="text-[11px] text-slate-400">{classeActive.stagiaires.length} stagiaire(s)</span>
+            <span className="text-[11px] text-slate-400">
+              {classeActive.stagiaires.length + effectifLive.length} stagiaire(s)
+            </span>
           </div>
 
-          {classeActive.stagiaires.length === 0 ? (
-            <p className="text-slate-400 italic">Aucun stagiaire dans cette classe pour le moment.</p>
-          ) : (
-            <ul className="divide-y divide-slate-100">
-              {classeActive.stagiaires.map((s) => (
-                <li key={s.matricule} className="py-2 flex items-center justify-between">
-                  <span>
-                    <strong className="text-slate-800">{s.nom} {s.prenom}</strong>
-                    <span className="text-slate-400 ml-2 font-mono">{s.matricule}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleSupprimerStagiaire(s.matricule)}
-                    className="text-[11px] font-semibold text-[#D64545] hover:underline"
-                  >
-                    Retirer
-                  </button>
-                </li>
-              ))}
-            </ul>
+          {cloudEnabled && classeActive.codeInvitation && (
+            <div className="flex items-center justify-between gap-3 bg-[#F4F7FA] border border-slate-200 rounded-lg px-3.5 py-2.5">
+              <div>
+                <span className="block text-slate-500">Code à communiquer aux stagiaires pour qu'ils rejoignent cette classe :</span>
+                <span className="font-mono font-bold text-base tracking-widest text-[#16324F]">{classeActive.codeInvitation}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopierCode}
+                className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+              >
+                Copier
+              </button>
+            </div>
           )}
+
+          {cloudEnabled && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-bold text-slate-700">Rattachés via le code (comptes réels)</span>
+                {effectifLoading && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />}
+              </div>
+              {effectifLive.length === 0 ? (
+                <p className="text-slate-400 italic">Aucun stagiaire n'a encore saisi le code.</p>
+              ) : (
+                <ul className="divide-y divide-slate-100">
+                  {effectifLive.map((m) => (
+                    <li key={m.stagiaireUserId} className="py-2 flex items-center justify-between">
+                      <span>
+                        <strong className="text-slate-800">{m.nom} {m.prenom}</strong>
+                        {m.matricule && <span className="text-slate-400 ml-2 font-mono">{m.matricule}</span>}
+                        <span className="text-slate-400 ml-2">— rejoint le {new Date(m.joinedAt).toLocaleDateString('fr-FR')}</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRetirerMembreLive(m.stagiaireUserId)}
+                        className="text-[11px] font-semibold text-[#D64545] hover:underline"
+                      >
+                        Retirer
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          <div>
+            <span className="font-bold text-slate-700 block mb-1.5">Ajoutés manuellement (hors ligne)</span>
+            {classeActive.stagiaires.length === 0 ? (
+              <p className="text-slate-400 italic">Aucun stagiaire ajouté manuellement.</p>
+            ) : (
+              <ul className="divide-y divide-slate-100">
+                {classeActive.stagiaires.map((s) => (
+                  <li key={s.matricule} className="py-2 flex items-center justify-between">
+                    <span>
+                      <strong className="text-slate-800">{s.nom} {s.prenom}</strong>
+                      <span className="text-slate-400 ml-2 font-mono">{s.matricule}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleSupprimerStagiaire(s.matricule)}
+                      className="text-[11px] font-semibold text-[#D64545] hover:underline"
+                    >
+                      Retirer
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <form onSubmit={handleAjouterStagiaire} className="pt-3 border-t border-slate-100 flex flex-wrap items-end gap-2">
             <label className="flex-1 min-w-[100px]">

@@ -402,9 +402,21 @@ export interface ClassePedagogique {
   anneeScolaire: string;
   formateurNom: string;
   etablissement: string; // Ex: "ISTA Marrakech Guéliz - OFPPT"
+  /** Code à communiquer aux stagiaires pour rejoindre cette classe depuis leur propre compte */
+  codeInvitation?: string;
   stagiaires: {
     matricule: string;
     nom: string;
     prenom: string;
   }[];
+}
+
+/** Stagiaire ayant rejoint une classe depuis son propre compte (table classe_stagiaires) */
+export interface MembreClasseLive {
+  stagiaireUserId: string;
+  classeId: string;
+  matricule: string | null;
+  nom: string;
+  prenom: string;
+  joinedAt: string;
 }

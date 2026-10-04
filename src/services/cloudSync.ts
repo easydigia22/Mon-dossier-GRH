@@ -30,7 +30,7 @@ const COLLECTIONS: Collection[] = [
   },
   { table: 'regles', rows: (s) => s.regles },
   { table: 'tentatives', rows: (s) => s.tentatives, extra: (i) => ({ mission_id: i.missionId }) },
-  { table: 'classes', rows: (s) => s.classes }
+  { table: 'classes', rows: (s) => s.classes, extra: (i) => ({ code_invitation: i.codeInvitation ?? null }) }
 ];
 
 const PAGE_SIZE = 1000;

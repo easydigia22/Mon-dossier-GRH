@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { Loader2, LogIn, UserPlus } from 'lucide-react';
+import { Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
 import { supabase } from '../../services/supabase';
 import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
 import { fetchMyRole, UserRole } from '../../services/profile';
+import { fetchMaClasse, rejoindreClasse } from '../../services/classeJoin';
+import type { MembreClasseLive } from '../../types';
 
 interface AuthGateProps {
   children: (ctx: { userEmail?: string; role?: UserRole; onSignOut?: () => void }) => React.ReactNode;
@@ -20,6 +22,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   const [checking, setChecking] = useState(true);
   const [role, setRole] = useState<UserRole | undefined>(undefined);
   const [roleLoading, setRoleLoading] = useState(false);
+  const [maClasse, setMaClasse] = useState<MembreClasseLive | null>(null);
+  const [classeLoading, setClasseLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,9 +69,30 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     };
   }, [session?.user.id]);
 
+  // Pour un stagiaire : vérifier qu'il a rejoint une classe (sinon, on le lui demandera)
+  useEffect(() => {
+    if (!session || role !== 'stagiaire') {
+      setMaClasse(null);
+      return;
+    }
+    let cancelled = false;
+    setClasseLoading(true);
+    fetchMaClasse()
+      .then((c) => {
+        if (!cancelled) setMaClasse(c);
+      })
+      .catch((e) => console.error('Lecture de la classe impossible:', e))
+      .finally(() => {
+        if (!cancelled) setClasseLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user.id, role]);
+
   if (!supabase) return <>{children({})}</>;
 
-  if (checking || (session && roleLoading)) {
+  if (checking || (session && roleLoading) || (session && role === 'stagiaire' && classeLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA]">
         <Loader2 className="w-6 h-6 animate-spin text-[#16324F]" />
@@ -82,6 +107,11 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       await clearAllLocalData();
       resetCloudCache();
     };
+
+    if (role === 'stagiaire' && !maClasse) {
+      return <JoinClasseScreen onJoined={setMaClasse} onSignOut={signOut} />;
+    }
+
     // `key` force une réinitialisation complète de l'état applicatif au changement de compte
     return (
       <React.Fragment key={session.user.id}>
@@ -195,6 +225,111 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           className="w-full text-xs text-slate-600 hover:text-[#16324F] underline"
         >
           {mode === 'login' ? "Pas encore de compte ? S'inscrire" : 'Déjà un compte ? Se connecter'}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+interface JoinClasseScreenProps {
+  onJoined: (c: MembreClasseLive) => void;
+  onSignOut: () => void;
+}
+
+/** Étape obligatoire pour un compte stagiaire sans classe : saisir le code fourni par le formateur. */
+const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut }) => {
+  const [code, setCode] = useState('');
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [matricule, setMatricule] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await rejoindreClasse(code, nom, prenom, matricule);
+      const c = await fetchMaClasse();
+      if (c) onJoined(c);
+      else setError("Le rattachement a échoué, veuillez réessayer.");
+    } catch (e: any) {
+      setError(e.message || 'Code invalide.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <Users className="w-8 h-8 text-[#149D92]" />
+          <div>
+            <div className="text-sm font-bold text-[#16324F] leading-tight">Rejoindre ma classe</div>
+            <div className="text-xs text-slate-500">Demandez le code à votre formateur</div>
+          </div>
+        </div>
+
+        <label className="block text-xs font-medium text-slate-700">
+          Code de classe
+          <input
+            type="text"
+            required
+            autoFocus
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="Ex: 7K9QXM"
+            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+          />
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block text-xs font-medium text-slate-700">
+            Nom
+            <input
+              type="text"
+              required
+              value={nom}
+              onChange={(e) => setNom(e.target.value)}
+              className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            />
+          </label>
+          <label className="block text-xs font-medium text-slate-700">
+            Prénom
+            <input
+              type="text"
+              required
+              value={prenom}
+              onChange={(e) => setPrenom(e.target.value)}
+              className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            />
+          </label>
+        </div>
+        <label className="block text-xs font-medium text-slate-700">
+          Matricule (optionnel)
+          <input
+            type="text"
+            value={matricule}
+            onChange={(e) => setMatricule(e.target.value)}
+            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+          />
+        </label>
+
+        {error && <p className="text-xs text-[#D64545]" role="alert">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={busy}
+          className="w-full flex items-center justify-center gap-2 bg-[#16324F] text-white text-sm font-medium rounded py-2 hover:bg-[#1d4266] disabled:opacity-60 transition-colors"
+        >
+          {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+          Rejoindre la classe
+        </button>
+
+        <button type="button" onClick={onSignOut} className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-[#D64545]">
+          <LogOut className="w-3.5 h-3.5" />
+          Se déconnecter
         </button>
       </form>
     </div>
