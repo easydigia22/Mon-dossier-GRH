@@ -12,6 +12,7 @@ interface HeaderProps {
   onToggleNiveau: () => void;
   onResetDemo: () => void;
   userEmail?: string;
+  role?: 'stagiaire' | 'formateur';
   onSignOut?: () => void;
   cloudStatus?: 'off' | 'ok' | 'error';
 }
@@ -25,6 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleNiveau,
   onResetDemo,
   userEmail,
+  role,
   onSignOut,
   cloudStatus = 'off'
 }) => {
@@ -141,6 +143,15 @@ export const Header: React.FC<HeaderProps> = ({
 
           {onSignOut && (
             <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+              {role && (
+                <span
+                  className={`hidden md:inline text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                    role === 'formateur' ? 'bg-[#16324F] text-white' : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {role}
+                </span>
+              )}
               {userEmail && <span className="hidden xl:inline text-[11px] text-slate-500 max-w-[160px] truncate">{userEmail}</span>}
               <button
                 onClick={onSignOut}

@@ -22,13 +22,17 @@ import { MissionsView } from './components/missions/MissionsView';
 import { TrainerView } from './components/trainer/TrainerView';
 import { SettingsView } from './components/settings/SettingsView';
 import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
+import type { UserRole } from './services/profile';
 
 interface AppProps {
   userEmail?: string;
+  role?: UserRole;
   onSignOut?: () => void;
 }
 
-export default function App({ userEmail, onSignOut }: AppProps) {
+export default function App({ userEmail, role, onSignOut }: AppProps) {
+  const estFormateur = role === 'formateur' || role === undefined; // mode local sans compte : accès complet
+
   const {
     isLoaded,
     cloudEnabled,
@@ -67,7 +71,11 @@ export default function App({ userEmail, onSignOut }: AppProps) {
     soumettreTentative
   } = useAppData();
 
-  const [ongletActif, setOngletActif] = useState<OngletNavigation>('dashboard');
+  const [ongletActif, setOngletActifBrut] = useState<OngletNavigation>('dashboard');
+  const setOngletActif = (onglet: OngletNavigation) => {
+    // Un stagiaire ne doit jamais atterrir sur l'espace réservé au formateur
+    setOngletActifBrut(onglet === 'formateur' && !estFormateur ? 'dashboard' : onglet);
+  };
   const [selectedSalarieIdPourBulletin, setSelectedSalarieIdPourBulletin] = useState<string | undefined>(undefined);
 
   const handleVoirBulletin = (salarieId: string) => {
@@ -166,6 +174,7 @@ export default function App({ userEmail, onSignOut }: AppProps) {
         onToggleNiveau={handleToggleNiveau}
         onResetDemo={handleResetDemoConfirm}
         userEmail={userEmail}
+        role={role}
         onSignOut={onSignOut}
         cloudStatus={!cloudEnabled ? 'off' : cloudOk ? 'ok' : 'error'}
       />
@@ -176,6 +185,7 @@ export default function App({ userEmail, onSignOut }: AppProps) {
         onSelectOnglet={setOngletActif}
         nombreSalaries={salaries.length}
         nombreMissions={missions.length}
+        afficherEspaceFormateur={estFormateur}
       />
 
       {/* Contenu principal de la vue active */}
@@ -305,7 +315,7 @@ export default function App({ userEmail, onSignOut }: AppProps) {
           />
         )}
 
-        {ongletActif === 'formateur' && (
+        {ongletActif === 'formateur' && estFormateur && (
           <TrainerView
             classes={classes}
             setClasses={setClasses}

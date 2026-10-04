@@ -37,13 +37,16 @@ interface NavigationTabsProps {
   onSelectOnglet: (onglet: OngletNavigation) => void;
   nombreSalaries: number;
   nombreMissions: number;
+  /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
+  afficherEspaceFormateur?: boolean;
 }
 
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   ongletActif,
   onSelectOnglet,
   nombreSalaries,
-  nombreMissions
+  nombreMissions,
+  afficherEspaceFormateur = true
 }) => {
   const items: { id: OngletNavigation; label: string; icon: any; badge?: number }[] = [
     { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
@@ -58,7 +61,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'cnss', label: 'CNSS & AMO', icon: ShieldCheck },
     { id: 'documents', label: 'Documents RH', icon: FileText },
     { id: 'missions', label: 'Exercices & Missions', icon: GraduationCap, badge: nombreMissions },
-    { id: 'formateur', label: 'Espace Formateur', icon: Award },
+    ...(afficherEspaceFormateur ? [{ id: 'formateur' as const, label: 'Espace Formateur', icon: Award }] : []),
     { id: 'parametres', label: 'Paramètres & Lois', icon: Sliders }
   ];
 
