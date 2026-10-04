@@ -150,6 +150,9 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         nombreSalaries={salaries.length}
         nombreMissions={missions.length}
         afficherEspaceFormateur={estFormateur}
+        userEmail={userEmail}
+        role={role}
+        onSignOut={onSignOut}
       />
 
       <div className="flex-1 min-w-0 flex flex-col">
@@ -183,9 +186,6 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         niveau={niveau}
         onToggleNiveau={handleToggleNiveau}
         onResetDemo={handleResetDemoConfirm}
-        userEmail={userEmail}
-        role={role}
-        onSignOut={onSignOut}
         cloudStatus={!cloudEnabled ? 'off' : cloudOk ? 'ok' : 'error'}
       />
 

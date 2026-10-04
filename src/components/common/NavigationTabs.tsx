@@ -15,7 +15,8 @@ import {
   Award,
   Sliders,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  LogOut
 } from 'lucide-react';
 
 export type OngletNavigation =
@@ -41,6 +42,9 @@ interface NavigationTabsProps {
   nombreMissions: number;
   /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
   afficherEspaceFormateur?: boolean;
+  userEmail?: string;
+  role?: 'stagiaire' | 'formateur';
+  onSignOut?: () => void;
 }
 
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({
@@ -48,7 +52,10 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   onSelectOnglet,
   nombreSalaries,
   nombreMissions,
-  afficherEspaceFormateur = true
+  afficherEspaceFormateur = true,
+  userEmail,
+  role,
+  onSignOut
 }) => {
   const [reduit, setReduit] = useState(false);
 
@@ -127,6 +134,39 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
           );
         })}
       </nav>
+
+      {onSignOut && (
+        <div className="shrink-0 border-t border-slate-200 p-2">
+          <div className={`flex items-center gap-2 ${reduit ? 'flex-col' : ''}`}>
+            {!reduit && (
+              <div className="flex-1 min-w-0">
+                {role && (
+                  <span
+                    className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                      role === 'formateur' ? 'bg-[#16324F] text-white' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {role}
+                  </span>
+                )}
+                {userEmail && (
+                  <div className="text-[11px] text-slate-500 truncate mt-0.5" title={userEmail}>
+                    {userEmail}
+                  </div>
+                )}
+              </div>
+            )}
+            <button
+              onClick={onSignOut}
+              className="shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-slate-500 bg-slate-100 hover:bg-[#D64545] hover:text-white transition-colors"
+              title="Se déconnecter"
+              aria-label="Se déconnecter"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };
