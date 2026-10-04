@@ -1,0 +1,6 @@
+{
+  "name": "Mon Dossier Administratif - Simulateur RH & Paie",
+  "description": "Simulateur RH et Paie pour la formation professionnelle OFPPT au Maroc : gestion du personnel, contrats, congés, moteur de paie déterministe, bulletins et missions d'apprentissage.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
