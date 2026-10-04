@@ -75,7 +75,14 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         reduit ? 'w-16' : 'w-64'
       }`}
     >
-      <div className={`flex items-center h-16 shrink-0 border-b border-slate-200 px-3 ${reduit ? 'justify-center' : 'justify-end'}`}>
+      <div className={`flex items-center h-16 shrink-0 border-b border-slate-200 px-3 ${reduit ? 'justify-center' : 'justify-between'}`}>
+        {!reduit && (
+          <img
+            src="/logo-ofppt.jpg"
+            alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+            className="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200"
+          />
+        )}
         <button
           onClick={() => setReduit((v) => !v)}
           className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
