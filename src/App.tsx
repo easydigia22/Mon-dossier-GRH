@@ -341,7 +341,14 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
       {/* Pied de page sobre */}
       <footer className="bg-white border-t border-slate-200 py-4 px-6 text-center text-[11px] text-slate-500 no-print">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>MON DOSSIER ADMINISTRATIF — Simulateur RH &amp; Paie (Formation professionnelle OFPPT)</span>
+          <span className="flex items-center gap-2">
+            <img
+              src="/logo-ofppt.jpg"
+              alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+              className="w-6 h-6 rounded-full object-cover shrink-0 border border-slate-200"
+            />
+            MON DOSSIER ADMINISTRATIF — Simulateur RH &amp; Paie (Formation professionnelle OFPPT)
+          </span>
           <span className="text-slate-400">
             Conforme Code du Travail (Loi 65-99), Dahir CNSS et CGI Article 73 · Sauvegarde locale sécurisée IndexedDB
           </span>

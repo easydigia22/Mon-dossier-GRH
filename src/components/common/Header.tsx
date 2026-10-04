@@ -37,6 +37,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Zone 1: Identité & Wordmark */}
         <div className="flex items-center gap-3">
           <AppLogo size={36} />
+          <img
+            src="/logo-ofppt.jpg"
+            alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+            className="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200"
+          />
           <div>
             <div className="text-base font-bold text-[#16324F] leading-tight flex items-center gap-2">
               <span>MON DOSSIER ADMINISTRATIF</span>

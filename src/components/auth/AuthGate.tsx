@@ -150,6 +150,11 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <AppLogo size={40} />
+          <img
+            src="/logo-ofppt.jpg"
+            alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+            className="w-10 h-10 rounded-full object-cover shrink-0 border border-slate-200"
+          />
           <div>
             <div className="text-sm font-bold text-[#16324F] leading-tight">MON DOSSIER ADMINISTRATIF</div>
             <div className="text-xs text-slate-500">Simulateur RH &amp; Paie — OFPPT</div>
