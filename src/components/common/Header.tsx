@@ -1,6 +1,7 @@
 import React from 'react';
-import { Calendar, CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, RotateCcw } from 'lucide-react';
+import { CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, RotateCcw } from 'lucide-react';
 import { AppLogo } from './AppLogo';
+import { MonthPicker } from './MonthPicker';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import { ModePedagogique, NiveauPedagogique } from '../../types';
 
@@ -60,20 +61,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 2: Mois de simulation & Mode Pédagogique */}
         <div className="flex items-center gap-4">
-          {/* Sélecteur de mois de simulation */}
-          <div className="flex items-center gap-2 bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200">
-            <Calendar className="w-4 h-4 text-[#1C2459]" />
-            <span className="text-xs font-semibold text-[#1C2459] whitespace-nowrap">Mois :</span>
-            <select
-              value={periodeActive}
-              onChange={(e) => onSelectPeriode(e.target.value)}
-              className="text-xs font-medium text-slate-800 bg-transparent border-none focus:outline-none cursor-pointer"
-            >
-              <option value="2025-01">Janvier 2025</option>
-              <option value="2025-02">Février 2025</option>
-              <option value="2025-03">Mars 2025</option>
-            </select>
-          </div>
+          {/* Sélecteur de mois de simulation (calendrier) */}
+          <MonthPicker value={periodeActive} onChange={onSelectPeriode} />
 
           {/* Mode Pédagogique (Segmented Control) */}
           <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">

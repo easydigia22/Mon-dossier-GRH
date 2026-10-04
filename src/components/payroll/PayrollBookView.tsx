@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BookOpenText, Download, Printer, Filter, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { BulletinPaie, Entreprise, LivrePaieLigne, Salarie } from '../../types';
 import { formatMAD, formatDateJJMMAAAA, exporterLivrePaieCSV } from '../../services/exportService';
+import { MonthPicker } from '../common/MonthPicker';
 
 interface PayrollBookViewProps {
   entreprise: Entreprise;
@@ -121,15 +122,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
         <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <span className="text-slate-500 font-medium">Période mensuelle :</span>
-            <select
-              value={periodeActive}
-              onChange={(e) => onSelectPeriode(e.target.value)}
-              className="px-2.5 py-1 border border-slate-200 rounded font-bold text-[#1C2459] bg-slate-50"
-            >
-              <option value="2025-01">Janvier 2025</option>
-              <option value="2025-02">Février 2025</option>
-              <option value="2025-03">Mars 2025</option>
-            </select>
+            <MonthPicker value={periodeActive} onChange={onSelectPeriode} />
           </div>
 
           <div className="flex items-center gap-2 text-emerald-800 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 font-medium text-[11px]">
