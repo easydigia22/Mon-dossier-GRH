@@ -16,7 +16,8 @@ import {
   Sliders,
   PanelLeftClose,
   PanelLeftOpen,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 
 export type OngletNavigation =
@@ -45,6 +46,9 @@ interface NavigationTabsProps {
   userEmail?: string;
   role?: 'stagiaire' | 'formateur';
   onSignOut?: () => void;
+  /** Contrôle l'ouverture du tiroir de navigation sur mobile (< lg) */
+  mobileOuvert?: boolean;
+  onFermerMobile?: () => void;
 }
 
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({
@@ -55,9 +59,16 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   afficherEspaceFormateur = true,
   userEmail,
   role,
-  onSignOut
+  onSignOut,
+  mobileOuvert = false,
+  onFermerMobile
 }) => {
   const [reduit, setReduit] = useState(false);
+
+  const handleSelect = (onglet: OngletNavigation) => {
+    onSelectOnglet(onglet);
+    onFermerMobile?.();
+  };
 
   const items: { id: OngletNavigation; label: string; icon: any; badge?: number }[] = [
     { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
@@ -77,11 +88,21 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   ];
 
   return (
-    <aside
-      className={`no-print bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col shrink-0 transition-all duration-200 ${
-        reduit ? 'w-16' : 'w-64'
-      }`}
-    >
+    <>
+      {/* Fond assombri derrière le tiroir mobile */}
+      {mobileOuvert && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden no-print"
+          onClick={onFermerMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`no-print bg-white border-r border-slate-200 h-screen flex flex-col shrink-0 z-50 transition-transform duration-200 fixed top-0 left-0 lg:sticky lg:translate-x-0 w-72 ${
+          reduit ? 'lg:w-16' : 'lg:w-64'
+        } ${mobileOuvert ? 'translate-x-0' : '-translate-x-full'}`}
+      >
       <div className={`flex items-center h-16 shrink-0 border-b border-slate-200 px-3 ${reduit ? 'justify-center' : 'justify-between'}`}>
         {!reduit && (
           <img
@@ -92,11 +113,19 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         )}
         <button
           onClick={() => setReduit((v) => !v)}
-          className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
+          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
           title={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
           aria-label={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
         >
           {reduit ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+        </button>
+        <button
+          onClick={onFermerMobile}
+          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
+          title="Fermer le menu"
+          aria-label="Fermer le menu"
+        >
+          <X className="w-4 h-4" />
         </button>
       </div>
 
@@ -107,7 +136,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
           return (
             <button
               key={item.id}
-              onClick={() => onSelectOnglet(item.id)}
+              onClick={() => handleSelect(item.id)}
               title={reduit ? item.label : undefined}
               className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
                 reduit ? 'justify-center' : ''
@@ -167,6 +196,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
           </div>
         </div>
       )}
-    </aside>
+      </aside>
+    </>
   );
 };

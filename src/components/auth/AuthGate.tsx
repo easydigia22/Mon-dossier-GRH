@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
+import { Download, Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
 import { supabase } from '../../services/supabase';
 import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
 import { fetchMyRole, UserRole } from '../../services/profile';
 import { fetchMaClasse, rejoindreClasse } from '../../services/classeJoin';
+import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import type { MembreClasseLive } from '../../types';
 
 interface AuthGateProps {
@@ -31,6 +32,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const { canInstall, isInstalled, promptInstall } = useInstallPrompt();
 
   useEffect(() => {
     if (!supabase) {
@@ -160,6 +162,20 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             <div className="text-xs text-slate-500">Simulateur RH &amp; Paie — OFPPT</div>
           </div>
         </div>
+
+        {canInstall && (
+          <button
+            type="button"
+            onClick={promptInstall}
+            className="w-full flex items-center justify-center gap-2 bg-[#149D92] text-white text-xs font-semibold rounded py-2 hover:bg-[#108a80] transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Installer l'application sur cet appareil
+          </button>
+        )}
+        {isInstalled && (
+          <p className="text-[11px] text-[#149D92] text-center -mt-1">Application installée sur cet appareil ✓</p>
+        )}
 
         <h1 className="text-lg font-semibold text-[#16324F]">{mode === 'login' ? 'Connexion' : 'Créer un compte'}</h1>
 

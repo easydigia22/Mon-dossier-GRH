@@ -3,26 +3,35 @@
  * Simulateur RH & Paie — Formation OFPPT
  */
 
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useAppData } from './hooks/useAppData';
 import { Header } from './components/common/Header';
 import { NavigationTabs, OngletNavigation } from './components/common/NavigationTabs';
-import { DashboardView } from './components/dashboard/DashboardView';
-import { CompanyView } from './components/company/CompanyView';
-import { EmployeesView } from './components/employees/EmployeesView';
-import { ContractsView } from './components/contracts/ContractsView';
-import { PresenceView } from './components/presence/PresenceView';
-import { LeavesView } from './components/leaves/LeavesView';
-import { PayrollPreparationView } from './components/payroll/PayrollPreparationView';
-import { PayrollSlipsView } from './components/payroll/PayrollSlipsView';
-import { PayrollBookView } from './components/payroll/PayrollBookView';
-import { CnssView } from './components/cnss/CnssView';
-import { DocumentsView } from './components/documents/DocumentsView';
-import { MissionsView } from './components/missions/MissionsView';
-import { TrainerView } from './components/trainer/TrainerView';
-import { SettingsView } from './components/settings/SettingsView';
-import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
 import type { UserRole } from './services/profile';
+
+// Chargement différé des vues : seule la vue affichée est téléchargée, ce qui
+// réduit fortement le poids du premier chargement (critique pour un partage WhatsApp).
+const DashboardView = lazy(() => import('./components/dashboard/DashboardView').then((m) => ({ default: m.DashboardView })));
+const CompanyView = lazy(() => import('./components/company/CompanyView').then((m) => ({ default: m.CompanyView })));
+const EmployeesView = lazy(() => import('./components/employees/EmployeesView').then((m) => ({ default: m.EmployeesView })));
+const ContractsView = lazy(() => import('./components/contracts/ContractsView').then((m) => ({ default: m.ContractsView })));
+const PresenceView = lazy(() => import('./components/presence/PresenceView').then((m) => ({ default: m.PresenceView })));
+const LeavesView = lazy(() => import('./components/leaves/LeavesView').then((m) => ({ default: m.LeavesView })));
+const PayrollPreparationView = lazy(() => import('./components/payroll/PayrollPreparationView').then((m) => ({ default: m.PayrollPreparationView })));
+const PayrollSlipsView = lazy(() => import('./components/payroll/PayrollSlipsView').then((m) => ({ default: m.PayrollSlipsView })));
+const PayrollBookView = lazy(() => import('./components/payroll/PayrollBookView').then((m) => ({ default: m.PayrollBookView })));
+const CnssView = lazy(() => import('./components/cnss/CnssView').then((m) => ({ default: m.CnssView })));
+const DocumentsView = lazy(() => import('./components/documents/DocumentsView').then((m) => ({ default: m.DocumentsView })));
+const MissionsView = lazy(() => import('./components/missions/MissionsView').then((m) => ({ default: m.MissionsView })));
+const TrainerView = lazy(() => import('./components/trainer/TrainerView').then((m) => ({ default: m.TrainerView })));
+const SettingsView = lazy(() => import('./components/settings/SettingsView').then((m) => ({ default: m.SettingsView })));
+
+const ChargementVue: React.FC = () => (
+  <div className="flex items-center justify-center py-24">
+    <Loader2 className="w-6 h-6 animate-spin text-[#16324F]" />
+  </div>
+);
 
 interface AppProps {
   userEmail?: string;
@@ -71,6 +80,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     soumettreTentative
   } = useAppData();
 
+  const [menuMobileOuvert, setMenuMobileOuvert] = useState(false);
   const [ongletActif, setOngletActifBrut] = useState<OngletNavigation>('dashboard');
   const setOngletActif = (onglet: OngletNavigation) => {
     // Un stagiaire ne doit jamais atterrir sur l'espace réservé au formateur
@@ -153,6 +163,8 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         userEmail={userEmail}
         role={role}
         onSignOut={onSignOut}
+        mobileOuvert={menuMobileOuvert}
+        onFermerMobile={() => setMenuMobileOuvert(false)}
       />
 
       <div className="flex-1 min-w-0 flex flex-col">
@@ -187,10 +199,12 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         onToggleNiveau={handleToggleNiveau}
         onResetDemo={handleResetDemoConfirm}
         cloudStatus={!cloudEnabled ? 'off' : cloudOk ? 'ok' : 'error'}
+        onOuvrirMenu={() => setMenuMobileOuvert(true)}
       />
 
       {/* Contenu principal de la vue active */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+       <Suspense fallback={<ChargementVue />}>
         {ongletActif === 'dashboard' && (
           <DashboardView
             entreprise={entreprise}
@@ -336,6 +350,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             showNotification={showNotification}
           />
         )}
+       </Suspense>
       </main>
 
       {/* Pied de page sobre */}

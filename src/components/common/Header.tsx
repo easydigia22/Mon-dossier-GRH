@@ -1,6 +1,7 @@
 import React from 'react';
-import { Calendar, CheckCircle2, Cloud, CloudOff, HelpCircle, RotateCcw } from 'lucide-react';
+import { Calendar, CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, RotateCcw } from 'lucide-react';
 import { AppLogo } from './AppLogo';
+import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import { ModePedagogique, NiveauPedagogique } from '../../types';
 
 interface HeaderProps {
@@ -12,6 +13,8 @@ interface HeaderProps {
   onToggleNiveau: () => void;
   onResetDemo: () => void;
   cloudStatus?: 'off' | 'ok' | 'error';
+  /** Ouvre le tiroir de navigation sur mobile (< lg) */
+  onOuvrirMenu?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,14 +25,25 @@ export const Header: React.FC<HeaderProps> = ({
   niveau,
   onToggleNiveau,
   onResetDemo,
-  cloudStatus = 'off'
+  cloudStatus = 'off',
+  onOuvrirMenu
 }) => {
+  const { canInstall, promptInstall } = useInstallPrompt();
+
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
       {/* Barre supérieure principale */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
         {/* Zone 1: Identité & Wordmark */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={onOuvrirMenu}
+            className="lg:hidden flex items-center justify-center w-9 h-9 -ml-1 rounded-md text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+            aria-label="Ouvrir le menu de navigation"
+            title="Ouvrir le menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
           <AppLogo size={36} />
           <div>
             <div className="text-base font-bold text-[#16324F] leading-tight flex items-center gap-2">
@@ -107,6 +121,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Actions & Réinitialisation */}
         <div className="flex items-center gap-2">
+          {canInstall && (
+            <button
+              onClick={promptInstall}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#149D92] hover:bg-[#108a80] rounded transition-colors"
+              title="Installer l'application sur cet appareil"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Installer l'app</span>
+            </button>
+          )}
+
           {modePedagogique === 'demonstration' && (
             <button
               onClick={onResetDemo}
