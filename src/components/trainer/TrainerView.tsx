@@ -29,13 +29,43 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     anneeScolaire: '2024 / 2025',
     formateurNom: 'Formateur OFPPT',
     etablissement: 'ISTA Guéliz Marrakech',
-    stagiaires: [
-      { matricule: 'STG-01', nom: 'EL AMRANI', prenom: 'Youssef' },
-      { matricule: 'STG-02', nom: 'BENKIRANE', prenom: 'Meryem' }
-    ]
+    stagiaires: []
   });
 
   const classeActive = classes.find((c) => c.id === classeActiveId) || classes[0];
+
+  // Gestion de l'effectif (liste des stagiaires) de la classe active
+  const [nouveauStagiaire, setNouveauStagiaire] = useState({ matricule: '', nom: '', prenom: '' });
+
+  const handleAjouterStagiaire = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!classeActive || !nouveauStagiaire.nom.trim() || !nouveauStagiaire.prenom.trim()) return;
+
+    const matricule = nouveauStagiaire.matricule.trim() || `STG-${(classeActive.stagiaires.length + 1).toString().padStart(2, '0')}`;
+
+    if (classeActive.stagiaires.some((s) => s.matricule === matricule)) {
+      showNotification(`Le matricule ${matricule} existe déjà dans cette classe.`, 'error');
+      return;
+    }
+
+    setClasses((prev) =>
+      prev.map((c) =>
+        c.id === classeActive.id
+          ? { ...c, stagiaires: [...c.stagiaires, { matricule, nom: nouveauStagiaire.nom.trim(), prenom: nouveauStagiaire.prenom.trim() }] }
+          : c
+      )
+    );
+    setNouveauStagiaire({ matricule: '', nom: '', prenom: '' });
+    showNotification(`${nouveauStagiaire.prenom} ${nouveauStagiaire.nom} ajouté(e) à la classe.`, 'success');
+  };
+
+  const handleSupprimerStagiaire = (matricule: string) => {
+    if (!classeActive) return;
+    setClasses((prev) =>
+      prev.map((c) => (c.id === classeActive.id ? { ...c, stagiaires: c.stagiaires.filter((s) => s.matricule !== matricule) } : c))
+    );
+    showNotification('Stagiaire retiré de la classe.', 'info');
+  };
 
   // Suivi en direct des tentatives de tous les stagiaires (via Supabase, policies formateur)
   const [tentativesLive, setTentativesLive] = useState<TentativeLive[]>([]);
@@ -190,6 +220,81 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Effectif de la classe active */}
+      {classeActive && (
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#149D92]" />
+              <span>Effectif de « {classeActive.nom} »</span>
+            </h3>
+            <span className="text-[11px] text-slate-400">{classeActive.stagiaires.length} stagiaire(s)</span>
+          </div>
+
+          {classeActive.stagiaires.length === 0 ? (
+            <p className="text-slate-400 italic">Aucun stagiaire dans cette classe pour le moment.</p>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {classeActive.stagiaires.map((s) => (
+                <li key={s.matricule} className="py-2 flex items-center justify-between">
+                  <span>
+                    <strong className="text-slate-800">{s.nom} {s.prenom}</strong>
+                    <span className="text-slate-400 ml-2 font-mono">{s.matricule}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleSupprimerStagiaire(s.matricule)}
+                    className="text-[11px] font-semibold text-[#D64545] hover:underline"
+                  >
+                    Retirer
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form onSubmit={handleAjouterStagiaire} className="pt-3 border-t border-slate-100 flex flex-wrap items-end gap-2">
+            <label className="flex-1 min-w-[100px]">
+              <span className="block text-slate-600 mb-1">Matricule (auto si vide)</span>
+              <input
+                type="text"
+                placeholder="STG-03"
+                value={nouveauStagiaire.matricule}
+                onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, matricule: e.target.value })}
+                className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+              />
+            </label>
+            <label className="flex-1 min-w-[120px]">
+              <span className="block text-slate-600 mb-1">Nom</span>
+              <input
+                type="text"
+                required
+                value={nouveauStagiaire.nom}
+                onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, nom: e.target.value })}
+                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+              />
+            </label>
+            <label className="flex-1 min-w-[120px]">
+              <span className="block text-slate-600 mb-1">Prénom</span>
+              <input
+                type="text"
+                required
+                value={nouveauStagiaire.prenom}
+                onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, prenom: e.target.value })}
+                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+              />
+            </label>
+            <button
+              type="submit"
+              className="px-3.5 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white font-semibold rounded flex items-center gap-1.5 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Ajouter</span>
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Suivi en direct des remises (Supabase) */}
       {cloudEnabled && (
