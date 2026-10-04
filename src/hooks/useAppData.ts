@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { CONTRATS_DEMO, DEMANDES_CONGES_DEMO, ENTREPRISE_DEMO, EVENEMENTS_PRESENCE_DEMO, SALARIES_DEMO } from '../data/initialDemoData';
 import { MISSIONS_PEDAGOGIQUES } from '../data/missionsData';
-import { clearAllLocalData, loadAppState, saveAppState } from '../services/db';
+import { cloudEnabled, loadCloudState, saveCloudState } from '../services/cloudSync';
+import { AppDatabaseState, clearAllLocalData, loadAppState, saveAppState } from '../services/db';
 import { calculerBulletinPaie } from '../services/payrollEngine';
 import { REGLES_JURIDIQUES_MAROC } from '../services/rulesData';
 import {
@@ -21,6 +22,7 @@ import {
 
 export function useAppData() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [cloudOk, setCloudOk] = useState(true);
   const [entreprise, setEntreprise] = useState<Entreprise>(ENTREPRISE_DEMO);
   const [salaries, setSalaries] = useState<Salarie[]>(SALARIES_DEMO);
   const [contrats, setContrats] = useState<Contrat[]>(CONTRATS_DEMO);
@@ -56,7 +58,18 @@ export function useAppData() {
   useEffect(() => {
     async function init() {
       try {
-        const stored = await loadAppState();
+        // Priorité au cloud (compte connecté) ; à défaut, reprise des données locales
+        // (ce qui migre automatiquement un ancien espace IndexedDB vers Supabase à la 1re sauvegarde).
+        let stored: AppDatabaseState | null = null;
+        if (cloudEnabled) {
+          try {
+            stored = await loadCloudState();
+          } catch (e) {
+            console.error('Chargement Supabase impossible, repli sur les données locales:', e);
+            setCloudOk(false);
+          }
+        }
+        if (!stored) stored = await loadAppState();
         if (stored) {
           if (stored.entreprise) setEntreprise(stored.entreprise);
           if (stored.salaries && stored.salaries.length > 0) setSalaries(stored.salaries);
@@ -90,7 +103,7 @@ export function useAppData() {
   useEffect(() => {
     if (!isLoaded) return;
     const saveTimeout = setTimeout(() => {
-      saveAppState({
+      const snapshot: AppDatabaseState = {
         version: 1,
         derniereSauvegarde: new Date().toISOString(),
         entreprise,
@@ -109,7 +122,18 @@ export function useAppData() {
           niveau,
           nomStagiaireActif
         }
-      });
+      };
+
+      // Copie locale systématique (hors-ligne), puis synchronisation Supabase
+      saveAppState(snapshot);
+      if (cloudEnabled) {
+        saveCloudState(snapshot)
+          .then(() => setCloudOk(true))
+          .catch((e) => {
+            console.error('Synchronisation Supabase échouée:', e);
+            setCloudOk(false);
+          });
+      }
     }, 400);
 
     return () => clearTimeout(saveTimeout);
@@ -358,6 +382,8 @@ export function useAppData() {
 
   return {
     isLoaded,
+    cloudEnabled,
+    cloudOk,
     entreprise,
     setEntreprise,
     salaries,

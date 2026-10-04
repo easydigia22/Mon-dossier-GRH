@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, CheckCircle2, HelpCircle, RotateCcw } from 'lucide-react';
+import { Calendar, CheckCircle2, Cloud, CloudOff, HelpCircle, LogOut, RotateCcw } from 'lucide-react';
 import { AppLogo } from './AppLogo';
 import { ModePedagogique, NiveauPedagogique } from '../../types';
 
@@ -11,6 +11,9 @@ interface HeaderProps {
   niveau: NiveauPedagogique;
   onToggleNiveau: () => void;
   onResetDemo: () => void;
+  userEmail?: string;
+  onSignOut?: () => void;
+  cloudStatus?: 'off' | 'ok' | 'error';
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,7 +23,10 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectMode,
   niveau,
   onToggleNiveau,
-  onResetDemo
+  onResetDemo,
+  userEmail,
+  onSignOut,
+  cloudStatus = 'off'
 }) => {
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
@@ -120,6 +126,32 @@ export const Header: React.FC<HeaderProps> = ({
             <CheckCircle2 className="w-3.5 h-3.5 text-[#149D92]" />
             <span>Moteur déterministe</span>
           </div>
+
+          {cloudStatus !== 'off' && (
+            <div
+              className={`hidden md:flex items-center gap-1 text-[11px] border-l border-slate-200 pl-3 ${
+                cloudStatus === 'ok' ? 'text-[#149D92]' : 'text-[#D64545]'
+              }`}
+              title={cloudStatus === 'ok' ? 'Données synchronisées avec Supabase' : 'Synchronisation impossible — copie locale conservée'}
+            >
+              {cloudStatus === 'ok' ? <Cloud className="w-3.5 h-3.5" /> : <CloudOff className="w-3.5 h-3.5" />}
+              <span>{cloudStatus === 'ok' ? 'Synchronisé' : 'Hors ligne'}</span>
+            </div>
+          )}
+
+          {onSignOut && (
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+              {userEmail && <span className="hidden xl:inline text-[11px] text-slate-500 max-w-[160px] truncate">{userEmail}</span>}
+              <button
+                onClick={onSignOut}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                title="Se déconnecter"
+              >
+                <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                <span>Quitter</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

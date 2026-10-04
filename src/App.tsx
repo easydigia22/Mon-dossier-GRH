@@ -23,9 +23,16 @@ import { TrainerView } from './components/trainer/TrainerView';
 import { SettingsView } from './components/settings/SettingsView';
 import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
 
-export default function App() {
+interface AppProps {
+  userEmail?: string;
+  onSignOut?: () => void;
+}
+
+export default function App({ userEmail, onSignOut }: AppProps) {
   const {
     isLoaded,
+    cloudEnabled,
+    cloudOk,
     entreprise,
     setEntreprise,
     salaries,
@@ -158,6 +165,9 @@ export default function App() {
         niveau={niveau}
         onToggleNiveau={handleToggleNiveau}
         onResetDemo={handleResetDemoConfirm}
+        userEmail={userEmail}
+        onSignOut={onSignOut}
+        cloudStatus={!cloudEnabled ? 'off' : cloudOk ? 'ok' : 'error'}
       />
 
       {/* Barre de navigation des onglets */}
