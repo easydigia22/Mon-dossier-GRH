@@ -142,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           {onSignOut && (
-            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-3 shrink-0">
               {role && (
                 <span
                   className={`hidden md:inline text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
@@ -155,11 +155,11 @@ export const Header: React.FC<HeaderProps> = ({
               {userEmail && <span className="hidden xl:inline text-[11px] text-slate-500 max-w-[160px] truncate">{userEmail}</span>}
               <button
                 onClick={onSignOut}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                className="shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-slate-500 bg-slate-100 hover:bg-[#D64545] hover:text-white transition-colors"
                 title="Se déconnecter"
+                aria-label="Se déconnecter"
               >
-                <LogOut className="w-3.5 h-3.5 text-slate-500" />
-                <span>Quitter</span>
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
           )}

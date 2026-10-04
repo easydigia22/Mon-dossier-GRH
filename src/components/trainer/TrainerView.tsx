@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Award, Download, Upload, Users, Plus, CheckCircle2, FileText, Settings2, FileSpreadsheet } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Award, Download, Upload, Users, Plus, CheckCircle2, FileText, Settings2, FileSpreadsheet, Radio, Loader2, Pencil, RefreshCw } from 'lucide-react';
 import { ClassePedagogique, MissionExercice, TentativeExercice } from '../../types';
 import { exporterJSON } from '../../services/exportService';
+import { cloudEnabled } from '../../services/cloudSync';
+import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
 
 interface TrainerViewProps {
   classes: ClassePedagogique[];
@@ -34,6 +36,64 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   });
 
   const classeActive = classes.find((c) => c.id === classeActiveId) || classes[0];
+
+  // Suivi en direct des tentatives de tous les stagiaires (via Supabase, policies formateur)
+  const [tentativesLive, setTentativesLive] = useState<TentativeLive[]>([]);
+  const [chargementLive, setChargementLive] = useState(false);
+  const [erreurLive, setErreurLive] = useState<string | null>(null);
+  const [editionOuverte, setEditionOuverte] = useState<TentativeLive | null>(null);
+  const [brouillonCorrection, setBrouillonCorrection] = useState<NonNullable<TentativeExercice['correction']> | null>(null);
+
+  const chargerTentativesLive = async () => {
+    setChargementLive(true);
+    setErreurLive(null);
+    try {
+      setTentativesLive(await fetchAllTentativesLive());
+    } catch (e: any) {
+      setErreurLive(e.message || 'Chargement impossible.');
+    } finally {
+      setChargementLive(false);
+    }
+  };
+
+  useEffect(() => {
+    if (cloudEnabled) chargerTentativesLive();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const ouvrirEdition = (item: TentativeLive) => {
+    setEditionOuverte(item);
+    setBrouillonCorrection(
+      item.tentative.correction || {
+        noteDossier: 0,
+        noteRegles: 0,
+        noteCalculs: 0,
+        noteControles: 0,
+        noteTotaleSur20: 0,
+        commentairesFormateur: '',
+        detailsEcarts: []
+      }
+    );
+  };
+
+  const handleEnregistrerCorrection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editionOuverte || !brouillonCorrection) return;
+    const noteTotale =
+      Number(brouillonCorrection.noteDossier) +
+      Number(brouillonCorrection.noteRegles) +
+      Number(brouillonCorrection.noteCalculs) +
+      Number(brouillonCorrection.noteControles);
+    const correction = { ...brouillonCorrection, noteTotaleSur20: noteTotale };
+    try {
+      await saveCorrectionLive(editionOuverte.userId, editionOuverte.tentative, correction);
+      showNotification('Correction enregistrée et transmise au stagiaire.', 'success');
+      setEditionOuverte(null);
+      chargerTentativesLive();
+    } catch (e: any) {
+      showNotification(`Échec de l'enregistrement : ${e.message}`, 'error');
+    }
+  };
 
   const handleAjouterClasse = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +191,82 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         </div>
       </div>
 
+      {/* Suivi en direct des remises (Supabase) */}
+      {cloudEnabled && (
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+              <Radio className="w-4 h-4 text-[#149D92]" />
+              <span>Suivi en direct des stagiaires</span>
+            </h3>
+            <button
+              type="button"
+              onClick={chargerTentativesLive}
+              disabled={chargementLive}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold text-[#16324F] bg-slate-100 hover:bg-slate-200 rounded transition-colors disabled:opacity-50"
+            >
+              {chargementLive ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              <span>Actualiser</span>
+            </button>
+          </div>
+
+          <p className="text-slate-600">
+            Les missions soumises par tous les stagiaires connectés à ce projet apparaissent ici automatiquement, sans import manuel.
+          </p>
+
+          {erreurLive && <p className="text-[#D64545]">{erreurLive}</p>}
+
+          {!chargementLive && tentativesLive.length === 0 && !erreurLive && (
+            <p className="text-slate-400 italic">Aucune remise pour le moment.</p>
+          )}
+
+          {tentativesLive.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-[10px] uppercase text-slate-400 border-b border-slate-100">
+                    <th className="py-1.5 pr-2">Stagiaire</th>
+                    <th className="py-1.5 pr-2">Mission</th>
+                    <th className="py-1.5 pr-2">Remise le</th>
+                    <th className="py-1.5 pr-2">Note / 20</th>
+                    <th className="py-1.5"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tentativesLive.map((item) => {
+                    const mission = missions.find((m) => m.id === item.tentative.missionId);
+                    return (
+                      <tr key={`${item.userId}-${item.tentative.id}`} className="border-b border-slate-50 hover:bg-slate-50">
+                        <td className="py-2 pr-2 font-semibold text-slate-800">{item.tentative.stagiaireNom}</td>
+                        <td className="py-2 pr-2 text-slate-600">
+                          {mission ? `Mission ${mission.numero} — ${mission.titre}` : item.tentative.missionId}
+                        </td>
+                        <td className="py-2 pr-2 text-slate-500">
+                          {item.tentative.dateRemise ? new Date(item.tentative.dateRemise).toLocaleString('fr-FR') : '—'}
+                        </td>
+                        <td className="py-2 pr-2 font-bold text-[#149D92]">
+                          {item.tentative.correction ? `${item.tentative.correction.noteTotaleSur20.toFixed(1)}/20` : 'Non noté'}
+                        </td>
+                        <td className="py-2">
+                          <button
+                            type="button"
+                            onClick={() => ouvrirEdition(item)}
+                            className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#16324F] bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                          >
+                            <Pencil className="w-3 h-3" />
+                            <span>Corriger</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Cartes d'action formateur */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Colonne 1 : Exporter des paquets d'exercices vers les stagiaires */}
@@ -209,6 +345,84 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Modal Correction d'une tentative (suivi en direct) */}
+      {editionOuverte && brouillonCorrection && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <form
+            onSubmit={handleEnregistrerCorrection}
+            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center border-b pb-2">
+              <h3 className="font-bold text-sm text-[#16324F]">
+                Corriger — {editionOuverte.tentative.stagiaireNom}
+              </h3>
+              <button type="button" onClick={() => setEditionOuverte(null)} className="text-slate-400 hover:text-slate-600 font-bold">
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                ['noteDossier', 'Dossier et pièces (/4)', 4],
+                ['noteRegles', 'Justification des règles (/4)', 4],
+                ['noteCalculs', 'Exactitude des calculs (/8)', 8],
+                ['noteControles', 'Contrôles de cohérence (/4)', 4]
+              ] as const).map(([champ, label, max]) => (
+                <label key={champ} className="block">
+                  <span className="block font-medium text-slate-700 mb-1">{label}</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={max}
+                    step="0.5"
+                    value={brouillonCorrection[champ]}
+                    onChange={(e) => setBrouillonCorrection({ ...brouillonCorrection, [champ]: Number(e.target.value) })}
+                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  />
+                </label>
+              ))}
+            </div>
+
+            <label className="block">
+              <span className="block font-medium text-slate-700 mb-1">Commentaire du formateur</span>
+              <textarea
+                rows={4}
+                value={brouillonCorrection.commentairesFormateur}
+                onChange={(e) => setBrouillonCorrection({ ...brouillonCorrection, commentairesFormateur: e.target.value })}
+                className="w-full p-3 border border-slate-200 rounded-lg leading-relaxed"
+              />
+            </label>
+
+            <div className="pt-2 flex justify-between items-center border-t border-slate-100">
+              <span className="text-slate-500">
+                Total actuel :{' '}
+                <strong className="text-[#149D92]">
+                  {(
+                    Number(brouillonCorrection.noteDossier) +
+                    Number(brouillonCorrection.noteRegles) +
+                    Number(brouillonCorrection.noteCalculs) +
+                    Number(brouillonCorrection.noteControles)
+                  ).toFixed(1)}
+                  /20
+                </strong>
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditionOuverte(null)}
+                  className="px-3 py-1.5 text-slate-700 bg-slate-100 rounded"
+                >
+                  Annuler
+                </button>
+                <button type="submit" className="px-4 py-1.5 bg-[#149D92] text-white font-semibold rounded hover:bg-[#11857c]">
+                  Enregistrer la correction
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Modal Création de classe */}
       {modalClasseOuverte && (
