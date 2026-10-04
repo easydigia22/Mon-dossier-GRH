@@ -44,7 +44,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold px-2 py-0.5 bg-[#16324F] text-white rounded">
+              <span className="text-xs font-semibold px-2 py-0.5 bg-[#1C2459] text-white rounded">
                 CYCLE DE PAIE MENSUEL
               </span>
               <span className="text-xs text-slate-500">Mois : <strong>{periodeActive}</strong></span>
@@ -54,7 +54,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                 </span>
               )}
             </div>
-            <h1 className="text-xl font-bold text-[#16324F] mt-1">Préparation &amp; Contrôle de la Paie</h1>
+            <h1 className="text-xl font-bold text-[#1C2459] mt-1">Préparation &amp; Contrôle de la Paie</h1>
             <p className="text-xs text-slate-500 mt-0.5">
               Consolidation des variables de pointage, vérification des assiettes sociales et fiscales marocaines
             </p>
@@ -73,7 +73,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                 {bulletinsPeriode.length > 0 && (
                   <button
                     onClick={handleCloturer}
-                    className="px-4 py-2 bg-[#16324F] hover:bg-[#11273e] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
+                    className="px-4 py-2 bg-[#1C2459] hover:bg-[#11273e] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
                     title="Sceller définitivement la paie du mois"
                   >
                     <Lock className="w-4 h-4" />
@@ -92,22 +92,22 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
 
         {/* Rappel du déroulement du calcul de paie marocain */}
         <div className="mt-5 p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs text-slate-600">
-          <span className="font-bold text-[#16324F] block mb-1">Architecture déterministe du calcul :</span>
+          <span className="font-bold text-[#1C2459] block mb-1">Architecture déterministe du calcul :</span>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-[11px]">
             <div className="p-2 bg-white rounded border border-slate-200">
-              <strong className="text-[#16324F] block">1. Brut Global</strong>
+              <strong className="text-[#1C2459] block">1. Brut Global</strong>
               Base (191h) - Retenues absences + Heures Sup + Prime Ancienneté (Art. 350) + Primes
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
-              <strong className="text-[#16324F] block">2. Cotisations Salariales</strong>
+              <strong className="text-[#1C2459] block">2. Cotisations Salariales</strong>
               CNSS 4,48% (Plafonné à 6 000 MAD) + AMO 2,26% (Déplafonné)
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
-              <strong className="text-[#16324F] block">3. Impôt sur le Revenu</strong>
+              <strong className="text-[#1C2459] block">3. Impôt sur le Revenu</strong>
               Frais pros (35%/25%) → SNI → Barème progressif CGI → Abattement famille (30 MAD/pers)
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
-              <strong className="text-[#16324F] block">4. Net &amp; Coût Patronal</strong>
+              <strong className="text-[#1C2459] block">4. Net &amp; Coût Patronal</strong>
               Net = Brut - Cotisations - IR - Acomptes | Coût = Brut + Charges patronales (CNSS, TFP, AMO)
             </div>
           </div>
@@ -117,7 +117,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
       {/* Tableau récapitulatif des variables préparées par salarié */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <span className="text-xs font-bold text-[#16324F] uppercase tracking-wider">
+          <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Pointage des variables de paie par collaborateur ({salaries.length})
           </span>
           <span className="text-[11px] text-slate-400">Période : {periodeActive}</span>
@@ -179,7 +179,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                     <td className="py-3 px-4 text-center">
                       <span className="text-slate-700">{bull ? `${bull.tauxAnciennete}%` : '-'}</span>
                     </td>
-                    <td className="py-3 px-4 text-right tabular-nums font-semibold text-[#16324F]">
+                    <td className="py-3 px-4 text-right tabular-nums font-semibold text-[#1C2459]">
                       {bull ? formatMAD(bull.salaireBrutGlobal) : 'À calculer'}
                     </td>
                     <td className="py-3 px-4 text-right tabular-nums font-bold text-emerald-700">
@@ -191,7 +191,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
                             bull.estSnapshotScelle
                               ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-blue-50 text-[#16324F]'
+                              : 'bg-blue-50 text-[#1C2459]'
                           }`}
                         >
                           {bull.estSnapshotScelle ? 'Scellé' : bull.statut}

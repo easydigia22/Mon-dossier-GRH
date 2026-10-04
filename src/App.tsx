@@ -29,7 +29,7 @@ const SettingsView = lazy(() => import('./components/settings/SettingsView').the
 
 const ChargementVue: React.FC = () => (
   <div className="flex items-center justify-center py-24">
-    <Loader2 className="w-6 h-6 animate-spin text-[#16324F]" />
+    <Loader2 className="w-6 h-6 animate-spin text-[#1C2459]" />
   </div>
 );
 
@@ -144,8 +144,8 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     return (
       <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 border-4 border-[#16324F] border-t-[#149D92] rounded-full animate-spin mx-auto"></div>
-          <p className="text-xs font-semibold text-[#16324F]">Chargement de Mon Dossier Administratif...</p>
+          <div className="w-12 h-12 border-4 border-[#1C2459] border-t-[#149D92] rounded-full animate-spin mx-auto"></div>
+          <p className="text-xs font-semibold text-[#1C2459]">Chargement de Mon Dossier Administratif...</p>
         </div>
       </div>
     );
@@ -178,7 +178,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
               ? 'bg-red-50 text-red-900 border-red-300'
               : notification.type === 'warning'
               ? 'bg-amber-50 text-amber-900 border-amber-300'
-              : 'bg-blue-50 text-[#16324F] border-blue-300'
+              : 'bg-blue-50 text-[#1C2459] border-blue-300'
           }`}
         >
           {notification.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}

@@ -56,12 +56,12 @@ export const CnssView: React.FC<CnssViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-[#16324F]">État Déclaratif Pédagogique CNSS &amp; AMO</h1>
+                <h1 className="text-lg font-bold text-[#1C2459]">État Déclaratif Pédagogique CNSS &amp; AMO</h1>
                 <span className="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded">
                   Simulation Pédagogique
                 </span>
@@ -100,7 +100,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
         <div className="border-b border-slate-200 pb-4 flex justify-between items-center">
           <div>
-            <h2 className="text-base font-bold text-[#16324F]">
+            <h2 className="text-base font-bold text-[#1C2459]">
               Bordereau Récapitulatif Mensuel des Cotisations
             </h2>
             <p className="text-xs text-slate-500">
@@ -109,7 +109,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
           </div>
           <div className="text-right">
             <span className="text-xs text-slate-500 block">Total Cotisations à verser</span>
-            <span className="text-xl font-black text-[#16324F] font-mono tabular-nums">
+            <span className="text-xl font-black text-[#1C2459] font-mono tabular-nums">
               {formatMAD(totalGeneralCotisations)}
             </span>
           </div>
@@ -118,7 +118,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
         {/* Tableau de ventilation par branche de sécurité sociale */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#16324F] text-white uppercase text-[10px] font-bold">
+            <thead className="bg-[#1C2459] text-white uppercase text-[10px] font-bold">
               <tr>
                 <th className="py-2.5 px-3">Branche de Cotisation</th>
                 <th className="py-2.5 px-3 text-right">Assiette Soumise</th>
@@ -145,7 +145,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
                 <td className="py-3 px-3 text-right tabular-nums text-slate-700">
                   {formatMAD(prestationsPatronales)} <span className="text-[10px] text-slate-400 font-sans block">(8,98%)</span>
                 </td>
-                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#16324F]">
+                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#1C2459]">
                   {formatMAD(totalPrestations)}
                 </td>
               </tr>
@@ -164,7 +164,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
                 <td className="py-3 px-3 text-right tabular-nums text-slate-700">
                   {formatMAD(allocFamilialesPatronales)} <span className="text-[10px] text-slate-400 font-sans block">(6,40%)</span>
                 </td>
-                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#16324F]">
+                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#1C2459]">
                   {formatMAD(allocFamilialesPatronales)}
                 </td>
               </tr>
@@ -183,7 +183,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
                 <td className="py-3 px-3 text-right tabular-nums text-slate-700">
                   {formatMAD(tfpPatronale)} <span className="text-[10px] text-slate-400 font-sans block">(1,60%)</span>
                 </td>
-                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#16324F]">
+                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#1C2459]">
                   {formatMAD(tfpPatronale)}
                 </td>
               </tr>
@@ -204,16 +204,16 @@ export const CnssView: React.FC<CnssViewProps> = ({
                 <td className="py-3 px-3 text-right tabular-nums text-slate-700">
                   {formatMAD(amoPatronaleTotale)} <span className="text-[10px] text-slate-400 font-sans block">(4,11%)</span>
                 </td>
-                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#16324F]">
+                <td className="py-3 px-3 text-right tabular-nums font-bold text-[#1C2459]">
                   {formatMAD(totalAMO)}
                 </td>
               </tr>
             </tbody>
 
             {/* Total général */}
-            <tfoot className="bg-[#F4F7FA] font-mono text-xs font-bold border-t-2 border-[#16324F]">
+            <tfoot className="bg-[#F4F7FA] font-mono text-xs font-bold border-t-2 border-[#1C2459]">
               <tr>
-                <td className="py-3 px-3 uppercase font-sans text-xs text-[#16324F]">
+                <td className="py-3 px-3 uppercase font-sans text-xs text-[#1C2459]">
                   Totaux Généraux des Cotisations
                 </td>
                 <td className="py-3 px-3 text-right tabular-nums">{formatMAD(masseBruteTotale)}</td>

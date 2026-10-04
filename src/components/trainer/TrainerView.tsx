@@ -224,11 +224,11 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <Award className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Espace Formateur &amp; Évaluation</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Espace Formateur &amp; Évaluation</h1>
               <p className="text-xs text-slate-500">
                 Gestion des groupes stagiaires, exportation des paquets d'exercices et consolidation des notes
               </p>
@@ -253,7 +253,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             <select
               value={classeActiveId}
               onChange={(e) => setClasseActiveId(e.target.value)}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#16324F] bg-slate-50"
+              className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50"
             >
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -273,7 +273,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       {classeActive && (
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+            <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Users className="w-4 h-4 text-[#149D92]" />
               <span>Effectif de « {classeActive.nom} »</span>
             </h3>
@@ -286,7 +286,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             <div className="flex items-center justify-between gap-3 bg-[#F4F7FA] border border-slate-200 rounded-lg px-3.5 py-2.5">
               <div>
                 <span className="block text-slate-500">Code à communiquer aux stagiaires pour qu'ils rejoignent cette classe :</span>
-                <span className="font-mono font-bold text-base tracking-widest text-[#16324F]">{classeActive.codeInvitation}</span>
+                <span className="font-mono font-bold text-base tracking-widest text-[#1C2459]">{classeActive.codeInvitation}</span>
               </div>
               <button
                 type="button"
@@ -400,7 +400,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       {cloudEnabled && (
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+            <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Radio className="w-4 h-4 text-[#149D92]" />
               <span>Suivi en direct des stagiaires</span>
             </h3>
@@ -408,7 +408,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               type="button"
               onClick={chargerTentativesLive}
               disabled={chargementLive}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold text-[#16324F] bg-slate-100 hover:bg-slate-200 rounded transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold text-[#1C2459] bg-slate-100 hover:bg-slate-200 rounded transition-colors disabled:opacity-50"
             >
               {chargementLive ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
               <span>Actualiser</span>
@@ -456,7 +456,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                           <button
                             type="button"
                             onClick={() => ouvrirEdition(item)}
-                            className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#16324F] bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                            className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#1C2459] bg-slate-100 hover:bg-slate-200 rounded transition-colors"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>Corriger</span>
@@ -477,7 +477,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         {/* Colonne 1 : Exporter des paquets d'exercices vers les stagiaires */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+            <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Download className="w-4 h-4 text-[#149D92]" />
               <span>Exporter un paquet d'exercice (JSON)</span>
             </h3>
@@ -516,7 +516,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         {/* Colonne 2 : Importer les remises stagiaires & Corriger */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-[#16324F] text-sm flex items-center gap-2">
+            <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Upload className="w-4 h-4 text-[#149D92]" />
               <span>Importer les copies remises par les stagiaires</span>
             </h3>
@@ -535,7 +535,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           </label>
 
           <div className="p-3 bg-[#F4F7FA] border border-slate-200 rounded-lg text-slate-600 space-y-1">
-            <strong className="block text-[#16324F]">Copies déjà enregistrées en local ({tentatives.length}) :</strong>
+            <strong className="block text-[#1C2459]">Copies déjà enregistrées en local ({tentatives.length}) :</strong>
             {tentatives.length === 0 ? (
               <span className="text-slate-400 italic">Aucune tentative remise pour le moment.</span>
             ) : (
@@ -559,7 +559,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs max-h-[90vh] overflow-y-auto"
           >
             <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-bold text-sm text-[#16324F]">
+              <h3 className="font-bold text-sm text-[#1C2459]">
                 Corriger — {editionOuverte.tentative.stagiaireNom}
               </h3>
               <button type="button" onClick={() => setEditionOuverte(null)} className="text-slate-400 hover:text-slate-600 font-bold">
@@ -637,7 +637,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs"
           >
             <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-bold text-sm text-[#16324F]">Créer un nouveau groupe / classe</h3>
+              <h3 className="font-bold text-sm text-[#1C2459]">Créer un nouveau groupe / classe</h3>
               <button
                 type="button"
                 onClick={() => setModalClasseOuverte(false)}

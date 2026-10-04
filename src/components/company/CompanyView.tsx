@@ -28,11 +28,11 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#1C2459] text-white flex items-center justify-center">
               <Building2 className="w-6 h-6 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[#16324F]">{entreprise.raisonSociale}</h1>
+              <h1 className="text-xl font-bold text-[#1C2459]">{entreprise.raisonSociale}</h1>
               <p className="text-xs text-slate-500">
                 Entreprise marocaine support de simulation · Secteur privé non agricole
               </p>
@@ -43,7 +43,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="px-3 py-1.5 text-xs font-semibold bg-[#16324F] text-white rounded-lg hover:bg-[#11273e] transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold bg-[#1C2459] text-white rounded-lg hover:bg-[#11273e] transition-colors"
               >
                 Modifier la fiche
               </button>

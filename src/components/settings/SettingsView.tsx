@@ -53,11 +53,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <Sliders className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Paramètres Juridiques, Fiscaux &amp; Sauvegardes</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Paramètres Juridiques, Fiscaux &amp; Sauvegardes</h1>
               <p className="text-xs text-slate-500">
                 Sources officielles vérifiées du droit du travail et de la paie marocaine · Gestion locale des données
               </p>
@@ -78,7 +78,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         {/* Panneau de sauvegarde / restauration */}
         <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg space-y-2">
-            <strong className="block font-bold text-[#16324F]">Restauration d'une sauvegarde</strong>
+            <strong className="block font-bold text-[#1C2459]">Restauration d'une sauvegarde</strong>
             <p className="text-slate-600">
               Chargez un fichier JSON précédemment exporté pour reprendre votre travail sur n'importe quel ordinateur :
             </p>
@@ -111,7 +111,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h2 className="text-xs font-bold text-[#16324F] uppercase tracking-wider">
+            <h2 className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
               Référentiel des Textes Légaux &amp; Sociaux Marocains ({regles.length} règles vérifiées)
             </h2>
             <p className="text-[11px] text-slate-500">
@@ -132,7 +132,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 uppercase">
                     {r.domaine}
                   </span>
-                  <h3 className="font-bold text-sm text-[#16324F]">{r.intitule}</h3>
+                  <h3 className="font-bold text-sm text-[#1C2459]">{r.intitule}</h3>
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -250,11 +250,11 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <Clock className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[#16324F]">Suivi des Présences &amp; Absences</h1>
+              <h1 className="text-xl font-bold text-[#1C2459]">Suivi des Présences &amp; Absences</h1>
               <p className="text-xs text-slate-500 mt-0.5">
                 Période active : <strong>{periodeActive}</strong> · Pointage journalier et horaire avec détection automatique de l'impact paie
               </p>
@@ -267,7 +267,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
               <button
                 onClick={() => setVueMode('liste')}
                 className={`px-3 py-1.5 text-xs font-semibold rounded transition-colors flex items-center gap-1.5 ${
-                  vueMode === 'liste' ? 'bg-white text-[#16324F] shadow-xs' : 'text-slate-600'
+                  vueMode === 'liste' ? 'bg-white text-[#1C2459] shadow-xs' : 'text-slate-600'
                 }`}
               >
                 <ListFilter className="w-3.5 h-3.5" />
@@ -322,7 +322,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
           <div className="p-3 bg-blue-50/60 rounded-lg border border-blue-200">
             <span className="text-[11px] text-blue-800 block">Congés pris</span>
-            <span className="text-lg font-bold text-[#16324F] tabular-nums">
+            <span className="text-lg font-bold text-[#1C2459] tabular-nums">
               {totalCongesJours} jour(s)
             </span>
             <span className="text-[10px] text-slate-500 block">Annuels &amp; exceptionnels payés</span>
@@ -384,7 +384,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-[#16324F] uppercase tracking-wider block">
+              <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider block">
                 Calendrier Mensuel de Pointage — {periodeActive}
               </span>
               <span className="text-[11px] text-slate-500">
@@ -410,8 +410,8 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-center border-collapse text-[10px]">
               <thead>
-                <tr className="bg-[#16324F] text-white">
-                  <th className="py-2 px-3 text-left min-w-36 sticky left-0 bg-[#16324F] z-10">Collaborateur</th>
+                <tr className="bg-[#1C2459] text-white">
+                  <th className="py-2 px-3 text-left min-w-36 sticky left-0 bg-[#1C2459] z-10">Collaborateur</th>
                   {joursDuMois.map((jour) => {
                     const dateStr = `${periodeActive}-${String(jour).padStart(2, '0')}`;
                     const dateObj = new Date(dateStr);
@@ -502,7 +502,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
       {vueMode === 'liste' && (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-            <span className="text-xs font-bold text-[#16324F] uppercase tracking-wider">
+            <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
               Registre des événements enregistrés ({evenementsMois.length})
             </span>
             <span className="text-[11px] text-slate-400">
@@ -558,7 +558,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                     <div className="flex items-center gap-5 self-end md:self-center shrink-0">
                       {/* Durée & Impact sur la paie */}
                       <div className="text-right">
-                        <span className="text-sm font-bold text-[#16324F] block tabular-nums">
+                        <span className="text-sm font-bold text-[#1C2459] block tabular-nums">
                           {evt.duree} {evt.unite}
                         </span>
                         <span
@@ -592,7 +592,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                       <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
                         <button
                           onClick={() => handleEditer(evt)}
-                          className="p-1 text-slate-500 hover:text-[#16324F] hover:bg-slate-100 rounded"
+                          className="p-1 text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 rounded"
                           title="Modifier"
                         >
                           <Edit className="w-4 h-4" />
@@ -625,7 +625,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
           >
             <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
-                <h3 className="text-sm font-bold text-[#16324F]">
+                <h3 className="text-sm font-bold text-[#1C2459]">
                   {evenements.some((e) => e.id === evenementEnEdition.id) ? 'Modifier le pointage' : 'Enregistrer un événement de pointage'}
                 </h3>
                 <p className="text-[11px] text-slate-500">Période de paie liée : {evenementEnEdition.periodeMois || periodeActive}</p>
@@ -649,7 +649,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                   required
                   value={evenementEnEdition.salarieId || ''}
                   onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, salarieId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#16324F]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
                 >
                   {salaries.map((s) => (
                     <option key={s.id} value={s.id}>

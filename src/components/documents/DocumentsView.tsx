@@ -37,11 +37,11 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <FileText className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Générateur de Documents RH Pédagogiques</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Générateur de Documents RH Pédagogiques</h1>
               <p className="text-xs text-slate-500">
                 Modèles conformes au droit marocain du travail · Prévisualisation et impression format A4
               </p>
@@ -64,7 +64,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
             <select
               value={salarieId}
               onChange={(e) => setSalarieId(e.target.value)}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg font-semibold text-[#16324F] bg-slate-50"
+              className="px-3 py-1.5 border border-slate-200 rounded-lg font-semibold text-[#1C2459] bg-slate-50"
             >
               {salaries.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -79,7 +79,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
             <select
               value={docActif}
               onChange={(e) => setDocActif(e.target.value as TypeDocumentRH)}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg font-semibold text-[#16324F] bg-slate-50"
+              className="px-3 py-1.5 border border-slate-200 rounded-lg font-semibold text-[#1C2459] bg-slate-50"
             >
               <option value="attestation_travail">Attestation de travail (Salarié en poste)</option>
               <option value="certificat_travail">Certificat de travail (Fin de contrat - Art. 72)</option>
@@ -95,9 +95,9 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
       {/* FEUILLE DE DOCUMENT FORMAT A4 (PRÉVISUALISATION ET IMPRESSION) */}
       <div className="bg-white border border-slate-300 rounded-xl p-10 max-w-3xl mx-auto shadow-md min-h-[700px] text-xs text-slate-800 space-y-6 print:border-none print:shadow-none print:p-0">
         {/* En-tête officiel de l'entreprise */}
-        <div className="border-b-2 border-[#16324F] pb-4 flex justify-between items-start">
+        <div className="border-b-2 border-[#1C2459] pb-4 flex justify-between items-start">
           <div>
-            <h2 className="text-sm font-black text-[#16324F] uppercase tracking-wide">
+            <h2 className="text-sm font-black text-[#1C2459] uppercase tracking-wide">
               {entreprise.raisonSociale}
             </h2>
             <p className="text-[11px] text-slate-600 mt-0.5">{entreprise.siegeSocial}, {entreprise.ville}</p>
@@ -114,7 +114,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 1. ATTESTATION DE TRAVAIL */}
         {docActif === 'attestation_travail' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               ATTESTATION DE TRAVAIL
             </h3>
 
@@ -166,7 +166,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 2. CERTIFICAT DE TRAVAIL (FIN DE CONTRAT - ART. 72) */}
         {docActif === 'certificat_travail' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               CERTIFICAT DE TRAVAIL
               <span className="block text-[11px] font-normal text-slate-500 mt-0.5">
                 Établi conformément à l'Article 72 du Code du Travail (Loi n° 65-99)
@@ -208,7 +208,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 3. ATTESTATION DE SALAIRE POUR LA CNSS */}
         {docActif === 'attestation_salaire_cnss' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               ATTESTATION DE SALAIRE POUR PRESTATIONS CNSS
               <span className="block text-[11px] font-normal text-slate-500 mt-0.5">
                 (Indemnités Journalières de Maladie / Maternité / Déclaration d'incapacité)
@@ -229,11 +229,11 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-[#16324F] mb-2 uppercase">
+              <h4 className="text-xs font-bold text-[#1C2459] mb-2 uppercase">
                 Relevé des rémunérations brutes soumises à cotisation :
               </h4>
               <table className="w-full text-left text-xs border border-slate-200">
-                <thead className="bg-[#16324F] text-white">
+                <thead className="bg-[#1C2459] text-white">
                   <tr>
                     <th className="p-2">Mois / Année</th>
                     <th className="p-2 text-center">Jours Travaillés</th>
@@ -276,7 +276,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 4. SOLDE DE TOUT COMPTE */}
         {docActif === 'solde_tout_compte' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               REÇU POUR SOLDE DE TOUT COMPTE
               <span className="block text-[11px] font-normal text-slate-500 mt-0.5">
                 Établi sous le régime des Articles 73 à 76 du Code du Travail marocain
@@ -331,7 +331,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 5. TITRE ET AUTORISATION DE CONGÉ */}
         {docActif === 'demande_conge_modele' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               TITRE DE CONGÉ ANNUEL PAYÉ
               <span className="block text-[11px] font-normal text-slate-500 mt-0.5">
                 (Article 246 du Code du Travail)
@@ -366,13 +366,13 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
         {/* 6. FICHE DE RENSEIGNEMENTS INDIVIDUELS */}
         {docActif === 'fiche_renseignements' && (
           <div className="space-y-6 pt-4">
-            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#16324F] border-b border-slate-200 pb-2">
+            <h3 className="text-center text-base font-extrabold uppercase tracking-wider text-[#1C2459] border-b border-slate-200 pb-2">
               FICHE INDIVIDUELLE DE RENSEIGNEMENTS SALARIÉ
             </h3>
 
             <div className="space-y-4 text-xs">
               <div className="border border-slate-200 rounded-lg p-3 space-y-2">
-                <h4 className="font-bold text-[#16324F] border-b pb-1">1. État Civil &amp; Coordonnées</h4>
+                <h4 className="font-bold text-[#1C2459] border-b pb-1">1. État Civil &amp; Coordonnées</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div>Nom : <strong>{salarie.nom}</strong></div>
                   <div>Prénom : <strong>{salarie.prenom}</strong></div>
@@ -385,7 +385,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
               </div>
 
               <div className="border border-slate-200 rounded-lg p-3 space-y-2">
-                <h4 className="font-bold text-[#16324F] border-b pb-1">2. Situation Familiale &amp; Ayants droit</h4>
+                <h4 className="font-bold text-[#1C2459] border-b pb-1">2. Situation Familiale &amp; Ayants droit</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div>Situation : <strong className="capitalize">{salarie.situationFamiliale}</strong></div>
                   <div>Nombre d'enfants : <strong>{salarie.nombreEnfants}</strong></div>
@@ -394,7 +394,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
               </div>
 
               <div className="border border-slate-200 rounded-lg p-3 space-y-2">
-                <h4 className="font-bold text-[#16324F] border-b pb-1">3. Données Professionnelles &amp; Bancaires</h4>
+                <h4 className="font-bold text-[#1C2459] border-b pb-1">3. Données Professionnelles &amp; Bancaires</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div>Matricule : <strong>{salarie.matricule}</strong></div>
                   <div>Poste : <strong>{salarie.poste}</strong></div>

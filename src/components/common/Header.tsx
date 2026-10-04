@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <AppLogo size={36} />
           <div>
-            <div className="text-base font-bold text-[#16324F] leading-tight flex items-center gap-2">
+            <div className="text-base font-bold text-[#1C2459] leading-tight flex items-center gap-2">
               <span>MON DOSSIER ADMINISTRATIF</span>
               <span className="text-[11px] font-medium px-2 py-0.5 bg-[#F4F7FA] text-[#149D92] rounded">
                 Simulateur RH &amp; Paie
@@ -62,8 +62,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-4">
           {/* Sélecteur de mois de simulation */}
           <div className="flex items-center gap-2 bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200">
-            <Calendar className="w-4 h-4 text-[#16324F]" />
-            <span className="text-xs font-semibold text-[#16324F] whitespace-nowrap">Mois :</span>
+            <Calendar className="w-4 h-4 text-[#1C2459]" />
+            <span className="text-xs font-semibold text-[#1C2459] whitespace-nowrap">Mois :</span>
             <select
               value={periodeActive}
               onChange={(e) => onSelectPeriode(e.target.value)}
@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onSelectMode('demonstration')}
               className={`px-3 py-1 text-xs font-medium rounded transition-colors whitespace-nowrap ${
                 modePedagogique === 'demonstration'
-                  ? 'bg-white text-[#16324F] shadow-sm font-semibold'
+                  ? 'bg-white text-[#1C2459] shadow-sm font-semibold'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="text-xs px-2.5 py-1.5 border border-slate-300 rounded text-slate-700 hover:bg-slate-50 transition-colors whitespace-nowrap"
             title="Basculer entre niveau essentiel et avancé"
           >
-            Niveau : <strong className="text-[#16324F] capitalize">{niveau}</strong>
+            Niveau : <strong className="text-[#1C2459] capitalize">{niveau}</strong>
           </button>
         </div>
 
@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Mention légale discrète requise par le cahier des charges */}
-      <div className="bg-[#16324F] text-slate-300 text-[11px] py-1 px-4 text-center">
+      <div className="bg-[#1C2459] text-slate-300 text-[11px] py-1 px-4 text-center">
         <span>Simulation pédagogique — données fictives — ne vaut pas validation juridique.</span>
         <span className="mx-2 text-slate-400">·</span>
         <span>Entreprise simulée : Atlas Services Formation SARL (Marrakech)</span>

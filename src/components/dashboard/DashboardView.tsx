@@ -52,12 +52,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold px-2 py-0.5 bg-[#16324F] text-white rounded">
+              <span className="text-xs font-semibold px-2 py-0.5 bg-[#1C2459] text-white rounded">
                 ENTREPRISE FICTIVE PME
               </span>
               <span className="text-xs text-slate-500 font-medium">Secteur privé non agricole (Maroc)</span>
             </div>
-            <h1 className="text-2xl font-bold text-[#16324F] mt-1">{entreprise.raisonSociale}</h1>
+            <h1 className="text-2xl font-bold text-[#1C2459] mt-1">{entreprise.raisonSociale}</h1>
             <p className="text-sm text-slate-600 mt-0.5">
               Siège social : {entreprise.siegeSocial}, {entreprise.ville} · {entreprise.secteur}
             </p>
@@ -66,7 +66,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex items-center gap-3">
             <div className="bg-[#F4F7FA] border border-slate-200 rounded-lg p-3 text-right">
               <span className="text-xs text-slate-500 block">Période de travail active</span>
-              <span className="text-base font-bold text-[#16324F] block">{formatMois(periodeActive)}</span>
+              <span className="text-base font-bold text-[#1C2459] block">{formatMois(periodeActive)}</span>
             </div>
             <button
               onClick={() => onNavigate('missions')}
@@ -107,12 +107,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500">Effectif total</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#16324F]">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#1C2459]">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-[#16324F] tabular-nums">{salaries.length}</span>
+            <span className="text-2xl font-bold text-[#1C2459] tabular-nums">{salaries.length}</span>
             <span className="text-xs text-slate-500">salariés adultes mensualisés</span>
           </div>
           <div className="mt-2 text-[11px] text-slate-500">
@@ -129,7 +129,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-xl font-bold text-[#16324F] tabular-nums">{formatMAD(totalMasseBrute)}</span>
+            <span className="text-xl font-bold text-[#1C2459] tabular-nums">{formatMAD(totalMasseBrute)}</span>
           </div>
           <div className="mt-2 text-[11px] text-slate-500">
             Pour {bulletinsPeriode.length} bulletin(s) généré(s)
@@ -145,7 +145,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-xl font-bold text-[#16324F] tabular-nums">{formatMAD(totalCotisationsCNSS + totalCotisationsAMO)}</span>
+            <span className="text-xl font-bold text-[#1C2459] tabular-nums">{formatMAD(totalCotisationsCNSS + totalCotisationsAMO)}</span>
           </div>
           <div className="mt-2 text-[11px] text-slate-500">
             Parts salariales et patronales confondues
@@ -176,12 +176,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           className="bg-white border border-slate-200 hover:border-[#149D92] rounded-xl p-5 transition-all cursor-pointer group shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#16324F] group-hover:text-[#149D92]">
+            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#1C2459] group-hover:text-[#149D92]">
               <Users className="w-5 h-5" />
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#149D92] group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="text-sm font-semibold text-[#16324F]">Dossiers du Personnel</h3>
+          <h3 className="text-sm font-semibold text-[#1C2459]">Dossiers du Personnel</h3>
           <p className="text-xs text-slate-500 mt-1">
             Consultez les 12 salariés, leurs pièces administratives, CIN et immatriculations CNSS fictives.
           </p>
@@ -192,12 +192,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           className="bg-white border border-slate-200 hover:border-[#149D92] rounded-xl p-5 transition-all cursor-pointer group shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#16324F] group-hover:text-[#149D92]">
+            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#1C2459] group-hover:text-[#149D92]">
               <Receipt className="w-5 h-5" />
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#149D92] group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="text-sm font-semibold text-[#16324F]">Moteur de Paie Déterministe</h3>
+          <h3 className="text-sm font-semibold text-[#1C2459]">Moteur de Paie Déterministe</h3>
           <p className="text-xs text-slate-500 mt-1">
             Visualisez les bulletins mensuels avec le détail pas-à-pas des formules : assiette, taux et résultat.
           </p>
@@ -208,12 +208,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           className="bg-white border border-slate-200 hover:border-[#149D92] rounded-xl p-5 transition-all cursor-pointer group shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#16324F] group-hover:text-[#149D92]">
+            <div className="w-9 h-9 rounded-lg bg-[#F4F7FA] group-hover:bg-teal-50 flex items-center justify-center text-[#1C2459] group-hover:text-[#149D92]">
               <GraduationCap className="w-5 h-5" />
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#149D92] group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="text-sm font-semibold text-[#16324F]">Parcours de 10 Missions</h3>
+          <h3 className="text-sm font-semibold text-[#1C2459]">Parcours de 10 Missions</h3>
           <p className="text-xs text-slate-500 mt-1">
             Du dossier salarié au livre de paie et à la régularisation des anomalies, progressez avec correction guidée.
           </p>
@@ -224,7 +224,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-base font-bold text-[#16324F]">Missions Pédagogiques du Module</h2>
+            <h2 className="text-base font-bold text-[#1C2459]">Missions Pédagogiques du Module</h2>
             <p className="text-xs text-slate-500">Compétences professionnelles évaluées sur barème standard de 20 points</p>
           </div>
           <button
@@ -243,12 +243,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onClick={() => onNavigate('missions')}
               className="p-3 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-[#F4F7FA] transition-colors cursor-pointer flex items-start gap-3"
             >
-              <span className="w-6 h-6 rounded bg-[#16324F] text-white text-xs font-bold flex items-center justify-center shrink-0">
+              <span className="w-6 h-6 rounded bg-[#1C2459] text-white text-xs font-bold flex items-center justify-center shrink-0">
                 {m.numero}
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-xs font-semibold text-[#16324F] truncate">{m.titre}</h4>
+                  <h4 className="text-xs font-semibold text-[#1C2459] truncate">{m.titre}</h4>
                   <span className="text-[10px] text-slate-500 shrink-0">{m.dureeIndicativeMinutes} min</span>
                 </div>
                 <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{m.contexte}</p>

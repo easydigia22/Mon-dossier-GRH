@@ -72,7 +72,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-[#16324F]">Congés Annuels, Exceptionnels &amp; Maladies</h1>
+            <h1 className="text-xl font-bold text-[#1C2459]">Congés Annuels, Exceptionnels &amp; Maladies</h1>
             <p className="text-xs text-slate-500 mt-0.5">
               Gestion des droits acquis (1,5 j/mois), décompte en jours ouvrables et événements familiaux rémunérés
             </p>
@@ -89,7 +89,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
         {/* Rappel juridique sur le congé annuel et les congés exceptionnels */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs space-y-1">
-            <div className="flex items-center gap-1.5 font-bold text-[#16324F]">
+            <div className="flex items-center gap-1.5 font-bold text-[#1C2459]">
               <CalendarDays className="w-4 h-4 text-[#149D92]" />
               <span>Congé Annuel Payé (Articles 231 à 268)</span>
             </div>
@@ -101,7 +101,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
           </div>
 
           <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs space-y-1">
-            <div className="flex items-center gap-1.5 font-bold text-[#16324F]">
+            <div className="flex items-center gap-1.5 font-bold text-[#1C2459]">
               <HeartHandshake className="w-4 h-4 text-[#149D92]" />
               <span>Congés Exceptionnels Rémunérés (Articles 269 &amp; 274)</span>
             </div>
@@ -118,7 +118,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
       {/* Tableau des demandes de congés */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <span className="text-xs font-bold text-[#16324F] uppercase tracking-wider">
+          <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Historique des demandes &amp; autorisations ({demandes.length})
           </span>
           <span className="text-[11px] text-slate-400">Circuit légal d'approbation employeur</span>
@@ -137,7 +137,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-semibold">
                       {getLibelleTypeConge(d.type)}
                     </span>
-                    <span className="font-bold text-[#16324F]">
+                    <span className="font-bold text-[#1C2459]">
                       {sal ? `${sal.nom} ${sal.prenom} (${sal.matricule})` : 'Inconnu'}
                     </span>
                   </div>
@@ -188,7 +188,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
             className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg max-h-[90vh] overflow-y-auto"
           >
             <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white">
-              <h3 className="text-sm font-bold text-[#16324F]">Nouvelle demande de congé</h3>
+              <h3 className="text-sm font-bold text-[#1C2459]">Nouvelle demande de congé</h3>
               <button
                 type="button"
                 onClick={() => setModalOuverte(false)}

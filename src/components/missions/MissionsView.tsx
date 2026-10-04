@@ -119,11 +119,11 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Missions &amp; Exercices Pédagogiques</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Missions &amp; Exercices Pédagogiques</h1>
               <p className="text-xs text-slate-500">
                 10 situations professionnelles réelles pour valider le module « Gestion administrative du personnel »
               </p>
@@ -132,7 +132,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">Apprenant :</span>
-            <span className="text-xs font-bold text-[#16324F] bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200">
+            <span className="text-xs font-bold text-[#1C2459] bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200">
               {nomStagiaireActif}
             </span>
           </div>
@@ -149,7 +149,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
                 onClick={() => handleChangerMission(m.id)}
                 className={`px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                   estActive
-                    ? 'bg-[#16324F] text-white'
+                    ? 'bg-[#1C2459] text-white'
                     : fait
                     ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -177,7 +177,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               </span>
             </div>
 
-            <h2 className="text-sm font-bold text-[#16324F] leading-snug">{mission.titre}</h2>
+            <h2 className="text-sm font-bold text-[#1C2459] leading-snug">{mission.titre}</h2>
 
             <div>
               <span className="font-bold text-slate-700 block mb-1">Mise en situation professionnelle :</span>
@@ -234,7 +234,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
           {/* Indices progressifs */}
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-[#16324F] flex items-center gap-1.5">
+              <span className="font-bold text-[#1C2459] flex items-center gap-1.5">
                 <HelpCircle className="w-4 h-4 text-[#E9A23B]" />
                 <span>Indices progressifs</span>
               </span>
@@ -273,7 +273,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
         <div className="lg:col-span-2 space-y-4">
           <form onSubmit={handleSoumettre} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5 text-xs">
             <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-[#16324F] flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span>Espace de réponse du Stagiaire</span>
                 {tentativeExistante && (
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
@@ -292,7 +292,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               <div className="space-y-1.5 bg-[#F4F7FA] p-3 rounded-lg border border-slate-200">
                 {mission.taches.map((t, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-slate-700">
-                    <span className="w-4 h-4 rounded-full bg-[#16324F] text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                    <span className="w-4 h-4 rounded-full bg-[#1C2459] text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">
                       {idx + 1}
                     </span>
                     <span>{t}</span>
@@ -403,7 +403,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setVoirCorrige(!voirCorrige)}
-                className="text-xs font-semibold text-[#16324F] hover:underline"
+                className="text-xs font-semibold text-[#1C2459] hover:underline"
               >
                 {voirCorrige ? 'Masquer le corrigé expliqué' : 'Consulter le corrigé officiel'}
               </button>
@@ -422,7 +422,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
           {voirCorrige && (
             <div className="bg-white border-2 border-[#149D92] rounded-xl p-6 shadow-sm space-y-4 text-xs">
               <div className="flex items-center justify-between border-b border-teal-100 pb-2">
-                <span className="font-extrabold text-sm text-[#16324F] flex items-center gap-2">
+                <span className="font-extrabold text-sm text-[#1C2459] flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-[#149D92]" />
                   <span>Corrigé Pédagogique &amp; Explication Officielle</span>
                 </span>

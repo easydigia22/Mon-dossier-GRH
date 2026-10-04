@@ -231,11 +231,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <FileSignature className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[#16324F]">Gestion des Contrats de Travail</h1>
+              <h1 className="text-xl font-bold text-[#1C2459]">Gestion des Contrats de Travail</h1>
               <p className="text-xs text-slate-500 mt-0.5">
                 Contrats CDI, CDD encadrés (Art. 16), avenants, périodes d'essai et association aux salariés
               </p>
@@ -255,11 +255,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
         <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
           <div className="p-3 bg-[#F4F7FA] rounded-lg border border-slate-200">
             <span className="text-[11px] text-slate-500 block">Total Contrats</span>
-            <span className="text-lg font-bold text-[#16324F] tabular-nums">{contrats.length}</span>
+            <span className="text-lg font-bold text-[#1C2459] tabular-nums">{contrats.length}</span>
           </div>
           <div className="p-3 bg-blue-50/60 rounded-lg border border-blue-200">
             <span className="text-[11px] text-slate-600 block">CDI en vigueur</span>
-            <span className="text-lg font-bold text-[#16324F] tabular-nums">{totalCDI}</span>
+            <span className="text-lg font-bold text-[#1C2459] tabular-nums">{totalCDI}</span>
           </div>
           <div className="p-3 bg-amber-50/60 rounded-lg border border-amber-200">
             <span className="text-[11px] text-amber-800 block">CDD réglementés</span>
@@ -333,7 +333,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                   <div className="flex items-center gap-1.5">
                     <span
                       className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
-                        estCDD ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-[#16324F]'
+                        estCDD ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-[#1C2459]'
                       }`}
                     >
                       {c.type}
@@ -350,7 +350,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                   </div>
                 </div>
 
-                <h3 className="text-sm font-bold text-[#16324F]">
+                <h3 className="text-sm font-bold text-[#1C2459]">
                   {salarie ? `${salarie.nom} ${salarie.prenom}` : 'Salarié non affecté'}
                 </h3>
                 <div className="text-xs text-slate-600 font-medium mt-0.5 flex items-center gap-1">
@@ -380,7 +380,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
                   <div className="flex justify-between">
                     <span className="text-slate-400">Salaire mensuel :</span>
-                    <span className="font-bold text-[#16324F] tabular-nums">{formatMAD(c.salaireBaseMensuel)}</span>
+                    <span className="font-bold text-[#1C2459] tabular-nums">{formatMAD(c.salaireBaseMensuel)}</span>
                   </div>
 
                   {estCDD && c.justificationCDD && (
@@ -403,7 +403,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEditer(c)}
-                    className="p-1 text-slate-500 hover:text-[#16324F] hover:bg-slate-100 rounded"
+                    className="p-1 text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 rounded"
                     title="Modifier le contrat"
                   >
                     Modifier
@@ -433,7 +433,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           >
             <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
-                <h3 className="text-sm font-bold text-[#16324F]">
+                <h3 className="text-sm font-bold text-[#1C2459]">
                   {contrats.some((c) => c.id === contratEnEdition.id) ? 'Modifier le contrat' : 'Établir un nouveau contrat de travail'}
                 </h3>
                 <p className="text-[11px] text-slate-500">
@@ -498,7 +498,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                       dureeEssaiMois: isCadre ? 3 : 1.5
                     });
                   }}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#16324F]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
                 >
                   {salaries.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -584,7 +584,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     onChange={(e) =>
                       setContratEnEdition({ ...contratEnEdition, salaireBaseMensuel: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold text-[#16324F]"
+                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold text-[#1C2459]"
                   />
                   <span className="text-[10px] text-slate-500">Pour 191h moyennes mensuelles (Art. 184)</span>
                 </div>
@@ -728,7 +728,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           <div className="bg-white rounded-xl shadow-2xl border border-slate-300 w-full max-w-3xl max-h-[92vh] overflow-y-auto">
             <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10 no-print">
               <div>
-                <h3 className="text-sm font-bold text-[#16324F]">
+                <h3 className="text-sm font-bold text-[#1C2459]">
                   Contrat de travail : {contratAVisualiser.numeroContrat}
                 </h3>
                 <span className="text-xs text-slate-500">Format A4 conforme au Code du Travail marocain (Loi 65-99)</span>
@@ -736,7 +736,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
-                  className="px-3 py-1.5 text-xs font-semibold bg-[#16324F] text-white rounded-lg flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-xs font-semibold bg-[#1C2459] text-white rounded-lg flex items-center gap-1.5"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Imprimer A4</span>
@@ -752,8 +752,8 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
             {/* Corps du contrat */}
             <div className="p-8 text-xs text-slate-800 space-y-5 leading-relaxed font-sans">
-              <div className="text-center border-b-2 border-[#16324F] pb-4">
-                <h2 className="text-base font-extrabold uppercase tracking-wider text-[#16324F]">
+              <div className="text-center border-b-2 border-[#1C2459] pb-4">
+                <h2 className="text-base font-extrabold uppercase tracking-wider text-[#1C2459]">
                   CONTRAT DE TRAVAIL {contratAVisualiser.type === 'CDD' ? 'À DURÉE DÉTERMINÉE (CDD)' : 'À DURÉE INDÉTERMINÉE (CDI)'}
                 </h2>
                 <div className="text-xs text-slate-500 font-mono mt-1">N° {contratAVisualiser.numeroContrat}</div>
@@ -764,7 +764,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
               {/* Les parties */}
               <div className="space-y-3">
-                <h4 className="font-bold text-[#16324F] uppercase border-b pb-1">ENTRE LES SOUSSIGNÉS :</h4>
+                <h4 className="font-bold text-[#1C2459] uppercase border-b pb-1">ENTRE LES SOUSSIGNÉS :</h4>
                 <p>
                   <strong>La société {entreprise?.raisonSociale || 'Atlas Services Formation SARL'}</strong>, {entreprise?.formeJuridique || 'SARL'}, au capital de 100 000 MAD, dont le siège social est situé à {entreprise?.siegeSocial || '142 Boulevard Mohammed V, Guéliz, Marrakech'}, immatriculée au Registre du Commerce sous le N° {entreprise?.registreCommerce || 'RC-48920'}, affiliée à la CNSS sous le N° {entreprise?.numeroCNSS || '7845129'}, et titulaire de l'ICE N° {entreprise?.ice || '001894235000084'}, représentée par <strong>{entreprise?.representantLegal || 'M. Karim EL AMRANI'}</strong>, en qualité de Gérant,
                   <br />
@@ -786,7 +786,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
               {/* Articles du contrat */}
               <div className="space-y-3 pt-2">
-                <h4 className="font-bold text-[#16324F] uppercase border-b pb-1">IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :</h4>
+                <h4 className="font-bold text-[#1C2459] uppercase border-b pb-1">IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :</h4>
 
                 <div>
                   <strong className="text-slate-900 block">Article 1 : Engagement et Nature du Contrat</strong>

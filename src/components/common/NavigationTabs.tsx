@@ -113,7 +113,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         )}
         <button
           onClick={() => setReduit((v) => !v)}
-          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
+          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 transition-colors"
           title={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
           aria-label={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
         >
@@ -121,7 +121,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         </button>
         <button
           onClick={onFermerMobile}
-          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#16324F] hover:bg-slate-100 transition-colors"
+          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 transition-colors"
           title="Fermer le menu"
           aria-label="Fermer le menu"
         >
@@ -142,8 +142,8 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 reduit ? 'justify-center' : ''
               } ${
                 estActif
-                  ? 'bg-[#16324F] text-white'
-                  : 'text-slate-600 hover:text-[#16324F] hover:bg-slate-100'
+                  ? 'bg-[#1C2459] text-white'
+                  : 'text-slate-600 hover:text-[#1C2459] hover:bg-slate-100'
               }`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${estActif ? 'text-[#149D92]' : 'text-slate-400'}`} />
@@ -172,7 +172,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 {role && (
                   <span
                     className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                      role === 'formateur' ? 'bg-[#16324F] text-white' : 'bg-slate-100 text-slate-600'
+                      role === 'formateur' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {role}

@@ -86,11 +86,11 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <BookOpenText className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Livre de Paie Mensuel Récapitulatif</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Livre de Paie Mensuel Récapitulatif</h1>
               <p className="text-xs text-slate-500">
                 Registre obligatoire (Article 371 du Code du Travail) · Réconciliation stricte avec les bulletins
               </p>
@@ -124,7 +124,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
             <select
               value={periodeActive}
               onChange={(e) => onSelectPeriode(e.target.value)}
-              className="px-2.5 py-1 border border-slate-200 rounded font-bold text-[#16324F] bg-slate-50"
+              className="px-2.5 py-1 border border-slate-200 rounded font-bold text-[#1C2459] bg-slate-50"
             >
               <option value="2025-01">Janvier 2025</option>
               <option value="2025-02">Février 2025</option>
@@ -142,7 +142,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
       {/* Tableau complet du Livre de paie */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <span className="text-xs font-bold text-[#16324F] uppercase tracking-wider">
+          <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             {entreprise.raisonSociale} — État détaillé de la paie ({lignesLivre.length} salariés)
           </span>
           <span className="text-[11px] text-slate-500">Tous montants exprimés en MAD</span>
@@ -155,7 +155,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs whitespace-nowrap">
-              <thead className="bg-[#16324F] text-white uppercase text-[10px] font-bold">
+              <thead className="bg-[#1C2459] text-white uppercase text-[10px] font-bold">
                 <tr>
                   <th className="py-2.5 px-3">Matr.</th>
                   <th className="py-2.5 px-3">Salarié</th>
@@ -176,7 +176,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
               <tbody className="divide-y divide-slate-100">
                 {lignesLivre.map((l) => (
                   <tr key={l.matricule} className="hover:bg-slate-50 font-mono text-[11px]">
-                    <td className="py-2 px-3 font-bold text-[#16324F]">{l.matricule}</td>
+                    <td className="py-2 px-3 font-bold text-[#1C2459]">{l.matricule}</td>
                     <td className="py-2 px-3 font-sans text-xs font-semibold text-slate-800">
                       {l.nomPrenom}
                     </td>
@@ -193,14 +193,14 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
                       {l.netAPayer.toFixed(2)}
                     </td>
                     <td className="py-2 px-3 text-right tabular-nums text-slate-600">{l.chargesPatronales.toFixed(2)}</td>
-                    <td className="py-2 px-3 text-right tabular-nums font-bold text-[#16324F]">{l.coutTotal.toFixed(2)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums font-bold text-[#1C2459]">{l.coutTotal.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
               {/* Ligne des totaux généraux */}
-              <tfoot className="bg-[#F4F7FA] font-mono text-[11px] font-bold border-t-2 border-[#16324F]">
+              <tfoot className="bg-[#F4F7FA] font-mono text-[11px] font-bold border-t-2 border-[#1C2459]">
                 <tr>
-                  <td colSpan={2} className="py-3 px-3 uppercase font-sans text-xs text-[#16324F]">
+                  <td colSpan={2} className="py-3 px-3 uppercase font-sans text-xs text-[#1C2459]">
                     Totaux Généraux ({lignesLivre.length} salariés)
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums">{totaux.salaireBase.toFixed(2)}</td>
@@ -216,7 +216,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
                     {totaux.netAPayer.toFixed(2)}
                   </td>
                   <td className="py-3 px-3 text-right tabular-nums">{totaux.chargesPatronales.toFixed(2)}</td>
-                  <td className="py-3 px-3 text-right tabular-nums text-[#16324F] text-xs">
+                  <td className="py-3 px-3 text-right tabular-nums text-[#1C2459] text-xs">
                     {totaux.coutTotal.toFixed(2)}
                   </td>
                 </tr>

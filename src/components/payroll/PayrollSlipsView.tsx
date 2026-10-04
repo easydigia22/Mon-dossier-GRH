@@ -58,11 +58,11 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#16324F] text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
               <Receipt className="w-5 h-5 text-[#149D92]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#16324F]">Bulletin de Paie Individuel</h1>
+              <h1 className="text-lg font-bold text-[#1C2459]">Bulletin de Paie Individuel</h1>
               <p className="text-xs text-slate-500">
                 Période : <strong>{periodeActive}</strong> · Moteur déterministe certifié sans IA
               </p>
@@ -97,7 +97,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
             <select
               value={salarieActifId || ''}
               onChange={(e) => onSelectSalarie(e.target.value)}
-              className="text-xs font-semibold text-[#16324F] px-3 py-1.5 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
+              className="text-xs font-semibold text-[#1C2459] px-3 py-1.5 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
             >
               {salaries.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -113,7 +113,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
               onClick={() => setOngletDetail('bulletin')}
               className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
                 ongletDetail === 'bulletin'
-                  ? 'bg-white text-[#16324F] shadow-xs'
+                  ? 'bg-white text-[#1C2459] shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -146,10 +146,10 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
         /* FORMAT DU BULLETIN CONFORME A4 */
         <div className="bg-white border border-slate-300 rounded-xl p-8 max-w-4xl mx-auto shadow-md print:shadow-none print:border-none print:p-0">
           {/* En-tête officiel du bulletin */}
-          <div className="border-b-2 border-[#16324F] pb-4 mb-6">
+          <div className="border-b-2 border-[#1C2459] pb-4 mb-6">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-base font-extrabold text-[#16324F] uppercase tracking-wide">
+                <h2 className="text-base font-extrabold text-[#1C2459] uppercase tracking-wide">
                   {entreprise.raisonSociale}
                 </h2>
                 <p className="text-xs text-slate-600 mt-0.5">{entreprise.siegeSocial}, {entreprise.ville}</p>
@@ -165,7 +165,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
               </div>
 
               <div className="text-right">
-                <div className="inline-block bg-[#16324F] text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">
+                <div className="inline-block bg-[#1C2459] text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">
                   BULLETIN DE PAIE
                 </div>
                 <div className="text-xs font-bold text-slate-800 mt-1">
@@ -192,7 +192,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
               </div>
               <div>
                 <span className="text-slate-500">Matricule : </span>
-                <span className="font-mono font-bold text-[#16324F]">{bulletinActif.salarieMatricule}</span>
+                <span className="font-mono font-bold text-[#1C2459]">{bulletinActif.salarieMatricule}</span>
               </div>
               <div>
                 <span className="text-slate-500">CIN Fictive : </span>
@@ -235,7 +235,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
           {/* Tableau des rubriques */}
           <div className="border border-slate-200 rounded-lg overflow-hidden mb-6">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#16324F] text-white uppercase text-[10px] font-bold">
+              <thead className="bg-[#1C2459] text-white uppercase text-[10px] font-bold">
                 <tr>
                   <th className="py-2.5 px-3">Code</th>
                   <th className="py-2.5 px-3">Rubrique</th>
@@ -348,8 +348,8 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
             {bulletinActif.explicationsPedagogiques.map((exp, idx) => (
               <div key={idx} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-2">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h4 className="text-xs font-bold text-[#16324F] flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-[#16324F] text-white flex items-center justify-center text-[10px]">
+                  <h4 className="text-xs font-bold text-[#1C2459] flex items-center gap-2">
+                    <span className="w-5 h-5 rounded bg-[#1C2459] text-white flex items-center justify-center text-[10px]">
                       {idx + 1}
                     </span>
                     <span>{exp.titre}</span>
@@ -362,7 +362,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
                   <div className="bg-[#F4F7FA] p-3 rounded-lg border border-slate-200">
                     <span className="text-slate-500 text-[10px] uppercase font-bold block mb-1">Formule théorique</span>
-                    <code className="text-xs text-[#16324F] font-mono font-semibold block">{exp.formule}</code>
+                    <code className="text-xs text-[#1C2459] font-mono font-semibold block">{exp.formule}</code>
                   </div>
                   <div className="bg-[#F4F7FA] p-3 rounded-lg border border-slate-200">
                     <span className="text-slate-500 text-[10px] uppercase font-bold block mb-1">Application numérique</span>
