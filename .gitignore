@@ -4,3 +4,5 @@ dist
 .env.*
 .wolf
 *.log
+.vercel
+.env*
