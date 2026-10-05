@@ -15,6 +15,7 @@ import {
   MissionExercice,
   ModePedagogique,
   NiveauPedagogique,
+  ProcedureDisciplinaire,
   RegleParametreJuridique,
   Salarie,
   TentativeExercice
@@ -46,6 +47,7 @@ export function useAppData() {
       ]
     }
   ]);
+  const [procedures, setProcedures] = useState<ProcedureDisciplinaire[]>([]);
 
   // Paramètres d'exécution
   const [periodeActive, setPeriodeActive] = useState<string>('2025-01');
@@ -80,6 +82,7 @@ export function useAppData() {
           if (stored.regles) setRegles(stored.regles);
           if (stored.tentatives) setTentatives(stored.tentatives);
           if (stored.classes) setClasses(stored.classes);
+          if (stored.procedures) setProcedures(stored.procedures);
           if (stored.parametresApp) {
             setPeriodeActive(stored.parametresApp.periodeActive || '2025-01');
             setModePedagogique(stored.parametresApp.modePedagogique || 'demonstration');
@@ -116,6 +119,7 @@ export function useAppData() {
         missions,
         tentatives,
         classes,
+        procedures,
         parametresApp: {
           periodeActive,
           modePedagogique,
@@ -148,6 +152,7 @@ export function useAppData() {
     regles,
     tentatives,
     classes,
+    procedures,
     periodeActive,
     modePedagogique,
     niveau,
@@ -261,6 +266,7 @@ export function useAppData() {
     setDemandesConges(DEMANDES_CONGES_DEMO);
     setRegles(REGLES_JURIDIQUES_MAROC);
     setTentatives([]);
+    setProcedures([]);
     calculerTousLesBulletinsPeriode('2025-01', SALARIES_DEMO, EVENEMENTS_PRESENCE_DEMO);
     showNotification('Jeu de données de démonstration réinitialisé avec succès.', 'info');
   };
@@ -325,6 +331,32 @@ export function useAppData() {
   const deleteContrat = (contratId: string) => {
     setContrats((prev) => prev.filter((c) => c.id !== contratId));
     showNotification('Contrat supprimé avec succès.', 'info');
+  };
+
+  /**
+   * Ajouter, modifier ou clôturer une procédure disciplinaire
+   */
+  const upsertProcedure = (procedure: ProcedureDisciplinaire) => {
+    const avecHorodatage = { ...procedure, misAJourLe: new Date().toISOString() };
+    setProcedures((prev) => {
+      const exists = prev.some((p) => p.id === procedure.id);
+      if (exists) {
+        return prev.map((p) => (p.id === procedure.id ? avecHorodatage : p));
+      }
+      return [...prev, avecHorodatage];
+    });
+    showNotification(
+      procedure.statut === 'cloturee' ? 'Procédure disciplinaire clôturée.' : 'Procédure disciplinaire enregistrée.',
+      'success'
+    );
+  };
+
+  /**
+   * Supprimer une procédure disciplinaire (ex: ouverte par erreur)
+   */
+  const deleteProcedure = (procedureId: string) => {
+    setProcedures((prev) => prev.filter((p) => p.id !== procedureId));
+    showNotification('Procédure disciplinaire supprimée.', 'info');
   };
 
   /**
@@ -412,6 +444,9 @@ export function useAppData() {
     upsertSalarie,
     upsertContrat,
     deleteContrat,
+    procedures,
+    upsertProcedure,
+    deleteProcedure,
     upsertEvenementPresence,
     deleteEvenementPresence,
     upsertDemandeConge,
