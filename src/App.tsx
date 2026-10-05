@@ -18,6 +18,7 @@ const EmployeesView = lazy(() => import('./components/employees/EmployeesView').
 const ContractsView = lazy(() => import('./components/contracts/ContractsView').then((m) => ({ default: m.ContractsView })));
 const PresenceView = lazy(() => import('./components/presence/PresenceView').then((m) => ({ default: m.PresenceView })));
 const LeavesView = lazy(() => import('./components/leaves/LeavesView').then((m) => ({ default: m.LeavesView })));
+const DisciplineView = lazy(() => import('./components/discipline/DisciplineView').then((m) => ({ default: m.DisciplineView })));
 const PayrollPreparationView = lazy(() => import('./components/payroll/PayrollPreparationView').then((m) => ({ default: m.PayrollPreparationView })));
 const PayrollSlipsView = lazy(() => import('./components/payroll/PayrollSlipsView').then((m) => ({ default: m.PayrollSlipsView })));
 const PayrollBookView = lazy(() => import('./components/payroll/PayrollBookView').then((m) => ({ default: m.PayrollBookView })));
@@ -74,6 +75,9 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     upsertSalarie,
     upsertContrat,
     deleteContrat,
+    procedures,
+    upsertProcedure,
+    deleteProcedure,
     upsertEvenementPresence,
     deleteEvenementPresence,
     upsertDemandeConge,
@@ -83,8 +87,9 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   const [menuMobileOuvert, setMenuMobileOuvert] = useState(false);
   const [ongletActif, setOngletActifBrut] = useState<OngletNavigation>('dashboard');
   const setOngletActif = (onglet: OngletNavigation) => {
-    // Un stagiaire ne doit jamais atterrir sur l'espace réservé au formateur
-    setOngletActifBrut(onglet === 'formateur' && !estFormateur ? 'dashboard' : onglet);
+    // Un stagiaire ne doit jamais atterrir sur les espaces réservés au formateur
+    const ongletsFormateur: OngletNavigation[] = ['formateur', 'discipline'];
+    setOngletActifBrut(ongletsFormateur.includes(onglet) && !estFormateur ? 'dashboard' : onglet);
   };
   const [selectedSalarieIdPourBulletin, setSelectedSalarieIdPourBulletin] = useState<string | undefined>(undefined);
 
@@ -118,6 +123,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     missions,
     tentatives,
     classes,
+    procedures,
     parametresApp: {
       periodeActive,
       modePedagogique,
@@ -133,6 +139,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     if (state.evenementsPresence) evenementsPresence.splice(0, evenementsPresence.length, ...state.evenementsPresence);
     if (state.demandesConges) demandesConges.splice(0, demandesConges.length, ...state.demandesConges);
     if (state.classes) setClasses(state.classes);
+    if (state.procedures) procedures.splice(0, procedures.length, ...state.procedures);
     if (state.parametresApp) {
       if (state.parametresApp.periodeActive) setPeriodeActive(state.parametresApp.periodeActive);
       if (state.parametresApp.modePedagogique) setModePedagogique(state.parametresApp.modePedagogique);
@@ -261,6 +268,18 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             demandes={demandesConges}
             salaries={salaries}
             onSaveDemande={upsertDemandeConge}
+            showNotification={showNotification}
+          />
+        )}
+
+        {ongletActif === 'discipline' && estFormateur && (
+          <DisciplineView
+            salaries={salaries}
+            demandesConges={demandesConges}
+            procedures={procedures}
+            onSaveProcedure={upsertProcedure}
+            onDeleteProcedure={deleteProcedure}
+            entreprise={entreprise}
             showNotification={showNotification}
           />
         )}

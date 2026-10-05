@@ -6,6 +6,7 @@ import {
   FileSignature,
   Clock,
   CalendarDays,
+  Gavel,
   Calculator,
   Receipt,
   BookOpenText,
@@ -27,6 +28,7 @@ export type OngletNavigation =
   | 'contrats'
   | 'presences'
   | 'conges'
+  | 'discipline'
   | 'preparation_paie'
   | 'bulletins'
   | 'livre_paie'
@@ -77,6 +79,9 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'contrats', label: 'Contrats', icon: FileSignature },
     { id: 'presences', label: 'Présences & Absences', icon: Clock },
     { id: 'conges', label: 'Congés & Maladies', icon: CalendarDays },
+    ...(afficherEspaceFormateur
+      ? [{ id: 'discipline' as const, label: 'Discipline & Licenciement', icon: Gavel }]
+      : []),
     { id: 'preparation_paie', label: 'Préparation paie', icon: Calculator },
     { id: 'bulletins', label: 'Bulletins de paie', icon: Receipt },
     { id: 'livre_paie', label: 'Livre de paie', icon: BookOpenText },
