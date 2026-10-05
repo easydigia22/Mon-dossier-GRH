@@ -346,7 +346,233 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
               )}
             </div>
           )}
+
+          {procedure.sanction === 'licenciement' && procedure.dateNotificationSanction && salarieActif && (
+            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-4">
+              <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">5</span>
+                Solde de tout compte
+              </h2>
+
+              {(() => {
+                const calcul = calculerSoldeToutCompte({ salarie: salarieActif, procedure, demandes: demandesConges });
+                const lignes: { libelle: string; formule: string; montant: number }[] = [
+                  { libelle: 'Salaire prorata du mois de sortie', formule: 'salaire ÷ 30 × jour du mois', montant: calcul.salaireProrataMoisSortie },
+                  { libelle: 'Prime d\'ancienneté (dernier mois)', formule: 'Art. 350', montant: calcul.primeAncienneteSolde },
+                  { libelle: 'Indemnité congés restants', formule: 'jours restants × salaire/26', montant: calcul.indemniteCongesRestants },
+                  { libelle: 'Indemnité de licenciement', formule: 'Art. 53 (0 si faute grave conforme)', montant: calcul.indemniteLicenciement },
+                  { libelle: 'Indemnité compensatrice de préavis', formule: 'Art. 43, 51 (0 si faute grave conforme)', montant: calcul.indemnitePreavis },
+                  { libelle: 'Dommages-intérêts (licenciement abusif)', formule: 'Art. 41', montant: calcul.dommagesInteretsAbusif },
+                  { libelle: 'Intérêts de retard', formule: `${calcul.tauxInteretAnnuel}% × ${calcul.joursRetardPaiement}j / 365`, montant: calcul.interetsRetard }
+                ];
+
+                return (
+                  <>
+                    {calcul.alertesConformite.map((a) => (
+                      <div key={a.code} className="flex items-start gap-2 px-3 py-2 rounded-lg text-[11px] bg-red-50 text-red-800 border border-red-200">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <span>{a.message}</span>
+                      </div>
+                    ))}
+
+                    <label className="flex items-center gap-2 text-xs">
+                      <input
+                        type="checkbox"
+                        checked={calcul.licenciementAbusif}
+                        onChange={(e) =>
+                          majProcedure({
+                            calculLicenciement: calculerSoldeToutCompte({
+                              salarie: salarieActif,
+                              procedure,
+                              demandes: demandesConges,
+                              licenciementAbusifForce: e.target.checked
+                            })
+                          })
+                        }
+                      />
+                      <span className="text-slate-700 font-medium">Licenciement jugé abusif (ajuste les dommages-intérêts Art. 41)</span>
+                    </label>
+
+                    <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                      <label className="block">
+                        <span className="text-slate-600 font-medium">Jours de retard de paiement</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={calcul.joursRetardPaiement}
+                          onChange={(e) =>
+                            majProcedure({
+                              calculLicenciement: calculerSoldeToutCompte({
+                                salarie: salarieActif,
+                                procedure: { ...procedure, calculLicenciement: { ...calcul, joursRetardPaiement: Number(e.target.value) } },
+                                demandes: demandesConges
+                              })
+                            })
+                          }
+                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-slate-600 font-medium">Taux d'intérêt annuel (%)</span>
+                        <input
+                          type="number"
+                          min={0}
+                          step={0.5}
+                          value={calcul.tauxInteretAnnuel}
+                          onChange={(e) =>
+                            majProcedure({
+                              calculLicenciement: calculerSoldeToutCompte({
+                                salarie: salarieActif,
+                                procedure: { ...procedure, calculLicenciement: { ...calcul, tauxInteretAnnuel: Number(e.target.value) } },
+                                demandes: demandesConges
+                              })
+                            })
+                          }
+                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                        />
+                      </label>
+                    </div>
+
+                    <table className="w-full text-xs">
+                      <tbody>
+                        {lignes.map((l) => (
+                          <tr key={l.libelle} className="border-b border-slate-100">
+                            <td className="py-2">
+                              <div className="font-medium text-slate-700">{l.libelle}</div>
+                              <div className="text-[10px] text-slate-400">{l.formule}</div>
+                            </td>
+                            <td className="py-2 text-right font-semibold text-[#1C2459]">{formatMAD(l.montant)}</td>
+                          </tr>
+                        ))}
+                        <tr>
+                          <td className="py-2 font-bold text-[#1C2459]">Total solde de tout compte</td>
+                          <td className="py-2 text-right font-bold text-[#149D92] text-sm">{formatMAD(calcul.totalSoldeToutCompte)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleImprimer('solde')}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        Imprimer le reçu pour solde de tout compte
+                      </button>
+                      <button
+                        onClick={() => {
+                          majProcedure({ statut: 'cloturee', calculLicenciement: calcul });
+                          setProcedureEnCours(null);
+                        }}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Clôturer la procédure
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </>
+      )}
+
+      {procedure && salarieActif && documentAImprimer && (
+        <div className="bg-white p-10 text-sm leading-relaxed">
+          <div className="mb-6 pb-4 border-b-2 border-slate-800">
+            <div className="font-bold text-base">{entreprise.raisonSociale}</div>
+            <div className="text-xs text-slate-600">{entreprise.siegeSocial}, {entreprise.ville}</div>
+            <div className="text-xs text-slate-500">
+              RC : {entreprise.registreCommerce} · Patente : {entreprise.patente} · CNSS : {entreprise.numeroCNSS} · ICE : {entreprise.ice}
+            </div>
+          </div>
+          <div className="text-right text-xs mb-6">Fait à {entreprise.ville}, le {formatDateJJMMAAAA(new Date().toISOString())}</div>
+
+          {documentAImprimer === 'convocation' && (
+            <>
+              <h1 className="text-center font-bold text-lg mb-6 uppercase">Convocation à entretien préalable</h1>
+              <p className="mb-4">Madame, Monsieur {salarieActif.nom} {salarieActif.prenom},</p>
+              <p className="mb-4">
+                Nous vous informons que les faits suivants, constatés le {formatDateJJMMAAAA(procedure.dateConstatation)}, nécessitent un
+                entretien préalable conformément à l'article 62 du Code du Travail (Loi n° 65-99) : <em>{procedure.motifFaute}</em>
+              </p>
+              <p className="mb-4">
+                Vous êtes convoqué(e) le {formatDateJJMMAAAA(procedure.dateConvocation!)} pour vous entretenir avec la direction sur ces faits.
+                {procedure.assistanceDemandee && " Vous pourrez être assisté(e) d'un représentant des salariés ou d'un délégué syndical."}
+              </p>
+            </>
+          )}
+
+          {documentAImprimer === 'pv' && (
+            <>
+              <h1 className="text-center font-bold text-lg mb-6 uppercase">Procès-verbal d'entretien préalable</h1>
+              <p className="mb-4">
+                Salarié : {salarieActif.nom} {salarieActif.prenom} ({salarieActif.matricule}) — Entretien du {formatDateJJMMAAAA(procedure.dateEntretien!)}
+              </p>
+              <p className="mb-4 whitespace-pre-wrap">{procedure.resumeEntretien}</p>
+              <p className="mb-4">
+                Signature :{' '}
+                {procedure.signePar === 'les_deux' && 'Signé par les deux parties.'}
+                {procedure.signePar === 'salarie_absent' && 'Le salarié ne s\'est pas présenté à l\'entretien.'}
+                {procedure.signePar === 'refus_signature' && 'Le salarié a refusé de signer le présent procès-verbal.'}
+              </p>
+            </>
+          )}
+
+          {documentAImprimer === 'notification' && (
+            <>
+              <h1 className="text-center font-bold text-lg mb-6 uppercase">Notification de sanction disciplinaire</h1>
+              <p className="mb-4">Madame, Monsieur {salarieActif.nom} {salarieActif.prenom},</p>
+              <p className="mb-4">
+                À la suite de l'entretien préalable du {formatDateJJMMAAAA(procedure.dateEntretien!)}, nous vous notifions la décision
+                suivante : <strong>{procedure.sanction === 'licenciement' ? 'Licenciement' : procedure.sanction}</strong>
+                {procedure.sanction === 'mise_a_pied' && ` de ${procedure.joursMiseAPied} jour(s)`}.
+              </p>
+            </>
+          )}
+
+          {documentAImprimer === 'solde' && procedure.calculLicenciement && (
+            <>
+              <h1 className="text-center font-bold text-lg mb-6 uppercase">Reçu pour solde de tout compte</h1>
+              <p className="mb-4">Salarié : {salarieActif.nom} {salarieActif.prenom} ({salarieActif.matricule})</p>
+              <table className="w-full text-sm mb-4">
+                <tbody>
+                  <tr><td className="py-1">Salaire prorata du mois de sortie</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.salaireProrataMoisSortie)}</td></tr>
+                  <tr><td className="py-1">Prime d'ancienneté</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.primeAncienneteSolde)}</td></tr>
+                  <tr><td className="py-1">Indemnité congés restants</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemniteCongesRestants)}</td></tr>
+                  <tr><td className="py-1">Indemnité de licenciement</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemniteLicenciement)}</td></tr>
+                  <tr><td className="py-1">Indemnité de préavis</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemnitePreavis)}</td></tr>
+                  <tr><td className="py-1">Dommages-intérêts</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.dommagesInteretsAbusif)}</td></tr>
+                  <tr><td className="py-1">Intérêts de retard</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.interetsRetard)}</td></tr>
+                  <tr className="font-bold border-t-2 border-slate-800"><td className="py-2">Total</td><td className="py-2 text-right">{formatMAD(procedure.calculLicenciement.totalSoldeToutCompte)}</td></tr>
+                </tbody>
+              </table>
+              <p className="text-xs text-slate-500">Document pédagogique — simulation OFPPT, ne constitue pas un reçu légalement opposable.</p>
+            </>
+          )}
+        </div>
+      )}
+
+      {historiqueClos.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-2">
+          <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
+            <History className="w-4 h-4 text-[#149D92]" />
+            Procédures clôturées pour {salarieActif?.nom} {salarieActif?.prenom}
+          </h2>
+          <ul className="divide-y divide-slate-100 text-xs">
+            {historiqueClos.map((p) => (
+              <li key={p.id} className="py-2 flex items-center justify-between">
+                <span>
+                  {p.typeFaute === 'grave' ? 'Faute grave' : 'Faute légère'} — {p.sanction} — constatée le {formatDateJJMMAAAA(p.dateConstatation)}
+                </span>
+                <button onClick={() => setProcedureEnCours(p)} className="text-[#149D92] font-semibold hover:underline">
+                  Voir
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
