@@ -143,5 +143,83 @@ export const REGLES_JURIDIQUES_MAROC: RegleParametreJuridique[] = [
     statutVerification: "verifiee_officielle",
     validationFormateur: true,
     descriptionDetaillee: "Augmentation de 1,5 jour de congé supplémentaire par période de 5 années de service, sans que le total puisse dépasser 30 jours de travail effectif."
+  },
+  {
+    id: 'art-37-echelle-sanctions',
+    intitule: 'Échelle des sanctions disciplinaires (faute légère)',
+    domaine: 'droit_travail',
+    valeurOuFormule: '1) Avertissement 2) Blâme 3) 2e blâme ou mise à pied ≤ 8 jours 4) 3e blâme, transfert ou rétrogradation — dans la même année',
+    populationConcernee: 'Tous les salariés du secteur privé non agricole',
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Article 37',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "L'employeur ne peut infliger qu'une seule des sanctions de cette échelle par faute, de façon progressive, sur une période de 12 mois à compter de la première sanction."
+  },
+  {
+    id: 'art-39-faute-grave',
+    intitule: 'Fautes graves justifiant un licenciement sans préavis ni indemnité',
+    domaine: 'droit_travail',
+    valeurOuFormule: "Vol, abus de confiance, violence, divulgation d'un secret professionnel, faute ayant causé un dommage matériel considérable… (liste non exhaustive de l'Art. 39)",
+    populationConcernee: 'Tous les salariés du secteur privé non agricole',
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Article 39',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "Une faute grave avérée, et une procédure régulière, dispensent l'employeur de l'indemnité de licenciement et de l'indemnité compensatrice de préavis."
+  },
+  {
+    id: 'art-41-licenciement-abusif',
+    intitule: 'Dommages-intérêts pour licenciement abusif',
+    domaine: 'droit_travail',
+    valeurOuFormule: "1,5 mois de salaire par année ou fraction d'année ≥ 6 mois d'ancienneté, plafonné à 36 mois de salaire",
+    populationConcernee: 'Salarié licencié sans motif valable ou sans procédure régulière',
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Article 41',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "Le juge apprécie le caractère abusif du licenciement ; ce simulateur propose une estimation pédagogique, pas une décision judiciaire."
+  },
+  {
+    id: 'art-43-preavis',
+    intitule: 'Indemnité compensatrice de préavis',
+    domaine: 'droit_travail',
+    valeurOuFormule: 'Non-cadre : 8j (<1an) / 1 mois (1-5 ans) / 2 mois (>5 ans) — Cadre : 1 mois / 2 mois / 3 mois',
+    populationConcernee: 'Salarié licencié sans faute grave retenue',
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Articles 43 et 51',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "Barème simplifié à des fins pédagogiques, dépendant de la catégorie professionnelle et de l'ancienneté du salarié."
+  },
+  {
+    id: 'art-53-indemnite-licenciement',
+    intitule: 'Indemnité légale de licenciement',
+    domaine: 'droit_travail',
+    valeurOuFormule: '96h × chacune des 5 premières années + 144h × (6e-10e année) + 192h × (11e-15e année) + 240h au-delà',
+    populationConcernee: "Salarié licencié avec au moins 6 mois d'ancienneté, hors faute grave",
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Article 53',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "Le nombre d'heures de salaire dû par tranche d'ancienneté est multiplié par le taux horaire moyen du salarié."
+  },
+  {
+    id: 'art-62-delai-procedure',
+    intitule: 'Délais de la procédure de licenciement pour faute grave',
+    domaine: 'droit_travail',
+    valeurOuFormule: 'Entretien préalable sous 8 jours à compter de la constatation · Notification de la décision sous 48 heures après la décision',
+    populationConcernee: 'Salarié visé par une procédure de licenciement pour faute grave',
+    dateDebutEffet: '2004-06-08',
+    sourceExacte: 'Code du Travail marocain (Loi n° 65-99), Article 62',
+    dateConsultation: '2026-10-05',
+    statutVerification: 'verifiee_officielle',
+    validationFormateur: true,
+    descriptionDetaillee: "Le non-respect de ces délais expose l'employeur à une requalification du licenciement en licenciement abusif."
   }
 ];
