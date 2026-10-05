@@ -420,3 +420,68 @@ export interface MembreClasseLive {
   prenom: string;
   joinedAt: string;
 }
+
+// ============================================================
+// Module Discipline & Licenciement
+// ============================================================
+
+export type TypeFauteDisciplinaire = 'legere' | 'grave';
+
+export type SanctionDisciplinaire =
+  | 'avertissement'
+  | 'blame'
+  | 'mise_a_pied'
+  | 'licenciement';
+
+export type StatutProcedureDisciplinaire = 'ouverte' | 'cloturee';
+
+export interface AlerteConformiteProcedure {
+  code: string; // ex: 'delai-convocation', 'delai-notification'
+  message: string;
+  articleLoi: string;
+  severite: 'avertissement' | 'risque';
+}
+
+export interface CalculLicenciement {
+  indemniteLicenciement: number;
+  indemnitePreavis: number;
+  indemniteCongesRestants: number;
+  primeAncienneteSolde: number;
+  salaireProrataMoisSortie: number;
+
+  licenciementAbusif: boolean;
+  dommagesInteretsAbusif: number;
+
+  joursRetardPaiement: number;
+  tauxInteretAnnuel: number;
+  interetsRetard: number;
+
+  totalSoldeToutCompte: number;
+  alertesConformite: AlerteConformiteProcedure[];
+}
+
+export interface ProcedureDisciplinaire {
+  id: string;
+  salarieId: string;
+  typeFaute: TypeFauteDisciplinaire;
+  motifFaute: string;
+  dateConstatation: string; // AAAA-MM-JJ
+  categorieSalarie: 'cadre' | 'non_cadre';
+
+  dateConvocation?: string;
+  assistanceDemandee: boolean;
+
+  dateEntretien?: string;
+  resumeEntretien?: string;
+  signePar?: 'les_deux' | 'salarie_absent' | 'refus_signature';
+
+  sanction?: SanctionDisciplinaire;
+  joursMiseAPied?: number;
+  dateNotificationSanction?: string;
+
+  calculLicenciement?: CalculLicenciement;
+
+  statut: StatutProcedureDisciplinaire;
+  creeLe: string;
+  misAJourLe: string;
+}
