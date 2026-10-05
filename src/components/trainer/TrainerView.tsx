@@ -104,6 +104,13 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     }
   };
 
+  const handleGenererCode = () => {
+    if (!classeActive) return;
+    const codeInvitation = genererCodeInvitation();
+    setClasses((prev) => prev.map((c) => (c.id === classeActive.id ? { ...c, codeInvitation } : c)));
+    showNotification('Code d\'invitation généré pour cette classe.', 'success');
+  };
+
   const handleCopierCode = async () => {
     if (!classeActive?.codeInvitation) return;
     try {
@@ -282,19 +289,35 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             </span>
           </div>
 
-          {cloudEnabled && classeActive.codeInvitation && (
+          {cloudEnabled && (
             <div className="flex items-center justify-between gap-3 bg-[#F4F7FA] border border-slate-200 rounded-lg px-3.5 py-2.5">
-              <div>
-                <span className="block text-slate-500">Code à communiquer aux stagiaires pour qu'ils rejoignent cette classe :</span>
-                <span className="font-mono font-bold text-base tracking-widest text-[#1C2459]">{classeActive.codeInvitation}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleCopierCode}
-                className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
-              >
-                Copier
-              </button>
+              {classeActive.codeInvitation ? (
+                <>
+                  <div>
+                    <span className="block text-slate-500">Code à communiquer aux stagiaires pour qu'ils rejoignent cette classe :</span>
+                    <span className="font-mono font-bold text-base tracking-widest text-[#1C2459]">{classeActive.codeInvitation}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopierCode}
+                    className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                  >
+                    Copier
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="text-slate-500">Cette classe n'a pas encore de code d'invitation (créée avant l'ajout de cette fonctionnalité).</span>
+                  <button
+                    type="button"
+                    onClick={handleGenererCode}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white font-semibold rounded transition-colors"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    Générer un code
+                  </button>
+                </>
+              )}
             </div>
           )}
 
