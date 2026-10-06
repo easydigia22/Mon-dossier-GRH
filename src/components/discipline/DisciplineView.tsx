@@ -316,10 +316,14 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   <textarea
                     value={procedure.resumeEntretien || ''}
                     onChange={(e) => majProcedure({ resumeEntretien: e.target.value })}
-                    rows={2}
+                    rows={3}
+                    placeholder="Explications du salarié, éléments échangés, suites annoncées..."
                     disabled={lectureSeule}
                     className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
+                  <span className="mt-1 block text-[10px] text-slate-400">
+                    Ce résumé constitue le corps du procès-verbal imprimé.
+                  </span>
                 </label>
               </div>
               {procedure.dateEntretien && (
@@ -555,13 +559,47 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
               <p className="mb-4">
                 Salarié : {salarieActif.nom} {salarieActif.prenom} ({salarieActif.matricule}) — Entretien du {formatDateJJMMAAAA(procedure.dateEntretien!)}
               </p>
-              <p className="mb-4 whitespace-pre-wrap">{procedure.resumeEntretien}</p>
+              <p className="mb-4">
+                En application de l'article 62 du Code du Travail (Loi n° 65-99), {salarieActif.nom} {salarieActif.prenom} a été
+                entendu(e) par la direction
+                {procedure.dateConvocation
+                  ? `, à la suite de la convocation du ${formatDateJJMMAAAA(procedure.dateConvocation)},`
+                  : ''}{' '}
+                au sujet des faits constatés le {formatDateJJMMAAAA(procedure.dateConstatation)}, qualifiés de{' '}
+                {procedure.typeFaute === 'grave' ? 'faute grave (Art. 39)' : 'faute légère (Art. 37)'} :
+              </p>
+              <p className="mb-4 pl-4 border-l-2 border-slate-300 italic">{procedure.motifFaute}</p>
+              <p className="mb-4">
+                {procedure.assistanceDemandee
+                  ? "Le salarié a demandé à être assisté d'un représentant des salariés ou d'un délégué syndical."
+                  : "Le salarié n'a pas demandé à être assisté."}
+              </p>
+              <p className="mb-2 font-semibold">Déroulement de l'entretien et explications du salarié</p>
+              {procedure.resumeEntretien ? (
+                <p className="mb-4 whitespace-pre-wrap">{procedure.resumeEntretien}</p>
+              ) : (
+                <p className="mb-4 italic text-slate-500">
+                  Aucun résumé d'entretien n'a été saisi. Renseignez le champ « Résumé de l'entretien » à
+                  l'étape 3 avant d'imprimer ce procès-verbal.
+                </p>
+              )}
               <p className="mb-4">
                 Signature :{' '}
                 {procedure.signePar === 'les_deux' && 'Signé par les deux parties.'}
                 {procedure.signePar === 'salarie_absent' && 'Le salarié ne s\'est pas présenté à l\'entretien.'}
                 {procedure.signePar === 'refus_signature' && 'Le salarié a refusé de signer le présent procès-verbal.'}
+                {!procedure.signePar && 'Mode de signature non renseigné.'}
               </p>
+              <div className="grid grid-cols-2 gap-8 mt-12 text-xs">
+                <div>
+                  Pour l'employeur (nom, qualité et signature)
+                  <div className="mt-12 border-t border-slate-400" />
+                </div>
+                <div>
+                  Le salarié (signature, ou mention du refus)
+                  <div className="mt-12 border-t border-slate-400" />
+                </div>
+              </div>
             </>
           )}
 
