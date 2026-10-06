@@ -178,7 +178,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
       {/* Toast Notification */}
       {notification && (
         <div
-          className={`fixed bottom-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg border text-xs font-semibold flex items-center gap-2 transition-all ${
+          className={`no-print fixed bottom-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg border text-xs font-semibold flex items-center gap-2 transition-all ${
             notification.type === 'success'
               ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
               : notification.type === 'error'
