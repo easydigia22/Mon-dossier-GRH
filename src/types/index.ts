@@ -479,6 +479,13 @@ export interface ProcedureDisciplinaire {
   joursMiseAPied?: number;
   dateNotificationSanction?: string;
 
+  // Saisies de l'étape 5 (solde de tout compte) : persistées sur la procédure
+  // elle-même, jamais dans `calculLicenciement` qui n'est qu'un résultat calculé.
+  licenciementAbusifForce?: boolean;
+  joursRetardPaiement?: number;
+  tauxInteretAnnuel?: number;
+
+  // Instantané archivé du calcul au moment de la clôture.
   calculLicenciement?: CalculLicenciement;
 
   statut: StatutProcedureDisciplinaire;

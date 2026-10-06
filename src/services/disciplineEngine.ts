@@ -190,7 +190,10 @@ export function calculerSoldeToutCompte(params: {
     ? 0
     : calculerIndemnitePreavis(ancienneteAnnees, procedure.categorieSalarie, salarie.salaireBaseMensuel).montant;
 
-  const licenciementAbusif = params.licenciementAbusifForce ?? !procedureConforme;
+  // La saisie utilisateur persistée sur la procédure fait foi ; le paramètre
+  // `licenciementAbusifForce` reste accepté pour un calcul ponctuel (prévisualisation).
+  const licenciementAbusif =
+    params.licenciementAbusifForce ?? procedure.licenciementAbusifForce ?? !procedureConforme;
   const dommagesInteretsAbusif = licenciementAbusif
     ? calculerDommagesInteretsAbusif(ancienneteAnnees, salarie.salaireBaseMensuel).montant
     : 0;
@@ -217,8 +220,12 @@ export function calculerSoldeToutCompte(params: {
     salaireProrataMoisSortie +
     dommagesInteretsAbusif;
 
-  const joursRetardPaiement = procedure.calculLicenciement?.joursRetardPaiement ?? 0;
-  const tauxInteretAnnuel = procedure.calculLicenciement?.tauxInteretAnnuel ?? 5;
+  // Saisies lues sur la procédure ; le repli sur `calculLicenciement` ne sert
+  // qu'aux procédures enregistrées avant l'ajout de ces champs.
+  const joursRetardPaiement =
+    procedure.joursRetardPaiement ?? procedure.calculLicenciement?.joursRetardPaiement ?? 0;
+  const tauxInteretAnnuel =
+    procedure.tauxInteretAnnuel ?? procedure.calculLicenciement?.tauxInteretAnnuel ?? 5;
   const interetsRetard = calculerInteretsRetard(sousTotal, tauxInteretAnnuel, joursRetardPaiement);
 
   return {

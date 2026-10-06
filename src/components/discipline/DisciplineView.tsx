@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Gavel, Printer, Plus, AlertTriangle, CheckCircle2, Clock, FileText, History } from 'lucide-react';
 import { DemandeConge, Entreprise, ProcedureDisciplinaire, Salarie, SanctionDisciplinaire, TypeFauteDisciplinaire } from '../../types';
 import { calculerSoldeToutCompte, detecterAlertesConformite } from '../../services/disciplineEngine';
@@ -34,6 +34,21 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
 
   const procedure = procedureEnCours;
 
+  // Une procédure clôturée se consulte et s'imprime, mais ne se modifie plus.
+  const lectureSeule = procedure?.statut === 'cloturee';
+
+  // Source unique de vérité du solde de tout compte : toujours recalculé depuis
+  // la procédure (dont les saisies de l'étape 5 sont persistées). Le tableau à
+  // l'écran et le reçu imprimable lisent tous les deux cette même valeur, ce qui
+  // les empêche de diverger — ou le reçu de sortir vide faute d'instantané.
+  const calculSolde = useMemo(
+    () =>
+      salarieActif && procedure
+        ? calculerSoldeToutCompte({ salarie: salarieActif, procedure, demandes: demandesConges })
+        : null,
+    [salarieActif, procedure, demandesConges]
+  );
+
   const handleNouvelleProcedure = () => {
     if (!salarieActif) return;
     const nouvelle: ProcedureDisciplinaire = {
@@ -53,7 +68,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
   };
 
   const majProcedure = (champs: Partial<ProcedureDisciplinaire>) => {
-    if (!procedure) return;
+    if (!procedure || lectureSeule) return;
     const maj = { ...procedure, ...champs };
     setProcedureEnCours(maj);
     onSaveProcedure(maj);
@@ -121,6 +136,21 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
         </div>
       )}
 
+      {procedure && lectureSeule && (
+        <div className="bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 no-print flex items-center justify-between gap-3">
+          <span className="text-xs text-slate-700 font-medium flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-slate-500" />
+            Procédure clôturée — consultation et impression uniquement, aucune modification possible.
+          </span>
+          <button
+            onClick={() => setProcedureEnCours(null)}
+            className="text-[11px] font-semibold text-[#1C2459] hover:underline shrink-0"
+          >
+            Fermer
+          </button>
+        </div>
+      )}
+
       {procedure && (
         <>
           {/* Étape 1 — Qualification */}
@@ -130,15 +160,17 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">1</span>
                 Qualification de la faute
               </h2>
-              <button
-                onClick={() => {
-                  onDeleteProcedure(procedure.id);
-                  setProcedureEnCours(null);
-                }}
-                className="text-[11px] text-red-600 hover:underline"
-              >
-                Supprimer cette procédure (ouverte par erreur)
-              </button>
+              {!lectureSeule && (
+                <button
+                  onClick={() => {
+                    onDeleteProcedure(procedure.id);
+                    setProcedureEnCours(null);
+                  }}
+                  className="text-[11px] text-red-600 hover:underline"
+                >
+                  Supprimer cette procédure (ouverte par erreur)
+                </button>
+              )}
             </div>
             <div className="grid sm:grid-cols-2 gap-3 text-xs">
               <label className="block">
@@ -146,7 +178,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                 <select
                   value={procedure.typeFaute}
                   onChange={(e) => majProcedure({ typeFaute: e.target.value as TypeFauteDisciplinaire })}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                  disabled={lectureSeule}
+                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                 >
                   <option value="legere">Faute légère (Art. 37)</option>
                   <option value="grave">Faute grave (Art. 39)</option>
@@ -157,7 +190,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                 <select
                   value={procedure.categorieSalarie}
                   onChange={(e) => majProcedure({ categorieSalarie: e.target.value as 'cadre' | 'non_cadre' })}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                  disabled={lectureSeule}
+                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                 >
                   <option value="non_cadre">Non-cadre</option>
                   <option value="cadre">Cadre</option>
@@ -169,7 +203,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   type="date"
                   value={procedure.dateConstatation}
                   onChange={(e) => majProcedure({ dateConstatation: e.target.value })}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                  disabled={lectureSeule}
+                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                 />
               </label>
               <label className="block sm:col-span-2">
@@ -178,7 +213,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   value={procedure.motifFaute}
                   onChange={(e) => majProcedure({ motifFaute: e.target.value })}
                   rows={2}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                  disabled={lectureSeule}
+                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   placeholder="Décrivez les faits reprochés au salarié..."
                 />
               </label>
@@ -198,12 +234,14 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     type="date"
                     value={procedure.dateConvocation || ''}
                     onChange={(e) => majProcedure({ dateConvocation: e.target.value })}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
+                    disabled={lectureSeule}
                     checked={procedure.assistanceDemandee}
                     onChange={(e) => majProcedure({ assistanceDemandee: e.target.checked })}
                   />
@@ -235,7 +273,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     type="date"
                     value={procedure.dateEntretien || ''}
                     onChange={(e) => majProcedure({ dateEntretien: e.target.value })}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
                 <label className="block">
@@ -243,7 +282,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   <select
                     value={procedure.signePar || ''}
                     onChange={(e) => majProcedure({ signePar: e.target.value as ProcedureDisciplinaire['signePar'] })}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   >
                     <option value="">—</option>
                     <option value="les_deux">Signé par les deux parties</option>
@@ -257,7 +297,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.resumeEntretien || ''}
                     onChange={(e) => majProcedure({ resumeEntretien: e.target.value })}
                     rows={2}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
               </div>
@@ -285,7 +326,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   <select
                     value={procedure.sanction || ''}
                     onChange={(e) => majProcedure({ sanction: e.target.value as SanctionDisciplinaire })}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   >
                     <option value="">—</option>
                     {procedure.typeFaute === 'legere' ? (
@@ -308,7 +350,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                       max={8}
                       value={procedure.joursMiseAPied || 1}
                       onChange={(e) => majProcedure({ joursMiseAPied: Math.min(8, Math.max(1, Number(e.target.value))) })}
-                      className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                      disabled={lectureSeule}
+                      className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                     />
                   </label>
                 )}
@@ -318,7 +361,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     type="date"
                     value={procedure.dateNotificationSanction || ''}
                     onChange={(e) => majProcedure({ dateNotificationSanction: e.target.value })}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                    disabled={lectureSeule}
+                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
               </div>
@@ -355,7 +399,8 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
               </h2>
 
               {(() => {
-                const calcul = calculerSoldeToutCompte({ salarie: salarieActif, procedure, demandes: demandesConges });
+                const calcul = calculSolde;
+                if (!calcul) return null;
                 const lignes: { libelle: string; formule: string; montant: number }[] = [
                   { libelle: 'Salaire prorata du mois de sortie', formule: 'salaire ÷ 30 × jour du mois', montant: calcul.salaireProrataMoisSortie },
                   { libelle: 'Prime d\'ancienneté (dernier mois)', formule: 'Art. 350', montant: calcul.primeAncienneteSolde },
@@ -378,17 +423,9 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     <label className="flex items-center gap-2 text-xs">
                       <input
                         type="checkbox"
-                        checked={calcul.licenciementAbusif}
-                        onChange={(e) =>
-                          majProcedure({
-                            calculLicenciement: calculerSoldeToutCompte({
-                              salarie: salarieActif,
-                              procedure,
-                              demandes: demandesConges,
-                              licenciementAbusifForce: e.target.checked
-                            })
-                          })
-                        }
+                        disabled={lectureSeule}
+                        checked={procedure.licenciementAbusifForce ?? calcul.licenciementAbusif}
+                        onChange={(e) => majProcedure({ licenciementAbusifForce: e.target.checked })}
                       />
                       <span className="text-slate-700 font-medium">Licenciement jugé abusif (ajuste les dommages-intérêts Art. 41)</span>
                     </label>
@@ -399,17 +436,10 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                         <input
                           type="number"
                           min={0}
-                          value={calcul.joursRetardPaiement}
-                          onChange={(e) =>
-                            majProcedure({
-                              calculLicenciement: calculerSoldeToutCompte({
-                                salarie: salarieActif,
-                                procedure: { ...procedure, calculLicenciement: { ...calcul, joursRetardPaiement: Number(e.target.value) } },
-                                demandes: demandesConges
-                              })
-                            })
-                          }
-                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                          value={procedure.joursRetardPaiement ?? calcul.joursRetardPaiement}
+                          onChange={(e) => majProcedure({ joursRetardPaiement: Math.max(0, Number(e.target.value) || 0) })}
+                          disabled={lectureSeule}
+                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                         />
                       </label>
                       <label className="block">
@@ -418,17 +448,10 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                           type="number"
                           min={0}
                           step={0.5}
-                          value={calcul.tauxInteretAnnuel}
-                          onChange={(e) =>
-                            majProcedure({
-                              calculLicenciement: calculerSoldeToutCompte({
-                                salarie: salarieActif,
-                                procedure: { ...procedure, calculLicenciement: { ...calcul, tauxInteretAnnuel: Number(e.target.value) } },
-                                demandes: demandesConges
-                              })
-                            })
-                          }
-                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded"
+                          value={procedure.tauxInteretAnnuel ?? calcul.tauxInteretAnnuel}
+                          onChange={(e) => majProcedure({ tauxInteretAnnuel: Math.max(0, Number(e.target.value) || 0) })}
+                          disabled={lectureSeule}
+                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
                         />
                       </label>
                     </div>
@@ -459,16 +482,18 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                         <Printer className="w-3.5 h-3.5" />
                         Imprimer le reçu pour solde de tout compte
                       </button>
-                      <button
-                        onClick={() => {
-                          majProcedure({ statut: 'cloturee', calculLicenciement: calcul });
-                          setProcedureEnCours(null);
-                        }}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Clôturer la procédure
-                      </button>
+                      {!lectureSeule && (
+                        <button
+                          onClick={() => {
+                            majProcedure({ statut: 'cloturee', calculLicenciement: calcul });
+                            setProcedureEnCours(null);
+                          }}
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Clôturer la procédure
+                        </button>
+                      )}
                     </div>
                   </>
                 );
@@ -532,20 +557,20 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
             </>
           )}
 
-          {documentAImprimer === 'solde' && procedure.calculLicenciement && (
+          {documentAImprimer === 'solde' && calculSolde && (
             <>
               <h1 className="text-center font-bold text-lg mb-6 uppercase">Reçu pour solde de tout compte</h1>
               <p className="mb-4">Salarié : {salarieActif.nom} {salarieActif.prenom} ({salarieActif.matricule})</p>
               <table className="w-full text-sm mb-4">
                 <tbody>
-                  <tr><td className="py-1">Salaire prorata du mois de sortie</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.salaireProrataMoisSortie)}</td></tr>
-                  <tr><td className="py-1">Prime d'ancienneté</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.primeAncienneteSolde)}</td></tr>
-                  <tr><td className="py-1">Indemnité congés restants</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemniteCongesRestants)}</td></tr>
-                  <tr><td className="py-1">Indemnité de licenciement</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemniteLicenciement)}</td></tr>
-                  <tr><td className="py-1">Indemnité de préavis</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.indemnitePreavis)}</td></tr>
-                  <tr><td className="py-1">Dommages-intérêts</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.dommagesInteretsAbusif)}</td></tr>
-                  <tr><td className="py-1">Intérêts de retard</td><td className="py-1 text-right">{formatMAD(procedure.calculLicenciement.interetsRetard)}</td></tr>
-                  <tr className="font-bold border-t-2 border-slate-800"><td className="py-2">Total</td><td className="py-2 text-right">{formatMAD(procedure.calculLicenciement.totalSoldeToutCompte)}</td></tr>
+                  <tr><td className="py-1">Salaire prorata du mois de sortie</td><td className="py-1 text-right">{formatMAD(calculSolde.salaireProrataMoisSortie)}</td></tr>
+                  <tr><td className="py-1">Prime d'ancienneté</td><td className="py-1 text-right">{formatMAD(calculSolde.primeAncienneteSolde)}</td></tr>
+                  <tr><td className="py-1">Indemnité congés restants</td><td className="py-1 text-right">{formatMAD(calculSolde.indemniteCongesRestants)}</td></tr>
+                  <tr><td className="py-1">Indemnité de licenciement</td><td className="py-1 text-right">{formatMAD(calculSolde.indemniteLicenciement)}</td></tr>
+                  <tr><td className="py-1">Indemnité de préavis</td><td className="py-1 text-right">{formatMAD(calculSolde.indemnitePreavis)}</td></tr>
+                  <tr><td className="py-1">Dommages-intérêts</td><td className="py-1 text-right">{formatMAD(calculSolde.dommagesInteretsAbusif)}</td></tr>
+                  <tr><td className="py-1">Intérêts de retard</td><td className="py-1 text-right">{formatMAD(calculSolde.interetsRetard)}</td></tr>
+                  <tr className="font-bold border-t-2 border-slate-800"><td className="py-2">Total</td><td className="py-2 text-right">{formatMAD(calculSolde.totalSoldeToutCompte)}</td></tr>
                 </tbody>
               </table>
               <p className="text-xs text-slate-500">Document pédagogique — simulation OFPPT, ne constitue pas un reçu légalement opposable.</p>
