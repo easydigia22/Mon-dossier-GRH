@@ -50,7 +50,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
   );
 
   const handleNouvelleProcedure = () => {
-    if (!salarieActif) return;
+    if (!salarieActif || procedureOuverte) return;
     const nouvelle: ProcedureDisciplinaire = {
       id: `disc-${Date.now()}`,
       salarieId: salarieActif.id,
@@ -119,20 +119,40 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
         </div>
       </div>
 
-      {/* Garde-fou : une seule procédure ouverte à la fois */}
+      {/* Garde-fou : une seule procédure ouverte à la fois par salarié */}
       {!procedure && (
         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print text-center space-y-3">
-          <p className="text-sm text-slate-600">
-            Aucune procédure disciplinaire ouverte pour {salarieActif?.nom} {salarieActif?.prenom}.
-          </p>
-          <button
-            onClick={handleNouvelleProcedure}
-            disabled={!salarieActif}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50"
-          >
-            <Plus className="w-4 h-4" />
-            Nouvelle procédure
-          </button>
+          {procedureOuverte ? (
+            <p className="text-sm text-slate-600">
+              Une procédure disciplinaire est déjà ouverte pour {salarieActif?.nom} {salarieActif?.prenom}
+              {' '}(constatée le {formatDateJJMMAAAA(procedureOuverte.dateConstatation)}). Clôturez-la ou
+              supprimez-la avant d'en ouvrir une nouvelle.
+            </p>
+          ) : (
+            <p className="text-sm text-slate-600">
+              Aucune procédure disciplinaire ouverte pour {salarieActif?.nom} {salarieActif?.prenom}.
+            </p>
+          )}
+          <div className="flex items-center justify-center gap-2">
+            {procedureOuverte && (
+              <button
+                onClick={() => setProcedureEnCours(procedureOuverte)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1C2459] hover:bg-[#161c47] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+              >
+                <FileText className="w-4 h-4" />
+                Reprendre la procédure en cours
+              </button>
+            )}
+            <button
+              onClick={handleNouvelleProcedure}
+              disabled={!salarieActif || !!procedureOuverte}
+              title={procedureOuverte ? 'Une procédure est déjà ouverte pour ce salarié' : undefined}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-4 h-4" />
+              Nouvelle procédure
+            </button>
+          </div>
         </div>
       )}
 
