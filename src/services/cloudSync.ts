@@ -30,7 +30,8 @@ const COLLECTIONS: Collection[] = [
   },
   { table: 'regles', rows: (s) => s.regles },
   { table: 'tentatives', rows: (s) => s.tentatives, extra: (i) => ({ mission_id: i.missionId }) },
-  { table: 'classes', rows: (s) => s.classes, extra: (i) => ({ code_invitation: i.codeInvitation ?? null }) }
+  { table: 'classes', rows: (s) => s.classes, extra: (i) => ({ code_invitation: i.codeInvitation ?? null }) },
+  { table: 'procedures', rows: (s) => s.procedures ?? [], extra: (i) => ({ salarie_id: i.salarieId }) }
 ];
 
 const PAGE_SIZE = 1000;
@@ -108,6 +109,7 @@ export async function loadCloudState(): Promise<AppDatabaseState | null> {
     missions: [],
     tentatives: byTable.tentatives,
     classes: byTable.classes,
+    procedures: byTable.procedures,
     parametresApp: paramsRow?.data
   };
 }
