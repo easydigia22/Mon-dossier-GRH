@@ -22,9 +22,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [checking, setChecking] = useState(true);
   const [profil, setProfil] = useState<MonProfil | undefined>(undefined);
-  const [profilLoading, setProfilLoading] = useState(false);
   const [profilErreur, setProfilErreur] = useState<string | null>(null);
   const role = profil?.role;
+  // Lu dans le .catch de la revérification de fond, qui ne doit pas dépendre de la
+  // valeur capturée à la création de l'effet.
+  const profilRef = React.useRef<MonProfil | undefined>(undefined);
+  profilRef.current = profil;
   const [maClasse, setMaClasse] = useState<MembreClasseLive | null>(null);
   const [classeLoading, setClasseLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -61,7 +64,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     let cancelled = false;
 
     const charger = (avecIndicateur: boolean) => {
-      if (avecIndicateur) setProfilLoading(true);
       fetchMonProfil()
         .then((p) => {
           if (cancelled) return;
@@ -70,11 +72,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
         })
         .catch((e) => {
           console.error('Lecture du profil impossible:', e);
-          // Échec fermé : aucun accès par défaut, un message explicite à la place.
-          if (!cancelled) setProfilErreur('Impossible de vérifier votre compte. Vérifiez votre connexion, puis réessayez.');
-        })
-        .finally(() => {
-          if (!cancelled && avecIndicateur) setProfilLoading(false);
+          if (cancelled) return;
+          // Échec fermé au premier chargement : aucun accès par défaut. Mais un échec
+          // de la revérification de fond ne doit pas éjecter un utilisateur déjà entré
+          // et emporter son travail en cours ; une vraie révocation, elle, est une
+          // lecture RÉUSSIE avec un statut non approuvé, et passe toujours.
+          if (avecIndicateur || !profilRef.current) {
+            setProfilErreur('Impossible de vérifier votre compte. Vérifiez votre connexion, puis réessayez.');
+          }
         });
     };
 
@@ -111,7 +116,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
   if (!supabase) return <>{children({})}</>;
 
-  if (checking || (session && profilLoading) || (session && role === 'stagiaire' && classeLoading)) {
+  // Tant que le profil n'est pas connu, on attend : sans cela `role === undefined`
+  // est interprété par App.tsx comme le mode local sans compte, donc accès complet.
+  if (checking || (session && !profil && !profilErreur) || (session && role === 'stagiaire' && classeLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA]">
         <Loader2 className="w-6 h-6 animate-spin text-[#1C2459]" />
@@ -129,6 +136,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
     if (profilErreur) {
       return <EcranBloquant titre="Compte non vérifiable" message={profilErreur} onSignOut={signOut} />;
+    }
+
+    if (profil?.profilAbsent) {
+      return (
+        <EcranBloquant
+          titre="Compte en cours de création"
+          message="Votre compte vient d'être créé et n'est pas encore lisible. Patientez quelques instants, puis rechargez la page."
+          email={session.user.email}
+          onSignOut={signOut}
+        />
+      );
     }
 
     if (profil && profil.role === 'formateur' && profil.statut !== 'approuve') {

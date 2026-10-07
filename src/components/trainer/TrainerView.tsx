@@ -14,6 +14,8 @@ interface TrainerViewProps {
   tentatives: TentativeExercice[];
   periodeActive: string;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
+  /** L'admin consulte les tentatives mais ne les corrige pas (politique RLS en lecture seule). */
+  lectureSeule?: boolean;
 }
 
 export const TrainerView: React.FC<TrainerViewProps> = ({
@@ -22,7 +24,8 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   missions,
   tentatives,
   periodeActive,
-  showNotification
+  showNotification,
+  lectureSeule = false
 }) => {
   const [classeActiveId, setClasseActiveId] = useState<string>(classes[0]?.id || '');
   const [modalClasseOuverte, setModalClasseOuverte] = useState(false);
@@ -479,14 +482,18 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                           {item.tentative.correction ? `${item.tentative.correction.noteTotaleSur20.toFixed(1)}/20` : 'Non noté'}
                         </td>
                         <td className="py-2">
-                          <button
-                            type="button"
-                            onClick={() => ouvrirEdition(item)}
-                            className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#1C2459] bg-slate-100 hover:bg-slate-200 rounded transition-colors"
-                          >
-                            <Pencil className="w-3 h-3" />
-                            <span>Corriger</span>
-                          </button>
+                          {lectureSeule ? (
+                            <span className="text-[11px] text-slate-400 italic">Lecture seule</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => ouvrirEdition(item)}
+                              className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#1C2459] bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                            >
+                              <Pencil className="w-3 h-3" />
+                              <span>Corriger</span>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );

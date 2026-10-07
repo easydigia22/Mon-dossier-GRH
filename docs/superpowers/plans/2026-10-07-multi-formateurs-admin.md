@@ -92,9 +92,16 @@ export interface MonProfil {
 export async function fetchMonProfil(): Promise<MonProfil> {
   if (!supabase) return { role: 'stagiaire', statut: 'approuve' };
 
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user.id;
+  if (!userId) return { role: 'stagiaire', statut: 'approuve' };
+
+  // Filtrer explicitement : depuis la policy `admin_read_all`, un select non filtré
+  // renvoie toutes les lignes à un admin, et `maybeSingle()` échoue au-delà d'une.
   const { data, error } = await supabase
     .from('profiles')
     .select('role, statut, email, motif_refus')
+    .eq('user_id', userId)
     .maybeSingle();
   if (error) throw error;
 

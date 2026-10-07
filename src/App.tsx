@@ -368,6 +368,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             tentatives={tentatives}
             periodeActive={periodeActive}
             showNotification={showNotification}
+            lectureSeule={estAdmin}
           />
         )}
 
