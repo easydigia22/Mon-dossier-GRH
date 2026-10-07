@@ -53,3 +53,113 @@ export async function deciderFormateur(
   });
   if (error) throw new Error(error.message);
 }
+
+/** Un groupe tel que l'admin le voit (policy `admin_read_classes`). */
+export interface ClasseAdmin {
+  userId: string;
+  id: string;
+  nom: string;
+}
+
+/** Un compte dans la liste d'administration, enrichi de son contexte. */
+export interface CompteAdmin extends ProfilAdmin {
+  /** Formateurs : nombre de groupes possédés. */
+  nbGroupes?: number;
+  /** Stagiaires : nom de la classe rejointe, si elle est lisible. */
+  classeRejointe?: string;
+}
+
+export interface ApercuSuppression {
+  groupes: number;
+  stagiairesDetaches: number;
+  bulletins: number;
+  remises: number;
+}
+
+/**
+ * Tous les comptes, enrichis : nombre de groupes pour un formateur, classe
+ * rejointe pour un stagiaire. Trois lectures assemblées côté client — le volume
+ * attendu est de quelques dizaines de comptes.
+ */
+export async function fetchComptes(): Promise<CompteAdmin[]> {
+  if (!supabase) return [];
+
+  const [profils, classes, rattachements] = await Promise.all([
+    fetchProfils(),
+    supabase.from('classes').select('user_id, id, data'),
+    supabase.from('classe_stagiaires').select('stagiaire_user_id, classe_user_id, classe_id')
+  ]);
+
+  if (classes.error) throw classes.error;
+  if (rattachements.error) throw rattachements.error;
+
+  const lignesClasses = classes.data ?? [];
+  const nomDeClasse = new Map<string, string>(
+    lignesClasses.map((c) => [`${c.user_id}|${c.id}`, (c.data as { nom?: string })?.nom ?? 'Groupe sans nom'])
+  );
+  const nbGroupesPar = new Map<string, number>();
+  lignesClasses.forEach((c) => nbGroupesPar.set(c.user_id, (nbGroupesPar.get(c.user_id) ?? 0) + 1));
+
+  const classeDuStagiaire = new Map<string, string>(
+    (rattachements.data ?? []).map((r) => [
+      r.stagiaire_user_id,
+      nomDeClasse.get(`${r.classe_user_id}|${r.classe_id}`) ?? 'Classe inconnue'
+    ])
+  );
+
+  return profils.map((p) => ({
+    ...p,
+    nbGroupes: p.role === 'formateur' ? nbGroupesPar.get(p.userId) ?? 0 : undefined,
+    classeRejointe: p.role === 'stagiaire' ? classeDuStagiaire.get(p.userId) : undefined
+  }));
+}
+
+/** Les groupes d'un formateur, pour le panneau de réaffectation. */
+export async function fetchClassesDe(userId: string): Promise<ClasseAdmin[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase.from('classes').select('user_id, id, data').eq('user_id', userId);
+  if (error) throw error;
+  return (data ?? []).map((c) => ({
+    userId: c.user_id,
+    id: c.id,
+    nom: (c.data as { nom?: string })?.nom ?? 'Groupe sans nom'
+  }));
+}
+
+export async function desactiverCompte(userId: string, desactive: boolean): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré.');
+  const { error } = await supabase.rpc('desactiver_compte', {
+    p_user_id: userId,
+    p_desactive: desactive
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function reaffecterGroupe(classeId: string, ancien: string, nouveau: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré.');
+  const { error } = await supabase.rpc('reaffecter_groupe', {
+    p_classe_id: classeId,
+    p_ancien: ancien,
+    p_nouveau: nouveau
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function apercuSuppression(userId: string): Promise<ApercuSuppression> {
+  if (!supabase) throw new Error('Supabase non configuré.');
+  const { data, error } = await supabase.rpc('apercu_suppression', { p_user_id: userId });
+  if (error) throw new Error(error.message);
+  const l = (data ?? [])[0] ?? {};
+  return {
+    groupes: Number(l.groupes ?? 0),
+    stagiairesDetaches: Number(l.stagiaires_detaches ?? 0),
+    bulletins: Number(l.bulletins ?? 0),
+    remises: Number(l.remises ?? 0)
+  };
+}
+
+export async function supprimerCompte(userId: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré.');
+  const { error } = await supabase.rpc('supprimer_compte', { p_user_id: userId });
+  if (error) throw new Error(error.message);
+}
