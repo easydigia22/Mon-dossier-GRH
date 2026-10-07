@@ -149,6 +149,19 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       );
     }
 
+    // Vaut pour tous les rôles : la garde ci-dessous ne teste que les formateurs,
+    // donc sans celle-ci désactiver un stagiaire n'aurait aucun effet.
+    if (profil?.statut === 'desactive') {
+      return (
+        <EcranBloquant
+          titre="Compte désactivé"
+          message="Votre compte a été désactivé par l'administrateur de l'établissement. Contactez-le si vous pensez qu'il s'agit d'une erreur."
+          email={session.user.email}
+          onSignOut={signOut}
+        />
+      );
+    }
+
     if (profil && profil.role === 'formateur' && profil.statut !== 'approuve') {
       const enAttente = profil.statut === 'en_attente';
       return (

@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 export type UserRole = 'stagiaire' | 'formateur' | 'admin';
-export type StatutCompte = 'en_attente' | 'approuve' | 'refuse';
+export type StatutCompte = 'en_attente' | 'approuve' | 'refuse' | 'desactive';
 
 export interface MonProfil {
   role: UserRole;
