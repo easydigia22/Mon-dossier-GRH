@@ -10,13 +10,15 @@ interface AdminViewProps {
 const LIBELLE_STATUT: Record<StatutCompte, string> = {
   en_attente: 'En attente',
   approuve: 'Approuvé',
-  refuse: 'Refusé'
+  refuse: 'Refusé',
+  desactive: 'Désactivé'
 };
 
 const CLASSE_STATUT: Record<StatutCompte, string> = {
   en_attente: 'bg-amber-50 text-amber-800 border-amber-200',
   approuve: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  refuse: 'bg-red-50 text-red-800 border-red-200'
+  refuse: 'bg-red-50 text-red-800 border-red-200',
+  desactive: 'bg-slate-100 text-slate-600 border-slate-300'
 };
 
 export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
