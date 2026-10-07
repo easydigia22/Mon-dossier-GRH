@@ -1,41 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, Loader2, ShieldAlert, XCircle } from 'lucide-react';
-import { deciderFormateur, fetchProfils, ProfilAdmin } from '../../services/adminService';
+import { Loader2, ShieldAlert } from 'lucide-react';
+import {
+  CompteAdmin,
+  deciderFormateur,
+  desactiverCompte,
+  fetchComptes
+} from '../../services/adminService';
 import type { StatutCompte } from '../../services/profile';
+import { LigneCompte } from './LigneCompte';
+import { ConfirmationSuppression } from './ConfirmationSuppression';
+import { ReaffectationGroupes } from './ReaffectationGroupes';
 
 interface AdminViewProps {
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
 }
 
-const LIBELLE_STATUT: Record<StatutCompte, string> = {
-  en_attente: 'En attente',
-  approuve: 'Approuvé',
-  refuse: 'Refusé',
-  desactive: 'Désactivé'
-};
-
-const CLASSE_STATUT: Record<StatutCompte, string> = {
-  en_attente: 'bg-amber-50 text-amber-800 border-amber-200',
-  approuve: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  refuse: 'bg-red-50 text-red-800 border-red-200',
-  desactive: 'bg-slate-100 text-slate-600 border-slate-300'
-};
+type Panneau = { type: 'suppression' | 'reaffectation' | 'refus'; userId: string } | null;
 
 export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
-  const [profils, setProfils] = useState<ProfilAdmin[]>([]);
+  const [comptes, setComptes] = useState<CompteAdmin[]>([]);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState<string | null>(null);
-  const [enCours, setEnCours] = useState<string | null>(null);
-  // Refus en ligne plutôt qu'un window.prompt : une boîte de dialogue native bloque
-  // la page, ne se teste pas et jure avec le reste de l'application.
-  const [refusPour, setRefusPour] = useState<string | null>(null);
+  const [occupe, setOccupe] = useState<string | null>(null);
+  const [panneau, setPanneau] = useState<Panneau>(null);
   const [motifSaisi, setMotifSaisi] = useState('');
 
   const recharger = () => {
     setChargement(true);
-    fetchProfils()
-      .then((p) => {
-        setProfils(p);
+    fetchComptes()
+      .then((c) => {
+        setComptes(c);
         setErreur(null);
       })
       .catch((e) => setErreur(e instanceof Error ? e.message : String(e)))
@@ -44,77 +38,46 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
 
   useEffect(recharger, []);
 
-  const decider = async (profil: ProfilAdmin, decision: StatutCompte, motif?: string) => {
-    setEnCours(profil.userId);
+  const agir = async (compte: CompteAdmin, action: () => Promise<void>, message: string) => {
+    setOccupe(compte.userId);
     try {
-      await deciderFormateur(profil.userId, decision, motif);
-      showNotification(`Compte ${profil.email} : ${LIBELLE_STATUT[decision].toLowerCase()}.`, 'success');
-      setRefusPour(null);
+      await action();
+      showNotification(message, 'success');
+      setPanneau(null);
       setMotifSaisi('');
       recharger();
     } catch (e) {
       showNotification(e instanceof Error ? e.message : String(e), 'error');
     } finally {
-      setEnCours(null);
+      setOccupe(null);
     }
   };
 
-  const formateurs = profils.filter((p) => p.role === 'formateur');
-  const enAttente = formateurs.filter((p) => p.statut === 'en_attente');
-  const traites = formateurs.filter((p) => p.statut !== 'en_attente');
+  const decider = (compte: CompteAdmin, decision: StatutCompte, motif?: string) =>
+    agir(
+      compte,
+      () => deciderFormateur(compte.userId, decision, motif),
+      `Compte ${compte.email} : décision enregistrée.`
+    );
 
-  const ligne = (p: ProfilAdmin) => (
-    <li key={p.userId} className="py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <div className="min-w-0">
-        <div className="text-xs font-semibold text-[#1C2459] truncate">{p.email}</div>
-        <div className="text-[10px] text-slate-400">
-          Inscrit le {new Date(p.creeLe).toLocaleDateString('fr-FR')}
-          {p.decideLe && ` · décidé le ${new Date(p.decideLe).toLocaleDateString('fr-FR')}`}
-          {p.motifRefus && ` · motif : ${p.motifRefus}`}
-        </div>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${CLASSE_STATUT[p.statut]}`}>
-          {LIBELLE_STATUT[p.statut]}
-        </span>
-        {enCours === p.userId ? (
-          <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
-        ) : (
-          <>
-            {p.statut !== 'approuve' && (
-              <button
-                onClick={() => decider(p, 'approuve')}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#149D92] hover:bg-[#11857c] text-white text-[11px] font-semibold rounded transition-colors"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Approuver
-              </button>
-            )}
-            {p.statut !== 'refuse' && (
-              <button
-                onClick={() => {
-                  setRefusPour(p.userId);
-                  setMotifSaisi('');
-                }}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-red-300 text-red-700 hover:bg-red-50 text-[11px] font-semibold rounded transition-colors"
-              >
-                <XCircle className="w-3.5 h-3.5" />
-                Refuser
-              </button>
-            )}
-            {p.statut === 'approuve' && (
-              <button
-                onClick={() => decider(p, 'en_attente')}
-                className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
-              >
-                Révoquer
-              </button>
-            )}
-          </>
-        )}
-      </div>
+  const basculer = (compte: CompteAdmin, desactive: boolean) =>
+    agir(
+      compte,
+      () => desactiverCompte(compte.userId, desactive),
+      `Compte ${compte.email} : ${desactive ? 'désactivé' : 'réactivé'}.`
+    );
 
-      {refusPour === p.userId && (
+  const formateurs = comptes.filter((c) => c.role === 'formateur');
+  const enAttente = formateurs.filter((c) => c.statut === 'en_attente');
+  const formateursTraites = formateurs.filter((c) => c.statut !== 'en_attente');
+  const stagiaires = comptes.filter((c) => c.role === 'stagiaire');
+  const formateursApprouves = formateurs.filter((c) => c.statut === 'approuve');
+
+  const panneauDe = (compte: CompteAdmin): React.ReactNode => {
+    if (panneau?.userId !== compte.userId) return null;
+
+    if (panneau.type === 'refus') {
+      return (
         <div className="w-full mt-2 flex flex-wrap items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
           <input
             type="text"
@@ -124,21 +87,50 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
             className="flex-1 min-w-[12rem] px-2 py-1 text-[11px] border border-red-200 rounded"
           />
           <button
-            onClick={() => decider(p, 'refuse', motifSaisi.trim() || undefined)}
+            onClick={() => decider(compte, 'refuse', motifSaisi.trim() || undefined)}
             className="px-2.5 py-1 bg-[#D64545] hover:bg-[#b93a3a] text-white text-[11px] font-semibold rounded transition-colors"
           >
             Confirmer le refus
           </button>
           <button
-            onClick={() => setRefusPour(null)}
+            onClick={() => setPanneau(null)}
             className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
           >
             Annuler
           </button>
         </div>
-      )}
-    </li>
-  );
+      );
+    }
+
+    if (panneau.type === 'suppression') {
+      return (
+        <ConfirmationSuppression
+          compte={compte}
+          onAnnuler={() => setPanneau(null)}
+          onSupprime={() => {
+            showNotification(`Compte ${compte.email} supprimé définitivement.`, 'success');
+            setPanneau(null);
+            recharger();
+          }}
+          onErreur={(m) => showNotification(m, 'error')}
+        />
+      );
+    }
+
+    return (
+      <ReaffectationGroupes
+        formateur={compte}
+        destinataires={formateursApprouves.filter((f) => f.userId !== compte.userId)}
+        onAnnuler={() => setPanneau(null)}
+        onReaffecte={(nom) => {
+          showNotification(`Groupe « ${nom} » réaffecté.`, 'success');
+          setPanneau(null);
+          recharger();
+        }}
+        onErreur={(m) => showNotification(m, 'error')}
+      />
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -150,13 +142,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
           <div>
             <h1 className="text-lg font-bold text-[#1C2459]">Administration</h1>
             <p className="text-xs text-slate-500">
-              Approuver, refuser ou révoquer les comptes formateurs de l'établissement
+              Comptes de l'établissement : approbation, désactivation, groupes et suppression
             </p>
           </div>
         </div>
         <p className="mt-4 pt-4 border-t border-slate-100 text-[11px] text-slate-500">
-          Une révocation ne supprime rien : le formateur perd l'accès et retombe sur l'écran
-          d'attente. Ses groupes, ses stagiaires et leur travail restent en base.
+          La désactivation est réversible et ne supprime rien. La suppression, elle, est
+          définitive : elle efface le compte et toutes ses données, sans récupération possible.
         </p>
       </div>
 
@@ -172,27 +164,80 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
 
       {!chargement && !erreur && (
         <>
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <h2 className="text-sm font-bold text-[#1C2459] mb-2">
               Demandes en attente ({enAttente.length})
             </h2>
             {enAttente.length === 0 ? (
               <p className="text-xs text-slate-400 italic">Aucune demande en attente.</p>
             ) : (
-              <ul className="divide-y divide-slate-100">{enAttente.map(ligne)}</ul>
+              <ul className="divide-y divide-slate-100">
+                {enAttente.map((c) => (
+                  <LigneCompte
+                    key={c.userId}
+                    compte={c}
+                    occupe={occupe === c.userId}
+                    onApprouver={() => decider(c, 'approuve')}
+                    onRefuser={() => {
+                      setMotifSaisi('');
+                      setPanneau({ type: 'refus', userId: c.userId });
+                    }}
+                    onDesactiver={(d) => basculer(c, d)}
+                    onSupprimer={() => setPanneau({ type: 'suppression', userId: c.userId })}
+                    panneau={panneauDe(c)}
+                  />
+                ))}
+              </ul>
             )}
-          </div>
+          </section>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <h2 className="text-sm font-bold text-[#1C2459] mb-2">
-              Comptes formateurs ({traites.length})
+              Formateurs ({formateursTraites.length})
             </h2>
-            {traites.length === 0 ? (
+            {formateursTraites.length === 0 ? (
               <p className="text-xs text-slate-400 italic">Aucun compte formateur traité pour le moment.</p>
             ) : (
-              <ul className="divide-y divide-slate-100">{traites.map(ligne)}</ul>
+              <ul className="divide-y divide-slate-100">
+                {formateursTraites.map((c) => (
+                  <LigneCompte
+                    key={c.userId}
+                    compte={c}
+                    occupe={occupe === c.userId}
+                    onRevoquer={c.statut === 'approuve' ? () => decider(c, 'en_attente') : undefined}
+                    onReaffecter={
+                      (c.nbGroupes ?? 0) > 0
+                        ? () => setPanneau({ type: 'reaffectation', userId: c.userId })
+                        : undefined
+                    }
+                    onDesactiver={(d) => basculer(c, d)}
+                    onSupprimer={() => setPanneau({ type: 'suppression', userId: c.userId })}
+                    panneau={panneauDe(c)}
+                  />
+                ))}
+              </ul>
             )}
-          </div>
+          </section>
+
+          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h2 className="text-sm font-bold text-[#1C2459] mb-2">Stagiaires ({stagiaires.length})</h2>
+            {stagiaires.length === 0 ? (
+              <p className="text-xs text-slate-400 italic">Aucun compte stagiaire.</p>
+            ) : (
+              <ul className="divide-y divide-slate-100">
+                {stagiaires.map((c) => (
+                  <LigneCompte
+                    key={c.userId}
+                    compte={c}
+                    occupe={occupe === c.userId}
+                    onDesactiver={(d) => basculer(c, d)}
+                    onSupprimer={() => setPanneau({ type: 'suppression', userId: c.userId })}
+                    panneau={panneauDe(c)}
+                  />
+                ))}
+              </ul>
+            )}
+          </section>
         </>
       )}
     </div>
