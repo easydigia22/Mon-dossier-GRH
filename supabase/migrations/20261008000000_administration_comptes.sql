@@ -24,6 +24,86 @@ create policy "admin_read_roster" on public.classe_stagiaires
   for select to authenticated
   using (public.is_admin());
 
+-- 2 bis. La désactivation doit mordre en base, pas seulement dans le navigateur.
+-- Sans ce qui suit, un compte désactivé garde tous ses droits : son onglet ouvert
+-- continue de lire et d'écrire jusqu'au prochain rechargement, son jeton reste
+-- renouvelé, et n'importe quel client HTTP contourne l'écran de blocage.
+create or replace function public.is_actif()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select not exists (
+    select 1 from public.profiles
+    where user_id = auth.uid() and statut = 'desactive'
+  );
+$$;
+
+do $$
+declare
+  t text;
+begin
+  foreach t in array array[
+    'entreprises', 'salaries', 'contrats', 'evenements_presence', 'demandes_conges',
+    'bulletins', 'regles', 'tentatives', 'classes', 'parametres_app', 'procedures'
+  ]
+  loop
+    execute format('drop policy if exists "owner_all" on public.%I', t);
+    execute format(
+      'create policy "owner_all" on public.%I for all to authenticated
+         using ((select auth.uid()) = user_id and public.is_actif())
+         with check ((select auth.uid()) = user_id and public.is_actif())', t);
+  end loop;
+end;
+$$;
+
+-- Un compte désactivé ne rejoint plus aucune classe.
+-- Corps repris à l'identique de 20261004140000 ; seule la garde est ajoutée.
+create or replace function public.join_classe(p_code text, p_nom text, p_prenom text, p_matricule text default null)
+returns table (classe_nom text, formateur_nom text, etablissement text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_owner  uuid;
+  v_id     text;
+  v_data   jsonb;
+begin
+  if auth.uid() is null then
+    raise exception 'Non authentifié.';
+  end if;
+
+  if not public.is_actif() then
+    raise exception 'Votre compte est désactivé.';
+  end if;
+
+  select user_id, id, data into v_owner, v_id, v_data
+  from public.classes
+  where code_invitation = upper(trim(p_code))
+  limit 1;
+
+  if v_owner is null then
+    raise exception 'Code de classe invalide.';
+  end if;
+
+  insert into public.classe_stagiaires (stagiaire_user_id, classe_user_id, classe_id, matricule, nom, prenom, joined_at)
+  values (auth.uid(), v_owner, v_id, nullif(trim(p_matricule), ''), trim(p_nom), trim(p_prenom), now())
+  on conflict (stagiaire_user_id) do update
+    set classe_user_id = excluded.classe_user_id,
+        classe_id      = excluded.classe_id,
+        matricule      = excluded.matricule,
+        nom            = excluded.nom,
+        prenom         = excluded.prenom,
+        joined_at      = now();
+
+  return query select v_data ->> 'nom', v_data ->> 'formateurNom', v_data ->> 'etablissement';
+end;
+$$;
+
+
 -- 3. Désactiver / réactiver
 create or replace function public.desactiver_compte(p_user_id uuid, p_desactive boolean)
 returns void

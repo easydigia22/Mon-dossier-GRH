@@ -16,15 +16,21 @@ export const ConfirmationSuppression: React.FC<ConfirmationSuppressionProps> = (
   onErreur
 }) => {
   const [apercu, setApercu] = useState<ApercuSuppression | null>(null);
+  const [apercuEchoue, setApercuEchoue] = useState(false);
   const [saisie, setSaisie] = useState('');
   const [occupe, setOccupe] = useState(false);
 
-  useEffect(() => {
+  const chargerApercu = () => {
+    setApercuEchoue(false);
     apercuSuppression(compte.userId)
       .then(setApercu)
-      .catch((e) => onErreur(e instanceof Error ? e.message : String(e)));
-    // L'aperçu ne dépend que du compte visé.
-  }, [compte.userId]);
+      .catch((e) => {
+        setApercuEchoue(true);
+        onErreur(e instanceof Error ? e.message : String(e));
+      });
+  };
+
+  useEffect(chargerApercu, [compte.userId]);
 
   // Recopier l'adresse oblige à regarder quelle ligne on vise : c'est la protection
   // contre l'erreur réelle, supprimer le mauvais compte d'une liste.
@@ -48,7 +54,14 @@ export const ConfirmationSuppression: React.FC<ConfirmationSuppressionProps> = (
         <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
         <div>
           <p className="font-semibold">Suppression définitive, sans retour possible.</p>
-          {apercu === null ? (
+          {apercuEchoue ? (
+            <p className="text-red-700">
+              Impossible de calculer ce qui sera effacé.{' '}
+              <button onClick={chargerApercu} className="underline font-semibold">
+                Réessayer
+              </button>
+            </p>
+          ) : apercu === null ? (
             <p className="text-red-700">Calcul de ce qui sera effacé…</p>
           ) : (
             <p className="text-red-700">
@@ -56,6 +69,8 @@ export const ConfirmationSuppression: React.FC<ConfirmationSuppressionProps> = (
               {apercu.remises} remise(s).
               {apercu.stagiairesDetaches > 0 &&
                 ` ${apercu.stagiairesDetaches} stagiaire(s) seront détachés et devront rejoindre une autre classe.`}
+              {' '}Toutes les autres données du compte partent avec : salariés, contrats, présences,
+              congés, procédures et paramètres.
             </p>
           )}
         </div>
@@ -75,7 +90,7 @@ export const ConfirmationSuppression: React.FC<ConfirmationSuppressionProps> = (
           <>
             <button
               onClick={supprimer}
-              disabled={!confirme}
+              disabled={!confirme || apercu === null}
               className="px-2.5 py-1 bg-[#D64545] hover:bg-[#b93a3a] text-white text-[11px] font-semibold rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Supprimer définitivement

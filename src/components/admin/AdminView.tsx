@@ -48,6 +48,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
       recharger();
     } catch (e) {
       showNotification(e instanceof Error ? e.message : String(e), 'error');
+      // La liste est probablement périmée (ligne déjà supprimée depuis un autre onglet) :
+      // la recharger évite que la ligne fantôme reste et rejoue l'erreur à chaque clic.
+      recharger();
     } finally {
       setOccupe(null);
     }
@@ -112,7 +115,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
             setPanneau(null);
             recharger();
           }}
-          onErreur={(m) => showNotification(m, 'error')}
+          onErreur={(m) => {
+            showNotification(m, 'error');
+            recharger();
+          }}
         />
       );
     }
@@ -123,7 +129,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
         destinataires={formateursApprouves.filter((f) => f.userId !== compte.userId)}
         onAnnuler={() => setPanneau(null)}
         onReaffecte={(nom) => {
-          showNotification(`Groupe « ${nom} » réaffecté.`, 'success');
+          showNotification(
+            `Groupe « ${nom} » réaffecté. Demandez à ${compte.email} de recharger la page : son application en garde une copie locale tant qu'elle n'est pas rechargée.`,
+            'success'
+          );
           setPanneau(null);
           recharger();
         }}
