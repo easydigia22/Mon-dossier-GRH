@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { UserRole } from '../../services/profile';
 import {
   LayoutDashboard,
   Building2,
@@ -46,7 +47,7 @@ interface NavigationTabsProps {
   /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
   afficherEspaceFormateur?: boolean;
   userEmail?: string;
-  role?: 'stagiaire' | 'formateur';
+  role?: UserRole;
   onSignOut?: () => void;
   /** Contrôle l'ouverture du tiroir de navigation sur mobile (< lg) */
   mobileOuvert?: boolean;
@@ -177,7 +178,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 {role && (
                   <span
                     className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                      role === 'formateur' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
+                      role === 'formateur' || role === 'admin' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {role}

@@ -5,7 +5,7 @@ import { AppLogo } from '../common/AppLogo';
 import { supabase } from '../../services/supabase';
 import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
-import { fetchMyRole, UserRole } from '../../services/profile';
+import { fetchMonProfil, MonProfil, UserRole } from '../../services/profile';
 import { fetchMaClasse, rejoindreClasse } from '../../services/classeJoin';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import type { MembreClasseLive } from '../../types';
@@ -21,8 +21,10 @@ interface AuthGateProps {
 export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [checking, setChecking] = useState(true);
-  const [role, setRole] = useState<UserRole | undefined>(undefined);
-  const [roleLoading, setRoleLoading] = useState(false);
+  const [profil, setProfil] = useState<MonProfil | undefined>(undefined);
+  const [profilLoading, setProfilLoading] = useState(false);
+  const [profilErreur, setProfilErreur] = useState<string | null>(null);
+  const role = profil?.role;
   const [maClasse, setMaClasse] = useState<MembreClasseLive | null>(null);
   const [classeLoading, setClasseLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -47,27 +49,42 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Charger le rôle (stagiaire / formateur) une fois la session établie
+  // Charger le profil (rôle + statut d'approbation) une fois la session établie.
+  // Revérifié au retour de focus : un compte révoqué pendant la session doit
+  // retomber sur l'écran d'attente plutôt que de se heurter à des erreurs RLS.
   useEffect(() => {
     if (!session) {
-      setRole(undefined);
+      setProfil(undefined);
+      setProfilErreur(null);
       return;
     }
     let cancelled = false;
-    setRoleLoading(true);
-    fetchMyRole()
-      .then((r) => {
-        if (!cancelled) setRole(r);
-      })
-      .catch((e) => {
-        console.error('Lecture du rôle impossible, repli sur « stagiaire »:', e);
-        if (!cancelled) setRole('stagiaire');
-      })
-      .finally(() => {
-        if (!cancelled) setRoleLoading(false);
-      });
+
+    const charger = (avecIndicateur: boolean) => {
+      if (avecIndicateur) setProfilLoading(true);
+      fetchMonProfil()
+        .then((p) => {
+          if (cancelled) return;
+          setProfil(p);
+          setProfilErreur(null);
+        })
+        .catch((e) => {
+          console.error('Lecture du profil impossible:', e);
+          // Échec fermé : aucun accès par défaut, un message explicite à la place.
+          if (!cancelled) setProfilErreur('Impossible de vérifier votre compte. Vérifiez votre connexion, puis réessayez.');
+        })
+        .finally(() => {
+          if (!cancelled && avecIndicateur) setProfilLoading(false);
+        });
+    };
+
+    charger(true);
+
+    const onFocus = () => charger(false);
+    window.addEventListener('focus', onFocus);
     return () => {
       cancelled = true;
+      window.removeEventListener('focus', onFocus);
     };
   }, [session?.user.id]);
 
@@ -94,7 +111,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
   if (!supabase) return <>{children({})}</>;
 
-  if (checking || (session && roleLoading) || (session && role === 'stagiaire' && classeLoading)) {
+  if (checking || (session && profilLoading) || (session && role === 'stagiaire' && classeLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA]">
         <Loader2 className="w-6 h-6 animate-spin text-[#1C2459]" />
@@ -109,6 +126,26 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       await clearAllLocalData();
       resetCloudCache();
     };
+
+    if (profilErreur) {
+      return <EcranBloquant titre="Compte non vérifiable" message={profilErreur} onSignOut={signOut} />;
+    }
+
+    if (profil && profil.role === 'formateur' && profil.statut !== 'approuve') {
+      const enAttente = profil.statut === 'en_attente';
+      return (
+        <EcranBloquant
+          titre={enAttente ? 'Compte en attente de validation' : 'Demande refusée'}
+          message={
+            enAttente
+              ? "Votre compte formateur a bien été créé. Un administrateur doit le valider avant que vous puissiez accéder à l'application."
+              : profil.motifRefus || "Votre demande de compte formateur n'a pas été retenue."
+          }
+          email={session.user.email}
+          onSignOut={signOut}
+        />
+      );
+    }
 
     if (role === 'stagiaire' && !maClasse) {
       return <JoinClasseScreen onJoined={setMaClasse} onSignOut={signOut} />;
@@ -356,3 +393,28 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
     </div>
   );
 };
+
+const EcranBloquant: React.FC<{
+  titre: string;
+  message: string;
+  email?: string;
+  onSignOut: () => void;
+}> = ({ titre, message, email, onSignOut }) => (
+  <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4">
+    <div className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4 text-center">
+      <div className="flex justify-center">
+        <AppLogo size={40} />
+      </div>
+      <h1 className="text-base font-bold text-[#1C2459]">{titre}</h1>
+      <p className="text-xs text-slate-600 leading-relaxed">{message}</p>
+      {email && <p className="text-[11px] text-slate-400">Compte : {email}</p>}
+      <button
+        onClick={onSignOut}
+        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#1C2459] hover:bg-[#161c47] text-white text-xs font-semibold rounded-lg transition-colors"
+      >
+        <LogOut className="w-4 h-4" />
+        Se déconnecter
+      </button>
+    </div>
+  </div>
+);
