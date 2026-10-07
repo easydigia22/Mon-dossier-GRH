@@ -258,6 +258,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                 </label>
               ))}
             </div>
+            {compteRole === 'formateur' && (
+              <p className="mt-2 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                Un compte formateur doit être validé par l'administrateur avant de pouvoir
+                servir. Vous serez prévenu à votre prochaine connexion.
+              </p>
+            )}
           </fieldset>
         )}
 
