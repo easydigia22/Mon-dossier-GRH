@@ -439,13 +439,16 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           </div>
 
           <p className="text-slate-600">
-            Les missions soumises par tous les stagiaires connectés à ce projet apparaissent ici automatiquement, sans import manuel.
+            Les missions soumises par les stagiaires de vos groupes apparaissent ici automatiquement, sans import manuel.
           </p>
 
           {erreurLive && <p className="text-[#D64545]">{erreurLive}</p>}
 
           {!chargementLive && tentativesLive.length === 0 && !erreurLive && (
-            <p className="text-slate-400 italic">Aucune remise pour le moment.</p>
+            <p className="text-slate-400 italic">
+              Aucune remise pour le moment. Si aucun stagiaire n'a encore rejoint vos groupes,
+              communiquez-leur le code d'invitation de votre classe.
+            </p>
           )}
 
           {tentativesLive.length > 0 && (
