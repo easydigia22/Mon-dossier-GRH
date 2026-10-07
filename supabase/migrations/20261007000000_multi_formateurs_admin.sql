@@ -45,7 +45,7 @@ update public.profiles p
    set role = 'admin', statut = 'approuve'
   from auth.users u
  where u.id = p.user_id
-   and lower(u.email) = 'ezzouhir2122@gmail.com';
+   and lower(u.email) = 'easydigia22@gmail.com';
 
 -- ---------------------------------------------------------------------------
 -- 3. Inscription : un formateur naît en attente, un admin ne naît jamais

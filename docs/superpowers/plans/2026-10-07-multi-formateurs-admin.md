@@ -905,7 +905,7 @@ C'est l'étape qui prouve le lot ; elle ne se remplace pas par une lecture du co
 1. **Formateur en attente** — s'inscrire avec un e-mail neuf en choisissant « formateur ».
    Attendu : la mention de validation s'affiche au moment de l'inscription, puis l'écran
    « Compte en attente de validation » après connexion, sans aucun onglet.
-2. **Admin** — se connecter avec `ezzouhir2122@gmail.com`. Attendu : l'onglet
+2. **Admin** — se connecter avec `easydigia22@gmail.com`. Attendu : l'onglet
    Administration liste la demande ; l'approuver ; vérifier que le formateur entre ensuite
    dans l'application ; le révoquer ; vérifier qu'il retombe sur l'écran d'attente au
    rechargement.

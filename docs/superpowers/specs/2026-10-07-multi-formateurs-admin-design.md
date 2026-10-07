@@ -205,7 +205,7 @@ l'admin. Comportement voulu.
   n'est enfermé dehors du jour au lendemain ; l'attente ne vaut que pour les
   inscriptions futures.
 - **Stagiaires déjà inscrits :** passés en `approuve` (sans objet pour eux).
-- **Premier admin :** `ezzouhir2122@gmail.com` est désigné en dur dans la migration,
+- **Premier admin :** `easydigia22@gmail.com` est désigné en dur dans la migration,
   en `role = 'admin'`, `statut = 'approuve'`. Le premier admin ne peut pas être
   approuvé par un admin ; le désigner en SQL est explicite et auditable, et ne crée
   aucune porte dérobée dans l'application.
