@@ -59,10 +59,17 @@ function resetIfUserChanged(userId: string) {
   }
 }
 
-async function fetchAll(table: string): Promise<any[]> {
+// Filtre explicite sur le propriétaire : RLS laisse désormais un formateur lire les
+// tentatives de ses stagiaires et un admin celles de tout le monde. Sans ce filtre,
+// l'espace de travail local se remplit des lignes d'autrui.
+async function fetchAll(table: string, userId: string): Promise<any[]> {
   const out: any[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await supabase!.from(table).select('id, data').range(from, from + PAGE_SIZE - 1);
+    const { data, error } = await supabase!
+      .from(table)
+      .select('id, data')
+      .eq('user_id', userId)
+      .range(from, from + PAGE_SIZE - 1);
     if (error) throw error;
     out.push(...(data ?? []));
     if (!data || data.length < PAGE_SIZE) break;
@@ -79,10 +86,11 @@ export async function loadCloudState(): Promise<AppDatabaseState | null> {
   if (!supabase || !userId) return null;
   resetIfUserChanged(userId);
 
-  const results = await Promise.all(COLLECTIONS.map((c) => fetchAll(c.table)));
+  const results = await Promise.all(COLLECTIONS.map((c) => fetchAll(c.table, userId)));
   const { data: paramsRow, error: paramsError } = await supabase
     .from('parametres_app')
     .select('data')
+    .eq('user_id', userId)
     .maybeSingle();
   if (paramsError) throw paramsError;
 

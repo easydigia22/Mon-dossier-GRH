@@ -28,6 +28,17 @@ export async function saveCorrectionLive(
 ): Promise<void> {
   if (!supabase) return;
   const updated: TentativeExercice = { ...tentative, statut: 'corrige', correction };
-  const { error } = await supabase.from('tentatives').update({ data: updated }).eq('user_id', userId).eq('id', tentative.id);
+  const { data, error } = await supabase
+    .from('tentatives')
+    .update({ data: updated })
+    .eq('user_id', userId)
+    .eq('id', tentative.id)
+    .select('id');
   if (error) throw error;
+  // RLS ne refuse pas un UPDATE : elle le réduit à zéro ligne, sans erreur. Sans ce
+  // contrôle, un admin (lecture seule) ou un formateur révoqué verrait « correction
+  // transmise » alors que rien n'a été écrit.
+  if (!data || data.length === 0) {
+    throw new Error("Correction refusée : vous n'avez pas le droit de corriger cette tentative.");
+  }
 }

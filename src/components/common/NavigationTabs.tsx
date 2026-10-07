@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { UserRole } from '../../services/profile';
 import {
   LayoutDashboard,
   Building2,
@@ -10,6 +11,7 @@ import {
   Calculator,
   Receipt,
   BookOpenText,
+  ShieldAlert,
   ShieldCheck,
   FileText,
   GraduationCap,
@@ -36,6 +38,7 @@ export type OngletNavigation =
   | 'documents'
   | 'missions'
   | 'formateur'
+  | 'administration'
   | 'parametres';
 
 interface NavigationTabsProps {
@@ -45,8 +48,9 @@ interface NavigationTabsProps {
   nombreMissions: number;
   /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
   afficherEspaceFormateur?: boolean;
+  afficherAdministration?: boolean;
   userEmail?: string;
-  role?: 'stagiaire' | 'formateur';
+  role?: UserRole;
   onSignOut?: () => void;
   /** Contrôle l'ouverture du tiroir de navigation sur mobile (< lg) */
   mobileOuvert?: boolean;
@@ -59,6 +63,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   nombreSalaries,
   nombreMissions,
   afficherEspaceFormateur = true,
+  afficherAdministration = false,
   userEmail,
   role,
   onSignOut,
@@ -89,6 +94,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'documents', label: 'Documents RH', icon: FileText },
     { id: 'missions', label: 'Exercices & Missions', icon: GraduationCap, badge: nombreMissions },
     ...(afficherEspaceFormateur ? [{ id: 'formateur' as const, label: 'Espace Formateur', icon: Award }] : []),
+    ...(afficherAdministration ? [{ id: 'administration' as const, label: 'Administration', icon: ShieldAlert }] : []),
     { id: 'parametres', label: 'Paramètres & Lois', icon: Sliders }
   ];
 
@@ -177,7 +183,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 {role && (
                   <span
                     className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                      role === 'formateur' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
+                      role === 'formateur' || role === 'admin' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {role}
