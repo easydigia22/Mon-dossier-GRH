@@ -11,6 +11,7 @@ import {
   Calculator,
   Receipt,
   BookOpenText,
+  ShieldAlert,
   ShieldCheck,
   FileText,
   GraduationCap,
@@ -37,6 +38,7 @@ export type OngletNavigation =
   | 'documents'
   | 'missions'
   | 'formateur'
+  | 'administration'
   | 'parametres';
 
 interface NavigationTabsProps {
@@ -46,6 +48,7 @@ interface NavigationTabsProps {
   nombreMissions: number;
   /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
   afficherEspaceFormateur?: boolean;
+  afficherAdministration?: boolean;
   userEmail?: string;
   role?: UserRole;
   onSignOut?: () => void;
@@ -60,6 +63,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   nombreSalaries,
   nombreMissions,
   afficherEspaceFormateur = true,
+  afficherAdministration = false,
   userEmail,
   role,
   onSignOut,
@@ -90,6 +94,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'documents', label: 'Documents RH', icon: FileText },
     { id: 'missions', label: 'Exercices & Missions', icon: GraduationCap, badge: nombreMissions },
     ...(afficherEspaceFormateur ? [{ id: 'formateur' as const, label: 'Espace Formateur', icon: Award }] : []),
+    ...(afficherAdministration ? [{ id: 'administration' as const, label: 'Administration', icon: ShieldAlert }] : []),
     { id: 'parametres', label: 'Paramètres & Lois', icon: Sliders }
   ];
 
