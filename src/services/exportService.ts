@@ -1,5 +1,21 @@
 import jsPDF from 'jspdf';
 import { BulletinPaie, LivrePaieLigne } from '../types';
+import { MENTION_COPYRIGHT } from './branding';
+
+/**
+ * Appose la mention de propriété en bas de chaque page du document, une fois
+ * toutes les pages créées.
+ */
+function apposerCopyright(doc: jsPDF): void {
+  const total = doc.getNumberOfPages();
+  for (let page = 1; page <= total; page++) {
+    doc.setPage(page);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(130, 130, 130);
+    doc.text(MENTION_COPYRIGHT, 105, 289, { align: 'center' });
+  }
+}
 
 /**
  * Formate un montant en Dirhams marocains (MAD)
@@ -216,6 +232,8 @@ export function genererBulletinPDF(bulletin: BulletinPaie, entrepriseRaisonSocia
   doc.setFont('helvetica', 'normal');
   doc.text(`Charges patronales totales : ${formatMAD(bulletin.totalCotisationsPatronales)} | Coût global employeur : ${formatMAD(bulletin.coutTotalEmployeur)}`, 15, y);
   doc.text(`Version des paramètres : ${bulletin.versionReglesUtilisee} - Généré le ${new Date().toLocaleDateString('fr-FR')}`, 15, y + 5);
+
+  apposerCopyright(doc);
 
   doc.save(`Bulletin_${bulletin.salarieMatricule}_${bulletin.periodeMois}.pdf`);
 }

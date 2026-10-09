@@ -7,6 +7,7 @@ import React, { Suspense, lazy, useState } from 'react';
 import { useAppData } from './hooks/useAppData';
 import { Header } from './components/common/Header';
 import { NavigationTabs, OngletNavigation } from './components/common/NavigationTabs';
+import { Copyright, CopyrightImpression } from './components/common/Copyright';
 import { CheckCircle2, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
 import type { UserRole } from './services/profile';
 
@@ -155,11 +156,12 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center relative">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 border-4 border-[#1C2459] border-t-[#149D92] rounded-full animate-spin mx-auto"></div>
           <p className="text-xs font-semibold text-[#1C2459]">Chargement de Mon Dossier Administratif...</p>
         </div>
+        <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
       </div>
     );
   }
@@ -399,7 +401,12 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             Conforme Code du Travail (Loi 65-99), Dahir CNSS et CGI Article 73 · Sauvegarde locale sécurisée IndexedDB
           </span>
         </div>
+        <Copyright className="max-w-7xl mx-auto mt-2 pt-2 border-t border-slate-100" />
       </footer>
+
+      {/* Reprise de la mention sur les documents imprimés (contrats, bulletins,
+          livre de paie, bordereaux CNSS, attestations, procédures) */}
+      <CopyrightImpression />
       </div>
     </div>
   );

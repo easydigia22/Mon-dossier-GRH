@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { Download, Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
+import { Copyright } from '../common/Copyright';
 import { supabase } from '../../services/supabase';
 import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
@@ -120,8 +121,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   // est interprété par App.tsx comme le mode local sans compte, donc accès complet.
   if (checking || (session && !profil && !profilErreur) || (session && role === 'stagiaire' && classeLoading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] relative">
         <Loader2 className="w-6 h-6 animate-spin text-[#1C2459]" />
+        <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
       </div>
     );
   }
@@ -216,7 +218,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <AppLogo size={40} />
@@ -322,6 +324,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           {mode === 'login' ? "Pas encore de compte ? S'inscrire" : 'Déjà un compte ? Se connecter'}
         </button>
       </form>
+      <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
     </div>
   );
 };
@@ -357,7 +360,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <Users className="w-8 h-8 text-[#149D92]" />
@@ -427,6 +430,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
           Se déconnecter
         </button>
       </form>
+      <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
     </div>
   );
 };
@@ -437,7 +441,7 @@ const EcranBloquant: React.FC<{
   email?: string;
   onSignOut: () => void;
 }> = ({ titre, message, email, onSignOut }) => (
-  <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4">
+  <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
     <div className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4 text-center">
       <div className="flex justify-center">
         <AppLogo size={40} />
@@ -453,5 +457,6 @@ const EcranBloquant: React.FC<{
         Se déconnecter
       </button>
     </div>
+    <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
   </div>
 );
