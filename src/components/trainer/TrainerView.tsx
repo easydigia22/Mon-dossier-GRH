@@ -4,7 +4,7 @@ import { ClassePedagogique, MissionExercice, TentativeExercice } from '../../typ
 import { exporterJSON } from '../../services/exportService';
 import { cloudEnabled } from '../../services/cloudSync';
 import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
-import { fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
+import { detacherTousDeLaClasse, fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
 import type { MembreClasseLive } from '../../types';
 
 interface TrainerViewProps {
@@ -91,14 +91,27 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     );
   };
 
-  const handleSupprimerClasse = () => {
+  const handleSupprimerClasse = async () => {
     if (!classeActive) return;
     const nom = classeActive.nom;
     const id = classeActive.id;
-    setClasses((prev) => prev.filter((c) => c.id !== id));
-    setClasseActiveId('');
-    setConfirmationSuppression(false);
-    showNotification(`Classe « ${nom} » supprimée.`, 'success');
+    try {
+      // Détacher AVANT de retirer la classe : sans cela les rattachements survivent
+      // en pointant vers une classe disparue, et leurs stagiaires ne revoient jamais
+      // le formulaire de saisie de code.
+      const detaches = cloudEnabled ? await detacherTousDeLaClasse(id) : 0;
+      setClasses((prev) => prev.filter((c) => c.id !== id));
+      setClasseActiveId('');
+      setConfirmationSuppression(false);
+      showNotification(
+        detaches > 0
+          ? `Classe « ${nom} » supprimée. ${detaches} stagiaire(s) détaché(s) : ils devront saisir un nouveau code.`
+          : `Classe « ${nom} » supprimée.`,
+        'success'
+      );
+    } catch (e: any) {
+      showNotification(`Suppression impossible : ${e.message}`, 'error');
+    }
   };
 
   // Effectif réellement rattaché à la classe (stagiaires ayant saisi le code d'invitation)
@@ -343,10 +356,14 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 Archiver cette classe
               </button>
             )}
-            {classeActive.stagiaires.length + effectifLive.length === 0 ? (
+            {classeActive.archiveeLe || classeActive.stagiaires.length + effectifLive.length === 0 ? (
               confirmationSuppression ? (
                 <>
-                  <span className="text-[11px] text-red-800">Supprimer « {classeActive.nom} » définitivement ?</span>
+                  <span className="text-[11px] text-red-800">
+                    Supprimer « {classeActive.nom} » définitivement ?
+                    {effectifLive.length > 0 &&
+                      ` ${effectifLive.length} stagiaire(s) seront détachés et devront saisir un nouveau code.`}
+                  </span>
                   <button
                     type="button"
                     onClick={handleSupprimerClasse}
@@ -373,7 +390,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               )
             ) : (
               <span className="text-[11px] text-slate-400 italic">
-                Suppression impossible tant qu'un stagiaire est rattaché — archivez la classe.
+                Suppression impossible tant qu'un stagiaire est rattaché — archivez d'abord la classe.
               </span>
             )}
           </div>

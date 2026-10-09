@@ -55,6 +55,30 @@ export async function fetchEffectifLive(classeId: string): Promise<MembreClasseL
   }));
 }
 
+/**
+ * Détache tous les stagiaires rattachés à une classe et renvoie leur nombre.
+ * Appelé avant de supprimer une classe archivée : `classe_stagiaires` n'a aucune
+ * clé étrangère vers `classes`, donc rien ne détacherait ces stagiaires tout seuls,
+ * et l'application les croirait rattachés à une classe disparue — sans jamais leur
+ * reproposer la saisie d'un code.
+ */
+export async function detacherTousDeLaClasse(classeId: string): Promise<number> {
+  if (!supabase) return 0;
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user.id;
+  if (!userId) return 0;
+
+  // Filtre explicite sur le propriétaire plutôt que de s'en remettre à RLS seule.
+  const { data, error } = await supabase
+    .from('classe_stagiaires')
+    .delete()
+    .eq('classe_user_id', userId)
+    .eq('classe_id', classeId)
+    .select('stagiaire_user_id');
+  if (error) throw error;
+  return data?.length ?? 0;
+}
+
 export async function retirerDuEffectif(stagiaireUserId: string): Promise<void> {
   if (!supabase) return;
   const { error } = await supabase.from('classe_stagiaires').delete().eq('stagiaire_user_id', stagiaireUserId);
