@@ -404,6 +404,11 @@ export interface ClassePedagogique {
   etablissement: string; // Ex: "ISTA Marrakech Guéliz - OFPPT"
   /** Code à communiquer aux stagiaires pour rejoindre cette classe depuis leur propre compte */
   codeInvitation?: string;
+  /**
+   * Date ISO d'archivage. Sa présence signifie que la classe est archivée : elle sort
+   * de la liste active et son code d'invitation cesse d'être accepté (voir join_classe).
+   */
+  archiveeLe?: string;
   stagiaires: {
     matricule: string;
     nom: string;
