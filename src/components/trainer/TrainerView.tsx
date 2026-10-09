@@ -37,7 +37,9 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     stagiaires: []
   });
 
-  const classeActive = classes.find((c) => c.id === classeActiveId) || classes[0];
+  const classesActives = classes.filter((c) => !c.archiveeLe);
+  const classesArchivees = classes.filter((c) => c.archiveeLe);
+  const classeActive = classes.find((c) => c.id === classeActiveId) || classesActives[0] || classes[0];
 
   // Gestion de l'effectif (liste des stagiaires) de la classe active
   const [nouveauStagiaire, setNouveauStagiaire] = useState({ matricule: '', nom: '', prenom: '' });
@@ -70,6 +72,33 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       prev.map((c) => (c.id === classeActive.id ? { ...c, stagiaires: c.stagiaires.filter((s) => s.matricule !== matricule) } : c))
     );
     showNotification('Stagiaire retiré de la classe.', 'info');
+  };
+
+  const [confirmationSuppression, setConfirmationSuppression] = useState(false);
+
+  const handleArchiver = (archiver: boolean) => {
+    if (!classeActive) return;
+    const id = classeActive.id;
+    setClasses((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, archiveeLe: archiver ? new Date().toISOString() : undefined } : c))
+    );
+    if (archiver) setClasseActiveId('');
+    showNotification(
+      archiver
+        ? `Classe « ${classeActive.nom} » archivée. Son code d'invitation ne fonctionne plus.`
+        : `Classe « ${classeActive.nom} » restaurée.`,
+      'success'
+    );
+  };
+
+  const handleSupprimerClasse = () => {
+    if (!classeActive) return;
+    const nom = classeActive.nom;
+    const id = classeActive.id;
+    setClasses((prev) => prev.filter((c) => c.id !== id));
+    setClasseActiveId('');
+    setConfirmationSuppression(false);
+    showNotification(`Classe « ${nom} » supprimée.`, 'success');
   };
 
   // Effectif réellement rattaché à la classe (stagiaires ayant saisi le code d'invitation)
@@ -265,11 +294,20 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               onChange={(e) => setClasseActiveId(e.target.value)}
               className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50"
             >
-              {classes.map((c) => (
+              {classesActives.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nom} ({c.anneeScolaire}) - {c.etablissement}
                 </option>
               ))}
+              {classesArchivees.length > 0 && (
+                <optgroup label={`Archivées (${classesArchivees.length})`}>
+                  {classesArchivees.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nom} ({c.anneeScolaire})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           </div>
 
@@ -292,7 +330,71 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             </span>
           </div>
 
-          {cloudEnabled && (
+          {/* Retirer une classe : archiver est le geste courant ; la suppression n'est
+              offerte que si personne n'y est rattaché, sinon un stagiaire se retrouverait
+              lié à une classe inexistante, sans pouvoir en rejoindre une autre. */}
+          <div className="flex flex-wrap items-center gap-2">
+            {!classeActive.archiveeLe && (
+              <button
+                type="button"
+                onClick={() => handleArchiver(true)}
+                className="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+              >
+                Archiver cette classe
+              </button>
+            )}
+            {classeActive.stagiaires.length + effectifLive.length === 0 ? (
+              confirmationSuppression ? (
+                <>
+                  <span className="text-[11px] text-red-800">Supprimer « {classeActive.nom} » définitivement ?</span>
+                  <button
+                    type="button"
+                    onClick={handleSupprimerClasse}
+                    className="px-3 py-1.5 bg-[#D64545] hover:bg-[#b93a3a] text-white font-semibold rounded transition-colors"
+                  >
+                    Confirmer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmationSuppression(false)}
+                    className="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmationSuppression(true)}
+                  className="px-3 py-1.5 text-[#D64545] font-semibold hover:underline"
+                >
+                  Supprimer
+                </button>
+              )
+            ) : (
+              <span className="text-[11px] text-slate-400 italic">
+                Suppression impossible tant qu'un stagiaire est rattaché — archivez la classe.
+              </span>
+            )}
+          </div>
+
+          {classeActive.archiveeLe && (
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-100 border border-slate-300 rounded-lg px-3.5 py-2.5">
+              <span className="text-slate-600">
+                Classe archivée le {new Date(classeActive.archiveeLe).toLocaleDateString('fr-FR')} — son code
+                d'invitation n'est plus accepté.
+              </span>
+              <button
+                type="button"
+                onClick={() => handleArchiver(false)}
+                className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+              >
+                Restaurer
+              </button>
+            </div>
+          )}
+
+          {cloudEnabled && !classeActive.archiveeLe && (
             <div className="flex items-center justify-between gap-3 bg-[#F4F7FA] border border-slate-200 rounded-lg px-3.5 py-2.5">
               {classeActive.codeInvitation ? (
                 <>
