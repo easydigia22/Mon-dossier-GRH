@@ -108,7 +108,8 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   const handleToggleNiveau = () => {
     const nouveau = niveau === 'essentiel' ? 'avance' : 'essentiel';
     setNiveau(nouveau);
-    showNotification(`Niveau pédagogique basculé en mode ${nouveau}.`, 'info');
+    const nbMissions = nouveau === 'avance' ? missions.length : missions.filter((m) => m.niveau === 'essentiel').length;
+    showNotification(`Niveau ${nouveau} : ${nbMissions} mission(s) proposée(s) sur ${missions.length}.`, 'info');
   };
 
   const handleResetDemoConfirm = () => {
@@ -352,6 +353,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             missions={missions}
             tentatives={tentatives}
             modePedagogique={modePedagogique}
+            niveau={niveau}
             nomStagiaireActif={nomStagiaireActif}
             onSoumettreTentative={soumettreTentative}
             showNotification={showNotification}

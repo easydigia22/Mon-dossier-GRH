@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   GraduationCap,
   CheckCircle2,
@@ -13,12 +13,19 @@ import {
   ChevronUp,
   FileCheck
 } from 'lucide-react';
-import { MissionExercice, ModePedagogique, TentativeExercice } from '../../types';
+import { MissionExercice, ModePedagogique, NiveauPedagogique, TentativeExercice } from '../../types';
+
+/** mm:ss, borné à zéro : un chrono négatif n'a pas de sens à l'écran. */
+function formaterChrono(secondes: number): string {
+  const s = Math.max(0, secondes);
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
 
 interface MissionsViewProps {
   missions: MissionExercice[];
   tentatives: TentativeExercice[];
   modePedagogique: ModePedagogique;
+  niveau: NiveauPedagogique;
   nomStagiaireActif: string;
   onSoumettreTentative: (tentative: TentativeExercice) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
@@ -28,6 +35,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   missions,
   tentatives,
   modePedagogique,
+  niveau,
   nomStagiaireActif,
   onSoumettreTentative,
   showNotification
@@ -39,24 +47,66 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   const [controlesCoches, setControlesCoches] = useState<string[]>([]);
   const [voirCorrige, setVoirCorrige] = useState<boolean>(false);
 
-  const mission = missions.find((m) => m.id === missionActiveId) || missions[0];
-  const tentativeExistante = tentatives.find((t) => t.missionId === mission.id);
+  const enEvaluation = modePedagogique === 'evaluation';
 
-  const handleChangerMission = (id: string) => {
-    setMissionActiveId(id);
+  // Le niveau avancé donne accès à tout le catalogue ; le niveau essentiel ne
+  // retient que les missions de base, celles sur lesquelles le module se valide.
+  const missionsVisibles = niveau === 'avance' ? missions : missions.filter((m) => m.niveau === 'essentiel');
+
+  const mission = missionsVisibles.find((m) => m.id === missionActiveId) || missionsVisibles[0];
+  const tentativeExistante = mission ? tentatives.find((t) => t.missionId === mission.id) : undefined;
+
+  // Chrono d'évaluation : redémarre à chaque changement de mission ou de mode.
+  const [debutMission, setDebutMission] = useState<number>(() => Date.now());
+  const [maintenant, setMaintenant] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    setDebutMission(Date.now());
+    setMaintenant(Date.now());
+  }, [mission?.id, modePedagogique]);
+
+  // Recharge l'espace de réponse sur la mission réellement affichée : celle-ci
+  // change aussi sans clic, quand une bascule de niveau masque la mission en cours.
+  useEffect(() => {
     setIndicesAffiches(0);
     setVoirCorrige(false);
-    const existing = tentatives.find((t) => t.missionId === id);
-    if (existing) {
-      setReponsesTextuelles(existing.reponsesStagiaire.justificationsTextuelles || {});
-      setValeursCalculees(existing.reponsesStagiaire.valeursCalculees || {});
-      setControlesCoches(existing.reponsesStagiaire.controlesEffectues || []);
-    } else {
-      setReponsesTextuelles({});
-      setValeursCalculees({});
-      setControlesCoches([]);
+    const existante = tentatives.find((t) => t.missionId === mission?.id);
+    setReponsesTextuelles(existante?.reponsesStagiaire.justificationsTextuelles || {});
+    setValeursCalculees(existante?.reponsesStagiaire.valeursCalculees || {});
+    setControlesCoches(existante?.reponsesStagiaire.controlesEffectues || []);
+    // `tentatives` volontairement hors dépendances : une remise ne doit pas
+    // réinitialiser le formulaire sous les doigts du stagiaire.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mission?.id]);
+
+  useEffect(() => {
+    if (!enEvaluation) return;
+    const timer = setInterval(() => setMaintenant(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [enEvaluation, mission?.id]);
+
+  // Le corrigé et les indices n'ont pas leur place pendant une évaluation.
+  useEffect(() => {
+    if (enEvaluation) {
+      setVoirCorrige(false);
+      setIndicesAffiches(0);
     }
-  };
+  }, [enEvaluation]);
+
+  if (!mission) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm text-center space-y-2">
+        <GraduationCap className="w-8 h-8 text-slate-300 mx-auto" />
+        <p className="text-sm font-bold text-[#1C2459]">Aucune mission pour ce niveau</p>
+        <p className="text-xs text-slate-500">Basculez le niveau sur « avancé » dans l'en-tête pour afficher tout le catalogue.</p>
+      </div>
+    );
+  }
+
+  const secondesRestantes = mission.dureeIndicativeMinutes * 60 - Math.floor((maintenant - debutMission) / 1000);
+  const tempsEcoule = enEvaluation && secondesRestantes <= 0;
+
+  const handleChangerMission = (id: string) => setMissionActiveId(id);
 
   const handleDemanderIndice = () => {
     if (indicesAffiches < mission.indicesProgressifs.length) {
@@ -86,7 +136,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
       id: `tentative-${mission.id}-${Date.now()}`,
       missionId: mission.id,
       stagiaireNom: nomStagiaireActif,
-      dateDebut: new Date().toISOString(),
+      dateDebut: new Date(debutMission).toISOString(),
       dateRemise: new Date().toISOString(),
       statut: 'corrige',
       reponsesStagiaire: {
@@ -109,8 +159,14 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
     };
 
     onSoumettreTentative(nouvelleTentative);
-    setVoirCorrige(true);
-    showNotification('Mission enregistrée. Vous pouvez consulter les explications détaillées.', 'success');
+
+    if (enEvaluation) {
+      // Copie remise : ni corrigé ni explications, la correction revient au formateur.
+      showNotification('Copie remise. Le corrigé reste fermé jusqu\'à la levée du mode Évaluation.', 'success');
+    } else {
+      setVoirCorrige(true);
+      showNotification('Mission enregistrée. Vous pouvez consulter les explications détaillées.', 'success');
+    }
   };
 
   return (
@@ -125,12 +181,28 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
             <div>
               <h1 className="text-lg font-bold text-[#1C2459]">Missions &amp; Exercices Pédagogiques</h1>
               <p className="text-xs text-slate-500">
-                10 situations professionnelles réelles pour valider le module « Gestion administrative du personnel »
+                {missionsVisibles.length} situations professionnelles réelles pour valider le module « Gestion administrative du personnel »
+                {niveau === 'essentiel' && missions.length > missionsVisibles.length && (
+                  <span className="text-slate-400"> · {missions.length - missionsVisibles.length} mission(s) avancée(s) masquée(s)</span>
+                )}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {enEvaluation && (
+              <span
+                className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border tabular-nums ${
+                  tempsEcoule
+                    ? 'bg-red-50 text-[#D64545] border-red-200'
+                    : 'bg-amber-50 text-amber-900 border-amber-200'
+                }`}
+                title="Temps restant pour cette mission"
+              >
+                <Clock className="w-3.5 h-3.5" />
+                {tempsEcoule ? 'Temps écoulé' : formaterChrono(secondesRestantes)}
+              </span>
+            )}
             <span className="text-xs text-slate-500">Apprenant :</span>
             <span className="text-xs font-bold text-[#1C2459] bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200">
               {nomStagiaireActif}
@@ -140,7 +212,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
         {/* Sélecteur horizontal des 10 missions */}
         <div className="mt-4 pt-4 border-t border-slate-100 flex gap-1.5 overflow-x-auto pb-1">
-          {missions.map((m) => {
+          {missionsVisibles.map((m) => {
             const fait = tentatives.some((t) => t.missionId === m.id);
             const estActive = m.id === missionActiveId;
             return (
@@ -169,7 +241,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#149D92]">
-                Mission N° {mission.numero} / 10
+                Mission N° {mission.numero} / {missions.length}
               </span>
               <span className="flex items-center gap-1 text-slate-500 text-[11px]">
                 <Clock className="w-3.5 h-3.5" />
@@ -204,7 +276,8 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               </ul>
             </div>
 
-            {/* Grille de notation sur 20 */}
+            {/* Grille de notation sur 20 — masquée pendant une évaluation */}
+            {!enEvaluation && (
             <div className="pt-2 border-t border-slate-100">
               <span className="font-bold text-slate-700 block mb-2 flex items-center justify-between">
                 <span>Barème de notation officiel</span>
@@ -229,9 +302,19 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
                 </div>
               </div>
             </div>
+            )}
           </div>
 
-          {/* Indices progressifs */}
+          {/* Indices progressifs — indisponibles pendant une évaluation */}
+          {enEvaluation ? (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-xs text-slate-600 flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-[#1C2459]">Mode Évaluation.</strong> Indices, barème et corrigé sont fermés.
+                Votre copie est enregistrée à la remise et corrigée par le formateur.
+              </span>
+            </div>
+          ) : (
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3 text-xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[#1C2459] flex items-center gap-1.5">
@@ -267,6 +350,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               </button>
             )}
           </div>
+          )}
         </div>
 
         {/* Colonne droite : Espace de travail du stagiaire & Remise */}
@@ -400,26 +484,30 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
             {/* Boutons d'action */}
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setVoirCorrige(!voirCorrige)}
-                className="text-xs font-semibold text-[#1C2459] hover:underline"
-              >
-                {voirCorrige ? 'Masquer le corrigé expliqué' : 'Consulter le corrigé officiel'}
-              </button>
+              {enEvaluation ? (
+                <span className="text-xs text-slate-400">Corrigé indisponible en évaluation</span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setVoirCorrige(!voirCorrige)}
+                  className="text-xs font-semibold text-[#1C2459] hover:underline"
+                >
+                  {voirCorrige ? 'Masquer le corrigé expliqué' : 'Consulter le corrigé officiel'}
+                </button>
+              )}
 
               <button
                 type="submit"
                 className="px-5 py-2.5 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-colors"
               >
                 <Send className="w-4 h-4" />
-                <span>Soumettre pour correction</span>
+                <span>{enEvaluation ? 'Remettre ma copie' : 'Soumettre pour correction'}</span>
               </button>
             </div>
           </form>
 
           {/* Volet Corrigé officiel détaillé et Erreurs fréquentes */}
-          {voirCorrige && (
+          {voirCorrige && !enEvaluation && (
             <div className="bg-white border-2 border-[#149D92] rounded-xl p-6 shadow-sm space-y-4 text-xs">
               <div className="flex items-center justify-between border-b border-teal-100 pb-2">
                 <span className="font-extrabold text-sm text-[#1C2459] flex items-center gap-2">
