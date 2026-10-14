@@ -1,11 +1,12 @@
 import React from 'react';
-import { Sliders, Download, Upload, RotateCcw, ShieldCheck, CheckCircle2, Info, BookOpen, AlertTriangle } from 'lucide-react';
+import { Sliders, Download, Upload, RotateCcw, ShieldCheck, CheckCircle2, Info, BookOpen, AlertTriangle, Trash2 } from 'lucide-react';
 import { RegleParametreJuridique } from '../../types';
 import { exporterJSON } from '../../services/exportService';
 
 interface SettingsViewProps {
   regles: RegleParametreJuridique[];
   onResetDemo: () => void;
+  onViderEspace: () => void;
   fullAppState: any;
   onRestoreState: (state: any) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
@@ -14,6 +15,7 @@ interface SettingsViewProps {
 export const SettingsView: React.FC<SettingsViewProps> = ({
   regles,
   onResetDemo,
+  onViderEspace,
   fullAppState,
   onRestoreState,
   showNotification
@@ -102,6 +104,25 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded text-xs transition-colors"
             >
               Réinitialiser la copie démo
+            </button>
+          </div>
+
+          <div className="md:col-span-2 p-3.5 bg-red-50 border border-red-300 rounded-lg space-y-2 text-red-900">
+            <strong className="block font-bold text-red-950 flex items-center gap-1.5">
+              <Trash2 className="w-4 h-4 text-red-700" />
+              <span>Vider l'espace de travail</span>
+            </strong>
+            <p className="text-[11px] leading-relaxed">
+              Supprime <strong>définitivement toutes les données de ce compte</strong> — la démonstration (SARL Atlas)
+              comme le travail réel — à la fois en local et dans le cloud. À utiliser pour repartir d'un espace
+              totalement vide. Le référentiel juridique est conservé. Cette action est irréversible.
+            </p>
+            <button
+              onClick={onViderEspace}
+              className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white font-semibold rounded text-xs transition-colors inline-flex items-center gap-1.5"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Vider l'espace de travail</span>
             </button>
           </div>
         </div>

@@ -261,6 +261,29 @@ export function useAppData() {
   };
 
   /**
+   * Vider complètement l'espace de travail (démo ET vrai travail).
+   *
+   * Remet l'état à zéro : la sauvegarde automatique propage alors la suppression
+   * aussi bien en local (IndexedDB/localStorage) que dans le cloud — pushDiff
+   * supprime toutes les lignes précédemment synchronisées du compte courant.
+   * Le référentiel juridique (règles) est conservé : ce ne sont pas des données
+   * fictives mais la base légale de l'application.
+   */
+  const viderEspaceDeTravail = async () => {
+    await clearAllLocalData();
+    setEntreprise(ENTREPRISE_VIDE);
+    setSalaries([]);
+    setContrats([]);
+    setEvenementsPresence([]);
+    setDemandesConges([]);
+    setBulletins([]);
+    setTentatives([]);
+    setClasses([]);
+    setProcedures([]);
+    showNotification('Espace de travail vidé : toutes les données (y compris la démonstration) ont été supprimées.', 'success');
+  };
+
+  /**
    * Ajouter ou modifier un salarié
    */
   const upsertSalarie = (salarie: Salarie) => {
@@ -430,6 +453,7 @@ export function useAppData() {
     calculerTousLesBulletinsPeriode,
     cloturerPeriode,
     reinitialiserDonneesDemo,
+    viderEspaceDeTravail,
     upsertSalarie,
     upsertContrat,
     deleteContrat,

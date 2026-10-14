@@ -83,6 +83,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     calculerTousLesBulletinsPeriode,
     cloturerPeriode,
     reinitialiserDonneesDemo,
+    viderEspaceDeTravail,
     upsertSalarie,
     upsertContrat,
     deleteContrat,
@@ -120,6 +121,16 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   const handleResetDemoConfirm = () => {
     if (confirm('Voulez-vous réinitialiser toutes les données de démonstration de la SARL Atlas ? Les modifications apportées seront effacées.')) {
       reinitialiserDonneesDemo();
+    }
+  };
+
+  const handleViderEspaceConfirm = () => {
+    if (
+      confirm(
+        "Vider l'espace de travail supprimera DÉFINITIVEMENT toutes les données de ce compte (démonstration ET travail réel), en local comme dans le cloud. Cette action est irréversible. Continuer ?"
+      )
+    ) {
+      viderEspaceDeTravail();
     }
   };
 
@@ -394,6 +405,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
           <SettingsView
             regles={regles}
             onResetDemo={handleResetDemoConfirm}
+            onViderEspace={handleViderEspaceConfirm}
             fullAppState={fullAppState}
             onRestoreState={handleRestoreState}
             showNotification={showNotification}
