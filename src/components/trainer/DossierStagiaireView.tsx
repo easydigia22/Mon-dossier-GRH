@@ -40,7 +40,7 @@ export const DossierStagiaireView: React.FC<DossierStagiaireViewProps> = ({ effe
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-3">
         <div className="flex items-center gap-2">
           <FolderOpen className="w-5 h-5 text-[#149D92]" />
           <h3 className="text-sm font-bold text-[#1C2459]">Dossier de travail d'un stagiaire</h3>
@@ -55,7 +55,7 @@ export const DossierStagiaireView: React.FC<DossierStagiaireViewProps> = ({ effe
             <select
               value={userIdActif}
               onChange={(e) => handleSelection(e.target.value)}
-              className="text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white"
+              className="text-xs border border-[#E3D8C8] rounded-lg px-3 py-2 bg-white"
             >
               <option value="">— Choisir un stagiaire —</option>
               {effectif.map((m) => (

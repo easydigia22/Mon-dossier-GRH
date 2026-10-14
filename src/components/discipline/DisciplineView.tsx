@@ -84,7 +84,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -104,7 +104,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
               setSalarieActifId(e.target.value);
               setProcedureEnCours(procedures.find((p) => p.salarieId === e.target.value && p.statut === 'ouverte') || null);
             }}
-            className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50 text-xs"
+            className="px-3 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459] bg-slate-50 text-xs"
           >
             {salaries.map((s) => (
               <option key={s.id} value={s.id}>
@@ -121,7 +121,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
 
       {/* Garde-fou : une seule procédure ouverte à la fois par salarié */}
       {!procedure && (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print text-center space-y-3">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print text-center space-y-3">
           {procedureOuverte ? (
             <p className="text-sm text-slate-600">
               Une procédure disciplinaire est déjà ouverte pour {salarieActif?.nom} {salarieActif?.prenom}
@@ -157,7 +157,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
       )}
 
       {procedure && lectureSeule && (
-        <div className="bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 no-print flex items-center justify-between gap-3">
+        <div className="bg-slate-100 border border-[#E3D8C8] rounded-xl px-4 py-3 no-print flex items-center justify-between gap-3">
           <span className="text-xs text-slate-700 font-medium flex items-center gap-2">
             <Clock className="w-3.5 h-3.5 text-slate-500" />
             Procédure clôturée — consultation et impression uniquement, aucune modification possible.
@@ -174,7 +174,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
       {procedure && (
         <>
           {/* Étape 1 — Qualification */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-3">
+          <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">1</span>
@@ -199,7 +199,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   value={procedure.typeFaute}
                   onChange={(e) => majProcedure({ typeFaute: e.target.value as TypeFauteDisciplinaire })}
                   disabled={lectureSeule}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                  className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                 >
                   <option value="legere">Faute légère (Art. 37)</option>
                   <option value="grave">Faute grave (Art. 39)</option>
@@ -211,7 +211,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   value={procedure.categorieSalarie}
                   onChange={(e) => majProcedure({ categorieSalarie: e.target.value as 'cadre' | 'non_cadre' })}
                   disabled={lectureSeule}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                  className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                 >
                   <option value="non_cadre">Non-cadre</option>
                   <option value="cadre">Cadre</option>
@@ -224,7 +224,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   value={procedure.dateConstatation}
                   onChange={(e) => majProcedure({ dateConstatation: e.target.value })}
                   disabled={lectureSeule}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                  className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                 />
               </label>
               <label className="block sm:col-span-2">
@@ -234,7 +234,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                   onChange={(e) => majProcedure({ motifFaute: e.target.value })}
                   rows={2}
                   disabled={lectureSeule}
-                  className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                  className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   placeholder="Décrivez les faits reprochés au salarié..."
                 />
               </label>
@@ -242,7 +242,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           </div>
 
           {procedure.motifFaute && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">2</span>
                 Convocation à l'entretien préalable
@@ -255,7 +255,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.dateConvocation || ''}
                     onChange={(e) => majProcedure({ dateConvocation: e.target.value })}
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
                 <label className="flex items-center gap-2">
@@ -281,7 +281,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.dateConvocation && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">3</span>
                 Entretien préalable &amp; procès-verbal
@@ -294,7 +294,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.dateEntretien || ''}
                     onChange={(e) => majProcedure({ dateEntretien: e.target.value })}
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
                 <label className="block">
@@ -303,7 +303,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.signePar || ''}
                     onChange={(e) => majProcedure({ signePar: e.target.value as ProcedureDisciplinaire['signePar'] })}
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   >
                     <option value="">—</option>
                     <option value="les_deux">Signé par les deux parties</option>
@@ -319,7 +319,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     rows={3}
                     placeholder="Explications du salarié, éléments échangés, suites annoncées..."
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                   <span className="mt-1 block text-[10px] text-slate-400">
                     Ce résumé constitue le corps du procès-verbal imprimé.
@@ -339,7 +339,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.dateEntretien && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">4</span>
                 Décision disciplinaire
@@ -351,7 +351,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.sanction || ''}
                     onChange={(e) => majProcedure({ sanction: e.target.value as SanctionDisciplinaire })}
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   >
                     <option value="">—</option>
                     {procedure.typeFaute === 'legere' ? (
@@ -375,7 +375,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                       value={procedure.joursMiseAPied || 1}
                       onChange={(e) => majProcedure({ joursMiseAPied: Math.min(8, Math.max(1, Number(e.target.value))) })}
                       disabled={lectureSeule}
-                      className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                      className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                     />
                   </label>
                 )}
@@ -386,7 +386,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                     value={procedure.dateNotificationSanction || ''}
                     onChange={(e) => majProcedure({ dateNotificationSanction: e.target.value })}
                     disabled={lectureSeule}
-                    className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                    className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                   />
                 </label>
               </div>
@@ -416,7 +416,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.sanction === 'licenciement' && procedure.dateNotificationSanction && salarieActif && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-4">
+            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-4">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">5</span>
                 Solde de tout compte
@@ -463,7 +463,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                           value={procedure.joursRetardPaiement ?? calcul.joursRetardPaiement}
                           onChange={(e) => majProcedure({ joursRetardPaiement: Math.max(0, Number(e.target.value) || 0) })}
                           disabled={lectureSeule}
-                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                          className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                         />
                       </label>
                       <label className="block">
@@ -475,7 +475,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                           value={procedure.tauxInteretAnnuel ?? calcul.tauxInteretAnnuel}
                           onChange={(e) => majProcedure({ tauxInteretAnnuel: Math.max(0, Number(e.target.value) || 0) })}
                           disabled={lectureSeule}
-                          className="mt-1 w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-500"
+                          className="mt-1 w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-500"
                         />
                       </label>
                     </div>
@@ -568,7 +568,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
                 au sujet des faits constatés le {formatDateJJMMAAAA(procedure.dateConstatation)}, qualifiés de{' '}
                 {procedure.typeFaute === 'grave' ? 'faute grave (Art. 39)' : 'faute légère (Art. 37)'} :
               </p>
-              <p className="mb-4 pl-4 border-l-2 border-slate-300 italic">{procedure.motifFaute}</p>
+              <p className="mb-4 pl-4 border-l-2 border-[#E3D8C8] italic">{procedure.motifFaute}</p>
               <p className="mb-4">
                 {procedure.assistanceDemandee
                   ? "Le salarié a demandé à être assisté d'un représentant des salariés ou d'un délégué syndical."
@@ -638,7 +638,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
       )}
 
       {historiqueClos.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print space-y-2">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-2">
           <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
             <History className="w-4 h-4 text-[#149D92]" />
             Procédures clôturées pour {salarieActif?.nom} {salarieActif?.prenom}

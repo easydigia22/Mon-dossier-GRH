@@ -40,7 +40,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Carte principale */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -91,22 +91,22 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
         </div>
 
         {/* Rappel du déroulement du calcul de paie marocain */}
-        <div className="mt-5 p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs text-slate-600">
+        <div className="mt-5 p-3.5 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg text-xs text-slate-600">
           <span className="font-bold text-[#1C2459] block mb-1">Architecture déterministe du calcul :</span>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-[11px]">
-            <div className="p-2 bg-white rounded border border-slate-200">
+            <div className="p-2 bg-white rounded border border-[#ECE3D6]">
               <strong className="text-[#1C2459] block">1. Brut Global</strong>
               Base (191h) - Retenues absences + Heures Sup + Prime Ancienneté (Art. 350) + Primes
             </div>
-            <div className="p-2 bg-white rounded border border-slate-200">
+            <div className="p-2 bg-white rounded border border-[#ECE3D6]">
               <strong className="text-[#1C2459] block">2. Cotisations Salariales</strong>
               CNSS 4,48% (Plafonné à 6 000 MAD) + AMO 2,26% (Déplafonné)
             </div>
-            <div className="p-2 bg-white rounded border border-slate-200">
+            <div className="p-2 bg-white rounded border border-[#ECE3D6]">
               <strong className="text-[#1C2459] block">3. Impôt sur le Revenu</strong>
               Frais pros (35%/25%) → SNI → Barème progressif CGI → Abattement famille (30 MAD/pers)
             </div>
-            <div className="p-2 bg-white rounded border border-slate-200">
+            <div className="p-2 bg-white rounded border border-[#ECE3D6]">
               <strong className="text-[#1C2459] block">4. Net &amp; Coût Patronal</strong>
               Net = Brut - Cotisations - IR - Acomptes | Coût = Brut + Charges patronales (CNSS, TFP, AMO)
             </div>
@@ -115,7 +115,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
       </div>
 
       {/* Tableau récapitulatif des variables préparées par salarié */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Pointage des variables de paie par collaborateur ({salaries.length})
@@ -125,7 +125,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-[#F4F7FA] text-slate-600 uppercase text-[11px] font-semibold">
+            <thead className="bg-[#FBF7F0] text-slate-600 uppercase text-[11px] font-semibold">
               <tr>
                 <th className="py-3 px-4">Salarié</th>
                 <th className="py-3 px-4 text-right">Salaire Base</th>

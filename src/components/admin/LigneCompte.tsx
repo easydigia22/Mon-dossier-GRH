@@ -14,7 +14,7 @@ export const CLASSE_STATUT: Record<StatutCompte, string> = {
   en_attente: 'bg-amber-50 text-amber-800 border-amber-200',
   approuve: 'bg-emerald-50 text-emerald-800 border-emerald-200',
   refuse: 'bg-red-50 text-red-800 border-red-200',
-  desactive: 'bg-slate-100 text-slate-600 border-slate-300'
+  desactive: 'bg-slate-100 text-slate-600 border-[#E3D8C8]'
 };
 
 interface LigneCompteProps {
@@ -85,7 +85,7 @@ export const LigneCompte: React.FC<LigneCompteProps> = ({
             {onRevoquer && (
               <button
                 onClick={onRevoquer}
-                className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+                className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
               >
                 Révoquer
               </button>
@@ -93,14 +93,14 @@ export const LigneCompte: React.FC<LigneCompteProps> = ({
             {onReaffecter && (
               <button
                 onClick={onReaffecter}
-                className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+                className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
               >
                 Réaffecter un groupe
               </button>
             )}
             <button
               onClick={() => onDesactiver(!desactive)}
-              className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+              className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
             >
               {desactive ? 'Réactiver' : 'Désactiver'}
             </button>

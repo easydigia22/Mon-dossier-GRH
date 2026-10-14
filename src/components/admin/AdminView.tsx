@@ -97,7 +97,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
           </button>
           <button
             onClick={() => setPanneau(null)}
-            className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+            className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
           >
             Annuler
           </button>
@@ -143,7 +143,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
             <ShieldAlert className="w-5 h-5 text-[#149D92]" />
@@ -173,7 +173,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
 
       {!chargement && !erreur && (
         <>
-          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <section className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
             <h2 className="text-sm font-bold text-[#1C2459] mb-2">
               Demandes en attente ({enAttente.length})
             </h2>
@@ -200,7 +200,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
             )}
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <section className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
             <h2 className="text-sm font-bold text-[#1C2459] mb-2">
               Formateurs ({formateursTraites.length})
             </h2>
@@ -228,7 +228,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ showNotification }) => {
             )}
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <section className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
             <h2 className="text-sm font-bold text-[#1C2459] mb-2">Stagiaires ({stagiaires.length})</h2>
             {stagiaires.length === 0 ? (
               <p className="text-xs text-slate-400 italic">Aucun compte stagiaire.</p>

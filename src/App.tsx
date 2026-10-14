@@ -173,7 +173,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center relative">
+      <div className="min-h-screen bg-[#FBF7F0] flex items-center justify-center relative">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 border-4 border-[#1C2459] border-t-[#149D92] rounded-full animate-spin mx-auto"></div>
           <p className="text-xs font-semibold text-[#1C2459]">Chargement de Mon Dossier Administratif...</p>
@@ -184,7 +184,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#F4F7FA] text-[#172B4D]">
+    <div className="min-h-screen flex bg-[#FBF7F0] text-[#172B4D]">
       {/* Barre de navigation verticale des onglets */}
       <NavigationTabs
         ongletActif={ongletActif}
@@ -415,13 +415,13 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
       </main>
 
       {/* Pied de page sobre */}
-      <footer className="bg-white border-t border-slate-200 py-4 px-6 text-center text-[11px] text-slate-500 no-print">
+      <footer className="bg-white border-t border-[#ECE3D6] py-4 px-6 text-center text-[11px] text-slate-500 no-print">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="flex items-center gap-2">
             <img
               src="/logo-ofppt.jpg"
               alt="Office de la Formation Professionnelle et de la Promotion du Travail"
-              className="w-6 h-6 rounded-full object-cover shrink-0 border border-slate-200"
+              className="w-6 h-6 rounded-full object-cover shrink-0 border border-[#ECE3D6]"
             />
             MON DOSSIER ADMINISTRATIF — Simulateur RH &amp; Paie (Formation professionnelle OFPPT)
           </span>

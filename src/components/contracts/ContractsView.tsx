@@ -228,7 +228,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête du module */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -253,7 +253,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
         {/* Métriques clés des contrats */}
         <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
-          <div className="p-3 bg-[#F4F7FA] rounded-lg border border-slate-200">
+          <div className="p-3 bg-[#FBF7F0] rounded-lg border border-[#ECE3D6]">
             <span className="text-[11px] text-slate-500 block">Total Contrats</span>
             <span className="text-lg font-bold text-[#1C2459] tabular-nums">{contrats.length}</span>
           </div>
@@ -280,7 +280,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               placeholder="Rechercher par salarié, poste, n° contrat..."
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
+              className="w-full pl-9 pr-3 py-1.5 text-xs border border-[#ECE3D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
             />
           </div>
 
@@ -290,7 +290,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               <select
                 value={filtreType}
                 onChange={(e) => setFiltreType(e.target.value)}
-                className="px-2.5 py-1 border border-slate-200 rounded bg-slate-50"
+                className="px-2.5 py-1 border border-[#ECE3D6] rounded bg-slate-50"
               >
                 <option value="tous">Tous types</option>
                 <option value="CDI">CDI</option>
@@ -304,7 +304,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               <select
                 value={filtreStatut}
                 onChange={(e) => setFiltreStatut(e.target.value)}
-                className="px-2.5 py-1 border border-slate-200 rounded bg-slate-50"
+                className="px-2.5 py-1 border border-[#ECE3D6] rounded bg-slate-50"
               >
                 <option value="tous">Tous statuts</option>
                 <option value="en_cours">En vigueur</option>
@@ -325,7 +325,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           return (
             <div
               key={c.id}
-              className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-[#149D92] transition-colors relative flex flex-col justify-between"
+              className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm hover:border-[#149D92] transition-colors relative flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -429,9 +429,9 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleEnregistrer}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           >
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div className="p-5 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
                 <h3 className="text-sm font-bold text-[#1C2459]">
                   {contrats.some((c) => c.id === contratEnEdition.id) ? 'Modifier le contrat' : 'Établir un nouveau contrat de travail'}
@@ -498,7 +498,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                       dureeEssaiMois: isCadre ? 3 : 1.5
                     });
                   }}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
+                  className="w-full px-3 py-2 border border-[#ECE3D6] rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
                 >
                   {salaries.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -524,7 +524,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                         motifCDD: t === 'CDD' ? 'remplacement_provisoire' : undefined
                       });
                     }}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-bold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-bold"
                   >
                     <option value="CDI">CDI (Droit commun)</option>
                     <option value="CDD">CDD (Dérogatoire Art. 16)</option>
@@ -539,7 +539,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     required
                     value={contratEnEdition.numeroContrat || ''}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, numeroContrat: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono font-semibold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono font-semibold"
                   />
                 </div>
 
@@ -548,7 +548,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                   <select
                     value={contratEnEdition.statut || 'en_cours'}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, statut: e.target.value as StatutContrat })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   >
                     <option value="en_cours">En vigueur (Actif)</option>
                     <option value="echu">Échu (Terminé)</option>
@@ -567,7 +567,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     required
                     value={contratEnEdition.poste || ''}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, poste: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
 
@@ -584,7 +584,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     onChange={(e) =>
                       setContratEnEdition({ ...contratEnEdition, salaireBaseMensuel: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold text-[#1C2459]"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-semibold text-[#1C2459]"
                   />
                   <span className="text-[10px] text-slate-500">Pour 191h moyennes mensuelles (Art. 184)</span>
                 </div>
@@ -599,7 +599,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     required
                     value={contratEnEdition.dateEffet || ''}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, dateEffet: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
 
@@ -613,7 +613,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     required={contratEnEdition.type === 'CDD'}
                     value={contratEnEdition.dateFinPrevue || ''}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, dateFinPrevue: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded disabled:bg-slate-100 disabled:text-slate-400 font-semibold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-400 font-semibold"
                   />
                 </div>
 
@@ -626,7 +626,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     max="6"
                     value={contratEnEdition.dureeEssaiMois ?? 1.5}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, dureeEssaiMois: Number(e.target.value) })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                   <span className="text-[10px] text-slate-500">Art. 14 : Cadre max 3m / Employé max 1.5m</span>
                 </div>
@@ -671,7 +671,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               {/* Clauses contractuelles */}
               <div>
                 <label className="block font-medium text-slate-700 mb-1">Clauses contractuelles incluses</label>
-                <div className="space-y-1.5 bg-[#F4F7FA] p-3 rounded-lg border border-slate-200 text-[11px]">
+                <div className="space-y-1.5 bg-[#FBF7F0] p-3 rounded-lg border border-[#ECE3D6] text-[11px]">
                   {[
                     'Clause de discrétion professionnelle et confidentialité',
                     'Respect du règlement intérieur de l\'entreprise',
@@ -703,7 +703,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2 sticky bottom-0">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end gap-2 sticky bottom-0">
               <button
                 type="button"
                 onClick={() => setModalOuverte(false)}
@@ -725,8 +725,8 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
       {/* Modal Visualisation complète du contrat imprimable format A4 */}
       {contratAVisualiser && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-slate-300 w-full max-w-3xl max-h-[92vh] overflow-y-auto">
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10 no-print">
+          <div className="bg-white rounded-xl shadow-2xl border border-[#E3D8C8] w-full max-w-3xl max-h-[92vh] overflow-y-auto">
+            <div className="p-5 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white z-10 no-print">
               <div>
                 <h3 className="text-sm font-bold text-[#1C2459]">
                   Contrat de travail : {contratAVisualiser.numeroContrat}
@@ -857,7 +857,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div>
                   <strong className="block text-slate-800">Pour l'Employeur</strong>
                   <span className="text-[11px] text-slate-400 block">{entreprise?.representantLegal || 'M. Karim EL AMRANI'}</span>
-                  <div className="h-16 border-b border-dashed border-slate-300 mt-2 flex items-center justify-center text-[10px] text-slate-400">
+                  <div className="h-16 border-b border-dashed border-[#E3D8C8] mt-2 flex items-center justify-center text-[10px] text-slate-400">
                     Cachet et signature
                   </div>
                 </div>
@@ -865,7 +865,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div>
                   <strong className="block text-slate-800">Le Salarié</strong>
                   <span className="text-[10px] text-slate-400 block">(Précédé de la mention manuscrite « Lu et approuvé »)</span>
-                  <div className="h-16 border-b border-dashed border-slate-300 mt-2 flex items-center justify-center text-[10px] text-slate-400">
+                  <div className="h-16 border-b border-dashed border-[#E3D8C8] mt-2 flex items-center justify-center text-[10px] text-slate-400">
                     Signature du salarié
                   </div>
                 </div>

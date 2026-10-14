@@ -55,7 +55,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Barre de contrôle et sélection */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -97,7 +97,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
             <select
               value={salarieActifId || ''}
               onChange={(e) => onSelectSalarie(e.target.value)}
-              className="text-xs font-semibold text-[#1C2459] px-3 py-1.5 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white"
+              className="text-xs font-semibold text-[#1C2459] px-3 py-1.5 border border-[#ECE3D6] rounded-lg bg-slate-50 focus:bg-white"
             >
               {salaries.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -108,7 +108,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
           </div>
 
           {/* Bascule Bulletin officiel vs Explications pas-à-pas */}
-          <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 self-start sm:self-auto">
+          <div className="flex bg-slate-100 p-0.5 rounded-lg border border-[#ECE3D6] self-start sm:self-auto">
             <button
               onClick={() => setOngletDetail('bulletin')}
               className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
@@ -135,7 +135,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
       </div>
 
       {!bulletinActif ? (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-12 text-center shadow-sm">
           <Receipt className="w-12 h-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-sm font-bold text-slate-700">Aucun bulletin calculé pour ce salarié en {periodeActive}</h3>
           <p className="text-xs text-slate-500 mt-1">
@@ -144,7 +144,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
         </div>
       ) : ongletDetail === 'bulletin' ? (
         /* FORMAT DU BULLETIN CONFORME A4 */
-        <div className="bg-white border border-slate-300 rounded-xl p-8 max-w-4xl mx-auto shadow-md print:shadow-none print:border-none print:p-0">
+        <div className="bg-white border border-[#E3D8C8] rounded-xl p-8 max-w-4xl mx-auto shadow-md print:shadow-none print:border-none print:p-0">
           {/* En-tête officiel du bulletin */}
           <div className="border-b-2 border-[#1C2459] pb-4 mb-6">
             <div className="flex justify-between items-start">
@@ -178,13 +178,13 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
             </div>
 
             {/* Mention légale obligatoire */}
-            <div className="mt-3 text-[10px] text-slate-500 italic bg-[#F4F7FA] p-1.5 rounded text-center border border-slate-200">
+            <div className="mt-3 text-[10px] text-slate-500 italic bg-[#FBF7F0] p-1.5 rounded text-center border border-[#ECE3D6]">
               Simulation pédagogique — données fictives — ne vaut pas validation juridique.
             </div>
           </div>
 
           {/* Cartouche Salarié & Contrat */}
-          <div className="grid grid-cols-2 gap-4 bg-[#F4F7FA] border border-slate-200 rounded-lg p-4 text-xs mb-6">
+          <div className="grid grid-cols-2 gap-4 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg p-4 text-xs mb-6">
             <div className="space-y-1">
               <div>
                 <span className="text-slate-500">Salarié : </span>
@@ -233,7 +233,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
           </div>
 
           {/* Tableau des rubriques */}
-          <div className="border border-slate-200 rounded-lg overflow-hidden mb-6">
+          <div className="border border-[#ECE3D6] rounded-lg overflow-hidden mb-6">
             <table className="w-full text-left text-xs">
               <thead className="bg-[#1C2459] text-white uppercase text-[10px] font-bold">
                 <tr>
@@ -272,7 +272,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
           </div>
 
           {/* Récapitulatif des masses, cotisations et impôts */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#F4F7FA] p-4 rounded-lg border border-slate-200 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#FBF7F0] p-4 rounded-lg border border-[#ECE3D6] mb-6">
             <div>
               <span className="text-slate-500 block text-[11px]">Salaire Brut Global</span>
               <strong className="text-slate-900 font-mono tabular-nums">{formatMAD(bulletinActif.salaireBrutGlobal)}</strong>
@@ -322,7 +322,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
           </div>
 
           {/* Charges patronales et mentions de bas de page */}
-          <div className="border-t border-slate-200 pt-3 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-2">
+          <div className="border-t border-[#ECE3D6] pt-3 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-2">
             <div>
               <span>Charges patronales : <strong>{formatMAD(bulletinActif.totalCotisationsPatronales)}</strong></span>
               <span className="mx-2">·</span>
@@ -346,7 +346,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
 
           <div className="space-y-3">
             {bulletinActif.explicationsPedagogiques.map((exp, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-2">
+              <div key={idx} className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-2">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <h4 className="text-xs font-bold text-[#1C2459] flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-[#1C2459] text-white flex items-center justify-center text-[10px]">
@@ -360,11 +360,11 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
-                  <div className="bg-[#F4F7FA] p-3 rounded-lg border border-slate-200">
+                  <div className="bg-[#FBF7F0] p-3 rounded-lg border border-[#ECE3D6]">
                     <span className="text-slate-500 text-[10px] uppercase font-bold block mb-1">Formule théorique</span>
                     <code className="text-xs text-[#1C2459] font-mono font-semibold block">{exp.formule}</code>
                   </div>
-                  <div className="bg-[#F4F7FA] p-3 rounded-lg border border-slate-200">
+                  <div className="bg-[#FBF7F0] p-3 rounded-lg border border-[#ECE3D6]">
                     <span className="text-slate-500 text-[10px] uppercase font-bold block mb-1">Application numérique</span>
                     <code className="text-xs text-slate-800 font-mono block">{exp.valeurs}</code>
                   </div>

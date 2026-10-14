@@ -53,7 +53,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête du bordereau CNSS & AMO */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -97,8 +97,8 @@ export const CnssView: React.FC<CnssViewProps> = ({
       </div>
 
       {/* Bordereau récapitulatif des cotisations dues */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
-        <div className="border-b border-slate-200 pb-4 flex justify-between items-center">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm space-y-6">
+        <div className="border-b border-[#ECE3D6] pb-4 flex justify-between items-center">
           <div>
             <h2 className="text-base font-bold text-[#1C2459]">
               Bordereau Récapitulatif Mensuel des Cotisations
@@ -211,7 +211,7 @@ export const CnssView: React.FC<CnssViewProps> = ({
             </tbody>
 
             {/* Total général */}
-            <tfoot className="bg-[#F4F7FA] font-mono text-xs font-bold border-t-2 border-[#1C2459]">
+            <tfoot className="bg-[#FBF7F0] font-mono text-xs font-bold border-t-2 border-[#1C2459]">
               <tr>
                 <td className="py-3 px-3 uppercase font-sans text-xs text-[#1C2459]">
                   Totaux Généraux des Cotisations

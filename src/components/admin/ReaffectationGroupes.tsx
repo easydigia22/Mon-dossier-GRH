@@ -43,7 +43,7 @@ export const ReaffectationGroupes: React.FC<ReaffectationGroupesProps> = ({
   };
 
   return (
-    <div className="w-full mt-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-3 space-y-2">
+    <div className="w-full mt-2 bg-slate-50 border border-[#ECE3D6] rounded-lg px-3 py-3 space-y-2">
       <p className="text-[11px] font-semibold text-[#1C2459]">
         Confier un groupe de {formateur.email} à un autre formateur
       </p>
@@ -67,7 +67,7 @@ export const ReaffectationGroupes: React.FC<ReaffectationGroupesProps> = ({
             value={choix[g.id] ?? ''}
             onChange={(e) => setChoix((c) => ({ ...c, [g.id]: e.target.value }))}
             disabled={destinataires.length === 0}
-            className="px-2 py-1 text-[11px] border border-slate-300 rounded disabled:bg-slate-100"
+            className="px-2 py-1 text-[11px] border border-[#E3D8C8] rounded disabled:bg-slate-100"
           >
             <option value="">Confier à…</option>
             {destinataires.map((d) => (
@@ -92,7 +92,7 @@ export const ReaffectationGroupes: React.FC<ReaffectationGroupesProps> = ({
 
       <button
         onClick={onAnnuler}
-        className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+        className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
       >
         Fermer
       </button>

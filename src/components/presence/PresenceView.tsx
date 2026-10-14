@@ -214,7 +214,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
     if (type === 'arret_maladie') return 'bg-amber-50 text-amber-800 border-amber-200';
     if (type === 'conge_annuel') return 'bg-blue-50 text-blue-700 border-blue-200';
     if (type === 'conge_exceptionnel') return 'bg-purple-50 text-purple-700 border-purple-200';
-    return 'bg-slate-100 text-slate-700 border-slate-200';
+    return 'bg-slate-100 text-slate-700 border-[#ECE3D6]';
   };
 
   const getAbreviationCalendrier = (type: TypeEvenementPresence) => {
@@ -247,7 +247,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête principal */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -263,7 +263,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
           <div className="flex items-center gap-2">
             {/* Bascule Vue Liste vs Vue Calendrier */}
-            <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <div className="flex bg-slate-100 p-0.5 rounded-lg border border-[#ECE3D6]">
               <button
                 onClick={() => setVueMode('liste')}
                 className={`px-3 py-1.5 text-xs font-semibold rounded transition-colors flex items-center gap-1.5 ${
@@ -338,7 +338,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
               placeholder="Filtrer par salarié, motif, matricule..."
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
+              className="w-full pl-9 pr-3 py-1.5 text-xs border border-[#ECE3D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
             />
           </div>
 
@@ -348,7 +348,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
               <select
                 value={salarieFiltre}
                 onChange={(e) => setSalarieFiltre(e.target.value)}
-                className="px-2.5 py-1 border border-slate-200 rounded bg-slate-50"
+                className="px-2.5 py-1 border border-[#ECE3D6] rounded bg-slate-50"
               >
                 <option value="tous">Tous les salariés</option>
                 {salaries.map((s) => (
@@ -364,7 +364,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
               <select
                 value={filtreType}
                 onChange={(e) => setFiltreType(e.target.value)}
-                className="px-2.5 py-1 border border-slate-200 rounded bg-slate-50"
+                className="px-2.5 py-1 border border-[#ECE3D6] rounded bg-slate-50"
               >
                 <option value="tous">Toutes natures</option>
                 <option value="heures_sup_jour_25">Heures Sup. 25%</option>
@@ -381,7 +381,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
       {/* VUE 1 : GRILLE MENSUELLE / CALENDRIER DE POINTAGE */}
       {vueMode === 'calendrier' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider block">
@@ -436,7 +436,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
                   return (
                     <tr key={sal.id} className="hover:bg-slate-50/80">
-                      <td className="py-2 px-3 text-left font-sans font-semibold text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-200">
+                      <td className="py-2 px-3 text-left font-sans font-semibold text-slate-800 sticky left-0 bg-white z-10 border-r border-[#ECE3D6]">
                         <div className="text-xs truncate">{sal.nom} {sal.prenom}</div>
                         <div className="text-[10px] text-slate-400 font-mono">{sal.matricule}</div>
                       </td>
@@ -500,7 +500,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
       {/* VUE 2 : LISTE DÉTAILLÉE DES ÉVÉNEMENTS */}
       {vueMode === 'liste' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
               Registre des événements enregistrés ({evenementsMois.length})
@@ -589,7 +589,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                       </span>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
+                      <div className="flex items-center gap-1 border-l border-[#ECE3D6] pl-3">
                         <button
                           onClick={() => handleEditer(evt)}
                           className="p-1 text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 rounded"
@@ -621,9 +621,9 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleEnregistrer}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-xl max-h-[90vh] overflow-y-auto"
           >
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div className="p-5 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
                 <h3 className="text-sm font-bold text-[#1C2459]">
                   {evenements.some((e) => e.id === evenementEnEdition.id) ? 'Modifier le pointage' : 'Enregistrer un événement de pointage'}
@@ -649,7 +649,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                   required
                   value={evenementEnEdition.salarieId || ''}
                   onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, salarieId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
+                  className="w-full px-3 py-2 border border-[#ECE3D6] rounded-lg bg-slate-50 focus:bg-white font-semibold text-[#1C2459]"
                 >
                   {salaries.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -711,7 +711,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                       impactPaie: impact
                     });
                   }}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg font-semibold text-slate-900"
+                  className="w-full px-3 py-2 border border-[#ECE3D6] rounded-lg font-semibold text-slate-900"
                 >
                   <optgroup label="Heures supplémentaires réglementées">
                     <option value="heures_sup_jour_25">Heures Sup. Jour Ouvrable (+25%)</option>
@@ -749,7 +749,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                         dateFin: evenementEnEdition.dateFin && evenementEnEdition.dateFin < deb ? deb : (evenementEnEdition.dateFin || deb)
                       });
                     }}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded font-semibold"
+                    className="w-full px-2.5 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                   />
                 </div>
 
@@ -760,7 +760,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                     required
                     value={evenementEnEdition.dateFin || evenementEnEdition.dateDebut || ''}
                     onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, dateFin: e.target.value })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded font-semibold"
+                    className="w-full px-2.5 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                   />
                 </div>
 
@@ -773,7 +773,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                     required
                     value={evenementEnEdition.duree || 0}
                     onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, duree: Number(e.target.value) })}
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded font-bold text-center"
+                    className="w-full px-2.5 py-1.5 border border-[#ECE3D6] rounded font-bold text-center"
                   />
                 </div>
 
@@ -784,7 +784,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                     onChange={(e) =>
                       setEvenementEnEdition({ ...evenementEnEdition, unite: e.target.value as 'heures' | 'jours' })
                     }
-                    className="w-full px-2.5 py-1.5 border border-slate-200 rounded font-semibold"
+                    className="w-full px-2.5 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                   >
                     <option value="heures">Heures</option>
                     <option value="jours">Jours</option>
@@ -802,7 +802,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                         ? 'bg-teal-50 border-teal-200 text-teal-900'
                         : impact.sens === 'retenue'
                         ? 'bg-red-50 border-red-200 text-red-900'
-                        : 'bg-slate-50 border-slate-200 text-slate-700'
+                        : 'bg-slate-50 border-[#ECE3D6] text-slate-700'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -830,7 +830,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                   placeholder="Ex: Surcroît temporaire préparation examens, panne de véhicule..."
                   value={evenementEnEdition.motif || ''}
                   onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, motif: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                 />
               </div>
 
@@ -843,7 +843,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                   placeholder="Ex: Certificat médical délivré le 05/02/2025, bulletin de retard..."
                   value={evenementEnEdition.justificatifFictif || ''}
                   onChange={(e) => setEvenementEnEdition({ ...evenementEnEdition, justificatifFictif: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                 />
               </div>
 
@@ -856,7 +856,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
                     onChange={(e) =>
                       setEvenementEnEdition({ ...evenementEnEdition, statut: e.target.value as StatutWorkflow })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                   >
                     <option value="Brouillon">Brouillon (Non validé)</option>
                     <option value="Soumise">Soumise pour validation</option>
@@ -883,7 +883,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2 sticky bottom-0">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end gap-2 sticky bottom-0">
               <button
                 type="button"
                 onClick={() => setModalOuverte(false)}

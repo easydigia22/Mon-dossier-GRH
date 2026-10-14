@@ -97,7 +97,7 @@ export const ConfirmationSuppression: React.FC<ConfirmationSuppressionProps> = (
             </button>
             <button
               onClick={onAnnuler}
-              className="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
+              className="px-2.5 py-1 bg-white border border-[#E3D8C8] text-slate-700 hover:bg-slate-50 text-[11px] font-semibold rounded transition-colors"
             >
               Annuler
             </button>

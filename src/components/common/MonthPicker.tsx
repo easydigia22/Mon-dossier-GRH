@@ -74,7 +74,7 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({ value, onChange }) => 
       <button
         type="button"
         onClick={() => (ouvert ? setOuvert(false) : ouvrir())}
-        className="flex items-center gap-2 bg-[#F4F7FA] px-3 py-1.5 rounded-lg border border-slate-200 hover:border-[#1C2459]/30 transition-colors"
+        className="flex items-center gap-2 bg-[#FBF7F0] px-3 py-1.5 rounded-lg border border-[#ECE3D6] hover:border-[#1C2459]/30 transition-colors"
         aria-haspopup="dialog"
         aria-expanded={ouvert}
       >
@@ -87,7 +87,7 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({ value, onChange }) => 
         <div
           role="dialog"
           aria-label="Choisir un mois"
-          className="absolute top-full left-0 mt-1.5 z-50 w-64 bg-white border border-slate-200 rounded-lg shadow-lg p-3"
+          className="absolute top-full left-0 mt-1.5 z-50 w-64 bg-white border border-[#ECE3D6] rounded-lg shadow-lg p-3"
         >
           <div className="flex items-center justify-between mb-2">
             <button

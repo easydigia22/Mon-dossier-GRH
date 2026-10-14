@@ -69,7 +69,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-[#1C2459]">Congés Annuels, Exceptionnels &amp; Maladies</h1>
@@ -88,7 +88,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
 
         {/* Rappel juridique sur le congé annuel et les congés exceptionnels */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs space-y-1">
+          <div className="p-3.5 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg text-xs space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-[#1C2459]">
               <CalendarDays className="w-4 h-4 text-[#149D92]" />
               <span>Congé Annuel Payé (Articles 231 à 268)</span>
@@ -100,7 +100,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
             </p>
           </div>
 
-          <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg text-xs space-y-1">
+          <div className="p-3.5 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg text-xs space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-[#1C2459]">
               <HeartHandshake className="w-4 h-4 text-[#149D92]" />
               <span>Congés Exceptionnels Rémunérés (Articles 269 &amp; 274)</span>
@@ -116,7 +116,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
       </div>
 
       {/* Tableau des demandes de congés */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Historique des demandes &amp; autorisations ({demandes.length})
@@ -185,9 +185,9 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleEnregistrer}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-lg max-h-[90vh] overflow-y-auto"
           >
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white">
+            <div className="p-5 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white">
               <h3 className="text-sm font-bold text-[#1C2459]">Nouvelle demande de congé</h3>
               <button
                 type="button"
@@ -204,7 +204,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                 <select
                   value={nouvelleDemande.salarieId || ''}
                   onChange={(e) => setNouvelleDemande({ ...nouvelleDemande, salarieId: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                 >
                   {salaries.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -237,7 +237,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                       soldeApres: Math.max(0, soldeAp)
                     });
                   }}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                 >
                   <option value="annuel">Congé annuel payé (Art. 231)</option>
                   <option value="mariage">Mariage du salarié (4 jours légaux payés)</option>
@@ -256,7 +256,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     required
                     value={nouvelleDemande.dateDepart || ''}
                     onChange={(e) => setNouvelleDemande({ ...nouvelleDemande, dateDepart: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -266,7 +266,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     required
                     value={nouvelleDemande.dateRetour || ''}
                     onChange={(e) => setNouvelleDemande({ ...nouvelleDemande, dateRetour: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
               </div>
@@ -289,7 +289,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                         soldeApres: Math.max(0, soldeAp)
                       });
                     }}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-bold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-bold"
                   />
                 </div>
                 <div>
@@ -300,7 +300,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     onChange={(e) =>
                       setNouvelleDemande({ ...nouvelleDemande, soldeAvant: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -309,7 +309,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     type="number"
                     value={nouvelleDemande.soldeApres || 12}
                     readOnly
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded bg-slate-100 font-bold text-[#149D92]"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-slate-100 font-bold text-[#149D92]"
                   />
                 </div>
               </div>
@@ -321,7 +321,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                   required
                   value={nouvelleDemande.motif || ''}
                   onChange={(e) => setNouvelleDemande({ ...nouvelleDemande, motif: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                 />
               </div>
 
@@ -330,7 +330,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                 <select
                   value={nouvelleDemande.statut || 'Approuvee'}
                   onChange={(e) => setNouvelleDemande({ ...nouvelleDemande, statut: e.target.value as StatutWorkflow })}
-                  className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                 >
                   <option value="Brouillon">Brouillon</option>
                   <option value="Soumise">Soumise</option>
@@ -340,7 +340,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setModalOuverte(false)}

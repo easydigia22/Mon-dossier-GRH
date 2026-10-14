@@ -25,8 +25,8 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ECE3D6] pb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-[#1C2459] text-white flex items-center justify-center">
               <Building2 className="w-6 h-6 text-[#149D92]" />
@@ -59,7 +59,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
         </div>
 
         {/* Note pédagogique sur les obligations d'identification légale au Maroc */}
-        <div className="my-4 p-3 bg-[#F4F7FA] border border-slate-200 rounded-lg flex items-start gap-2.5">
+        <div className="my-4 p-3 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg flex items-start gap-2.5">
           <Info className="w-4 h-4 text-[#149D92] shrink-0 mt-0.5" />
           <p className="text-xs text-slate-600">
             <strong>Rappel réglementaire (Droit marocain des affaires) :</strong> Toute entreprise du secteur privé est identifiée par son Registre du Commerce (RC), sa Taxe Professionnelle (Patente), son numéro d'affiliation CNSS et son Identifiant Commun de l'Entreprise (ICE à 15 chiffres). Ces identifiants doivent figurer sur tous les bulletins de paie et documents administratifs (Art. 370 Code du Travail).
@@ -81,7 +81,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                   disabled={!isEditing}
                   value={formData.raisonSociale}
                   onChange={(e) => setFormData({ ...formData, raisonSociale: e.target.value })}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                  className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                 />
               </div>
 
@@ -92,7 +92,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                   disabled={!isEditing}
                   value={formData.formeJuridique}
                   onChange={(e) => setFormData({ ...formData, formeJuridique: e.target.value })}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                  className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                 />
               </div>
 
@@ -103,7 +103,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                   disabled={!isEditing}
                   value={formData.secteur}
                   onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                  className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                 />
               </div>
 
@@ -115,7 +115,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.siegeSocial}
                     onChange={(e) => setFormData({ ...formData, siegeSocial: e.target.value })}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
                 <div>
@@ -125,7 +125,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.ville}
                     onChange={(e) => setFormData({ ...formData, ville: e.target.value })}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
               </div>
@@ -146,7 +146,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                   disabled={!isEditing}
                   value={formData.ice}
                   onChange={(e) => setFormData({ ...formData, ice: e.target.value })}
-                  className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                  className="w-full px-3 py-2 text-xs font-mono border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                 />
               </div>
 
@@ -158,7 +158,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.numeroCNSS}
                     onChange={(e) => setFormData({ ...formData, numeroCNSS: e.target.value })}
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
                 <div>
@@ -168,7 +168,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.registreCommerce}
                     onChange={(e) => setFormData({ ...formData, registreCommerce: e.target.value })}
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
               </div>
@@ -181,7 +181,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.patente}
                     onChange={(e) => setFormData({ ...formData, patente: e.target.value })}
-                    className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs font-mono border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
                 <div>
@@ -191,7 +191,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.representantLegal}
                     onChange={(e) => setFormData({ ...formData, representantLegal: e.target.value })}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                 </div>
               </div>
@@ -204,7 +204,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.horaireMensuelMoyen}
                     onChange={(e) => setFormData({ ...formData, horaireMensuelMoyen: Number(e.target.value) })}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                   <span className="text-[10px] text-slate-500">191h standard (Art. 184)</span>
                 </div>
@@ -215,7 +215,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
                     disabled={!isEditing}
                     value={formData.horaireHebdo}
                     onChange={(e) => setFormData({ ...formData, horaireHebdo: Number(e.target.value) })}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
+                    className="w-full px-3 py-2 text-xs border border-[#ECE3D6] rounded-lg bg-white disabled:bg-slate-50 disabled:text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#149D92]"
                   />
                   <span className="text-[10px] text-slate-500">44h / semaine</span>
                 </div>
@@ -224,7 +224,7 @@ export const CompanyView: React.FC<CompanyViewProps> = ({
           </div>
 
           {isEditing && (
-            <div className="pt-4 border-t border-slate-200 flex justify-end gap-2">
+            <div className="pt-4 border-t border-[#ECE3D6] flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}

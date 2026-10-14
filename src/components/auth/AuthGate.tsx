@@ -121,7 +121,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   // est interprété par App.tsx comme le mode local sans compte, donc accès complet.
   if (checking || (session && !profil && !profilErreur) || (session && role === 'stagiaire' && classeLoading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] relative">
+      <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] relative">
         <Loader2 className="w-6 h-6 animate-spin text-[#1C2459]" />
         <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
       </div>
@@ -218,14 +218,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <AppLogo size={40} />
           <img
             src="/logo-ofppt.jpg"
             alt="Office de la Formation Professionnelle et de la Promotion du Travail"
-            className="w-10 h-10 rounded-full object-cover shrink-0 border border-slate-200"
+            className="w-10 h-10 rounded-full object-cover shrink-0 border border-[#ECE3D6]"
           />
           <div>
             <div className="text-sm font-bold text-[#1C2459] leading-tight">MON DOSSIER ADMINISTRATIF</div>
@@ -257,7 +257,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
           />
         </label>
         <label className="block text-xs font-medium text-slate-700">
@@ -269,7 +269,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
           />
         </label>
 
@@ -283,7 +283,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                   className={`flex-1 text-center px-3 py-2 border rounded cursor-pointer capitalize transition-colors ${
                     compteRole === r
                       ? 'border-[#149D92] bg-teal-50 text-[#1C2459] font-semibold'
-                      : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                      : 'border-[#E3D8C8] text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <input type="radio" name="compteRole" value={r} checked={compteRole === r} onChange={() => setCompteRole(r)} className="sr-only" />
@@ -360,8 +360,8 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <Users className="w-8 h-8 text-[#149D92]" />
           <div>
@@ -384,7 +384,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="Ex: 7K9QXM"
-            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#149D92]"
           />
         </label>
         <div className="grid grid-cols-2 gap-3">
@@ -395,7 +395,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
               required
               value={nom}
               onChange={(e) => setNom(e.target.value)}
-              className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+              className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
             />
           </label>
           <label className="block text-xs font-medium text-slate-700">
@@ -405,7 +405,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
               required
               value={prenom}
               onChange={(e) => setPrenom(e.target.value)}
-              className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+              className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
             />
           </label>
         </div>
@@ -415,7 +415,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
             type="text"
             value={matricule}
             onChange={(e) => setMatricule(e.target.value)}
-            className="mt-1 w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
+            className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#149D92]"
           />
         </label>
 
@@ -446,8 +446,8 @@ const EcranBloquant: React.FC<{
   email?: string;
   onSignOut: () => void;
 }> = ({ titre, message, email, onSignOut }) => (
-  <div className="min-h-screen flex items-center justify-center bg-[#F4F7FA] px-4 relative">
-    <div className="w-full max-w-sm bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4 text-center">
+  <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
+    <div className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4 text-center">
       <div className="flex justify-center">
         <AppLogo size={40} />
       </div>

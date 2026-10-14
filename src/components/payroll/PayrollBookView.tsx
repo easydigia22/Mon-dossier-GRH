@@ -84,7 +84,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête du livre de paie */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -133,7 +133,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
       </div>
 
       {/* Tableau complet du Livre de paie */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             {entreprise.raisonSociale} — État détaillé de la paie ({lignesLivre.length} salariés)
@@ -191,7 +191,7 @@ export const PayrollBookView: React.FC<PayrollBookViewProps> = ({
                 ))}
               </tbody>
               {/* Ligne des totaux généraux */}
-              <tfoot className="bg-[#F4F7FA] font-mono text-[11px] font-bold border-t-2 border-[#1C2459]">
+              <tfoot className="bg-[#FBF7F0] font-mono text-[11px] font-bold border-t-2 border-[#1C2459]">
                 <tr>
                   <td colSpan={2} className="py-3 px-3 uppercase font-sans text-xs text-[#1C2459]">
                     Totaux Généraux ({lignesLivre.length} salariés)

@@ -114,7 +114,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête du module */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-[#1C2459]">Dossiers Administratifs du Personnel</h1>
@@ -140,13 +140,13 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
               placeholder="Rechercher par nom, matricule, poste..."
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
+              className="w-full pl-9 pr-3 py-1.5 text-xs border border-[#ECE3D6] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#149D92] bg-slate-50 focus:bg-white"
             />
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
             <span className="text-xs text-slate-500">Statut :</span>
-            <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <div className="flex bg-slate-100 p-0.5 rounded-lg border border-[#ECE3D6]">
               <button
                 onClick={() => setFiltreStatut('tous')}
                 className={`px-2.5 py-1 text-xs rounded transition-colors ${
@@ -177,10 +177,10 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
       </div>
 
       {/* Tableau des salariés */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-[#F4F7FA] text-slate-600 border-b border-slate-200 uppercase text-[11px] font-semibold">
+            <thead className="bg-[#FBF7F0] text-slate-600 border-b border-[#ECE3D6] uppercase text-[11px] font-semibold">
               <tr>
                 <th className="py-3 px-4">Matricule</th>
                 <th className="py-3 px-4">Salarié</th>
@@ -267,8 +267,8 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
       {/* Modal / Fiche détaillée du salarié sélectionné */}
       {salarieSelectionne && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
+          <div className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center font-bold">
                   {salarieSelectionne.matricule}
@@ -292,7 +292,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
 
             <div className="p-6 space-y-6">
               {/* Informations d'état civil et identification */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#F4F7FA] p-4 rounded-lg border border-slate-200 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#FBF7F0] p-4 rounded-lg border border-[#ECE3D6] text-xs">
                 <div>
                   <span className="text-slate-500 block">CIN Fictive</span>
                   <span className="font-mono font-bold text-slate-800">{salarieSelectionne.cinFictif}</span>
@@ -339,13 +339,13 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                       className={`p-3 rounded-lg border text-xs flex items-center justify-between cursor-pointer transition-colors ${
                         piece.estFournie
                           ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900'
-                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          : 'bg-white border-[#ECE3D6] text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-5 h-5 rounded flex items-center justify-center border ${
-                            piece.estFournie ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'
+                            piece.estFournie ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-[#E3D8C8] bg-white'
                           }`}
                         >
                           {piece.estFournie && <Check className="w-3.5 h-3.5" />}
@@ -372,7 +372,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                 <h4 className="text-xs font-bold text-[#1C2459] uppercase tracking-wider mb-2">
                   Historique administratif
                 </h4>
-                <div className="space-y-1.5 border-l-2 border-slate-200 pl-3">
+                <div className="space-y-1.5 border-l-2 border-[#ECE3D6] pl-3">
                   {salarieSelectionne.historiqueEvenements.map((h, i) => (
                     <div key={i} className="text-xs text-slate-600">
                       <span className="font-semibold text-slate-800">{formatDateJJMMAAAA(h.date)}</span> : {h.description}
@@ -383,7 +383,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end">
               <button
                 onClick={() => setSalarieSelectionne(null)}
                 className="px-4 py-2 text-xs font-semibold bg-[#1C2459] text-white rounded-lg hover:bg-[#11273e]"
@@ -400,9 +400,9 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleEnregistrerSalarie}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           >
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div className="p-6 border-b border-[#ECE3D6] flex items-center justify-between sticky top-0 bg-white z-10">
               <h3 className="text-base font-bold text-[#1C2459]">
                 {salaries.some((s) => s.id === nouveauSalarie.id) ? 'Modifier le salarié' : 'Créer un nouveau salarié'}
               </h3>
@@ -424,7 +424,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.matricule || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, matricule: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono"
                   />
                 </div>
                 <div>
@@ -432,7 +432,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                   <select
                     value={nouveauSalarie.statut || 'actif'}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, statut: e.target.value as StatutSalarie })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   >
                     <option value="actif">Actif</option>
                     <option value="sorti">Sorti</option>
@@ -449,7 +449,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.nom || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, nom: e.target.value.toUpperCase() })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -459,7 +459,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.prenom || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, prenom: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
               </div>
@@ -472,7 +472,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.cinFictif || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, cinFictif: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono"
                   />
                 </div>
                 <div>
@@ -482,7 +482,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.cnssFictif || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, cnssFictif: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono"
                   />
                 </div>
               </div>
@@ -495,7 +495,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     onChange={(e) =>
                       setNouveauSalarie({ ...nouveauSalarie, situationFamiliale: e.target.value as SituationFamiliale })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   >
                     <option value="celibataire">Célibataire</option>
                     <option value="marie">Marié(e)</option>
@@ -511,7 +511,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     max="10"
                     value={nouveauSalarie.nombreEnfants ?? 0}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, nombreEnfants: Number(e.target.value) })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -524,7 +524,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     onChange={(e) =>
                       setNouveauSalarie({ ...nouveauSalarie, nombrePersonnesACharge: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
               </div>
@@ -537,7 +537,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.poste || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, poste: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -546,7 +546,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     type="text"
                     value={nouveauSalarie.departement || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, departement: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
                 <div>
@@ -556,7 +556,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     required
                     value={nouveauSalarie.dateEmbauche || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, dateEmbauche: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </div>
               </div>
@@ -573,7 +573,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     onChange={(e) =>
                       setNouveauSalarie({ ...nouveauSalarie, salaireBaseMensuel: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-semibold"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-semibold"
                   />
                   <span className="text-[10px] text-slate-500">Pour 191h normales par mois</span>
                 </div>
@@ -583,13 +583,13 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                     type="text"
                     value={nouveauSalarie.ribFictif || ''}
                     onChange={(e) => setNouveauSalarie({ ...nouveauSalarie, ribFictif: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setModalEditionOuverte(false)}

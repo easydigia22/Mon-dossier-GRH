@@ -274,7 +274,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête Espace Formateur */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -306,7 +306,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             <select
               value={classeActiveId}
               onChange={(e) => setClasseActiveId(e.target.value)}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50"
+              className="px-3 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459] bg-slate-50"
             >
               {classesActives.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -333,7 +333,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
       {/* Effectif de la classe active */}
       {classeActive && (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Users className="w-4 h-4 text-[#149D92]" />
@@ -352,7 +352,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               <button
                 type="button"
                 onClick={() => handleArchiver(true)}
-                className="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                className="px-3 py-1.5 bg-white border border-[#E3D8C8] hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
               >
                 Archiver cette classe
               </button>
@@ -375,7 +375,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setConfirmationSuppression(false)}
-                    className="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                    className="px-3 py-1.5 bg-white border border-[#E3D8C8] hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
                   >
                     Annuler
                   </button>
@@ -397,7 +397,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           </div>
 
           {classeActive.archiveeLe && (
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-100 border border-slate-300 rounded-lg px-3.5 py-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-100 border border-[#E3D8C8] rounded-lg px-3.5 py-2.5">
               <span className="text-slate-600">
                 Classe archivée le {new Date(classeActive.archiveeLe).toLocaleDateString('fr-FR')} — son code
                 d'invitation n'est plus accepté.
@@ -405,7 +405,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
               <button
                 type="button"
                 onClick={() => handleArchiver(false)}
-                className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                className="shrink-0 px-3 py-1.5 bg-white border border-[#E3D8C8] hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
               >
                 Restaurer
               </button>
@@ -413,7 +413,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           )}
 
           {cloudEnabled && !classeActive.archiveeLe && (
-            <div className="flex items-center justify-between gap-3 bg-[#F4F7FA] border border-slate-200 rounded-lg px-3.5 py-2.5">
+            <div className="flex items-center justify-between gap-3 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg px-3.5 py-2.5">
               {classeActive.codeInvitation ? (
                 <>
                   <div>
@@ -423,7 +423,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                   <button
                     type="button"
                     onClick={handleCopierCode}
-                    className="shrink-0 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
+                    className="shrink-0 px-3 py-1.5 bg-white border border-[#E3D8C8] hover:bg-slate-50 text-slate-700 font-semibold rounded transition-colors"
                   >
                     Copier
                   </button>
@@ -508,7 +508,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 placeholder="STG-03"
                 value={nouveauStagiaire.matricule}
                 onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, matricule: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded font-mono"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-mono"
               />
             </label>
             <label className="flex-1 min-w-[120px]">
@@ -518,7 +518,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 required
                 value={nouveauStagiaire.nom}
                 onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, nom: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
               />
             </label>
             <label className="flex-1 min-w-[120px]">
@@ -528,7 +528,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 required
                 value={nouveauStagiaire.prenom}
                 onChange={(e) => setNouveauStagiaire({ ...nouveauStagiaire, prenom: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
               />
             </label>
             <button
@@ -544,7 +544,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
       {/* Suivi en direct des remises (Supabase) */}
       {cloudEnabled && (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Radio className="w-4 h-4 text-[#149D92]" />
@@ -631,7 +631,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       {/* Cartes d'action formateur */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Colonne 1 : Exporter des paquets d'exercices vers les stagiaires */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Download className="w-4 h-4 text-[#149D92]" />
@@ -648,7 +648,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             {missions.map((m) => (
               <div
                 key={m.id}
-                className="p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-between transition-colors"
+                className="p-2.5 rounded-lg border border-[#ECE3D6] hover:bg-slate-50 flex items-center justify-between transition-colors"
               >
                 <div className="min-w-0 pr-2">
                   <div className="font-semibold text-slate-800 truncate">
@@ -670,7 +670,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         </div>
 
         {/* Colonne 2 : Importer les remises stagiaires & Corriger */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Upload className="w-4 h-4 text-[#149D92]" />
@@ -683,14 +683,14 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             Importez les travaux enregistrés par les apprenants pour visualiser leurs calculs, leurs justifications et attribuer l'évaluation finale :
           </p>
 
-          <label className="border-2 border-dashed border-slate-300 hover:border-[#149D92] rounded-xl p-6 text-center block cursor-pointer transition-colors bg-slate-50">
+          <label className="border-2 border-dashed border-[#E3D8C8] hover:border-[#149D92] rounded-xl p-6 text-center block cursor-pointer transition-colors bg-slate-50">
             <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
             <span className="font-semibold text-slate-700 block">Cliquez pour charger une copie remise (.json)</span>
             <span className="text-[11px] text-slate-400 block mt-1">Paquet de remise conforme</span>
             <input type="file" accept=".json" onChange={handleImporterRemises} className="hidden" />
           </label>
 
-          <div className="p-3 bg-[#F4F7FA] border border-slate-200 rounded-lg text-slate-600 space-y-1">
+          <div className="p-3 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg text-slate-600 space-y-1">
             <strong className="block text-[#1C2459]">Copies déjà enregistrées en local ({tentatives.length}) :</strong>
             {tentatives.length === 0 ? (
               <span className="text-slate-400 italic">Aucune tentative remise pour le moment.</span>
@@ -712,7 +712,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleEnregistrerCorrection}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-lg p-6 space-y-4 text-xs max-h-[90vh] overflow-y-auto"
           >
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-bold text-sm text-[#1C2459]">
@@ -739,7 +739,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                     step="0.5"
                     value={brouillonCorrection[champ]}
                     onChange={(e) => setBrouillonCorrection({ ...brouillonCorrection, [champ]: Number(e.target.value) })}
-                    className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
                   />
                 </label>
               ))}
@@ -751,7 +751,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 rows={4}
                 value={brouillonCorrection.commentairesFormateur}
                 onChange={(e) => setBrouillonCorrection({ ...brouillonCorrection, commentairesFormateur: e.target.value })}
-                className="w-full p-3 border border-slate-200 rounded-lg leading-relaxed"
+                className="w-full p-3 border border-[#ECE3D6] rounded-lg leading-relaxed"
               />
             </label>
 
@@ -790,7 +790,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <form
             onSubmit={handleAjouterClasse}
-            className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs"
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-md p-6 space-y-4 text-xs"
           >
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-bold text-sm text-[#1C2459]">Créer un nouveau groupe / classe</h3>
@@ -810,7 +810,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 required
                 value={nouvelleClasse.nom || ''}
                 onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, nom: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
               />
             </div>
 
@@ -820,7 +820,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 type="text"
                 value={nouvelleClasse.etablissement || ''}
                 onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, etablissement: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
               />
             </div>
 
@@ -830,7 +830,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 type="text"
                 value={nouvelleClasse.formateurNom || ''}
                 onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, formateurNom: e.target.value })}
-                className="w-full px-3 py-1.5 border border-slate-200 rounded"
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
               />
             </div>
 

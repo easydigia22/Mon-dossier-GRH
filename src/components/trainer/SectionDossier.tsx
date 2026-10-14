@@ -24,7 +24,7 @@ export const SectionDossier: React.FC<SectionDossierProps> = ({
   const [ouvert, setOuvert] = useState(ouvertParDefaut);
 
   return (
-    <div className="border border-slate-200 rounded-lg bg-white">
+    <div className="border border-[#ECE3D6] rounded-lg bg-white">
       <button
         type="button"
         onClick={() => setOuvert((o) => !o)}

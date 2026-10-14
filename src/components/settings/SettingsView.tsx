@@ -52,7 +52,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -79,12 +79,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         {/* Panneau de sauvegarde / restauration */}
         <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div className="p-3.5 bg-[#F4F7FA] border border-slate-200 rounded-lg space-y-2">
+          <div className="p-3.5 bg-[#FBF7F0] border border-[#ECE3D6] rounded-lg space-y-2">
             <strong className="block font-bold text-[#1C2459]">Restauration d'une sauvegarde</strong>
             <p className="text-slate-600">
               Chargez un fichier JSON précédemment exporté pour reprendre votre travail sur n'importe quel ordinateur :
             </p>
-            <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-300 rounded cursor-pointer hover:bg-slate-50 font-medium">
+            <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#E3D8C8] rounded cursor-pointer hover:bg-slate-50 font-medium">
               <Upload className="w-3.5 h-3.5 text-slate-600" />
               <span>Sélectionner le fichier de sauvegarde (.json)</span>
               <input type="file" accept=".json" onChange={handleRestoreBackup} className="hidden" />
@@ -129,7 +129,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       </div>
 
       {/* Registre des règles juridiques vérifiées */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
             <h2 className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
@@ -166,7 +166,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </div>
               </div>
 
-              <div className="bg-[#F4F7FA] p-3 rounded-lg border border-slate-200 font-mono text-xs text-slate-900 font-semibold">
+              <div className="bg-[#FBF7F0] p-3 rounded-lg border border-[#ECE3D6] font-mono text-xs text-slate-900 font-semibold">
                 Formule / Barème : {r.valeurOuFormule}
               </div>
 
