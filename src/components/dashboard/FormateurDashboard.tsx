@@ -27,6 +27,7 @@ import {
   MetaSuiviExport
 } from '../../services/exportService';
 import { OngletNavigation } from '../common/NavigationTabs';
+import { Card, Kpi, Badge, SectionTitle, ZelligeHeader, Button } from '../ui/kit';
 
 interface FormateurDashboardProps {
   classes: ClassePedagogique[];
@@ -233,177 +234,130 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Bandeau formateur */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+      {/* Bandeau formateur — zellige */}
+      <ZelligeHeader>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
-              <Award className="w-6 h-6 text-[#149D92]" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center backdrop-blur-sm">
+              <Award className="w-6 h-6 text-[#5FD0C5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold px-2 py-0.5 bg-[#149D92] text-white rounded">SUIVI DES STAGIAIRES</span>
-                <span className="text-xs text-slate-500 font-medium inline-flex items-center gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 bg-[#C96A4B] text-white rounded-full tracking-wide">SUIVI DES STAGIAIRES</span>
+                <span className="text-[11px] text-white/70 font-medium inline-flex items-center gap-1">
                   <Radio className="w-3 h-3" /> Données en direct
                 </span>
               </div>
-              <h1 className="text-2xl font-bold text-[#1C2459] mt-1">Tableau de bord Formateur</h1>
-              <p className="text-sm text-slate-600 mt-0.5">
-                Avancement et résultats réels de vos stagiaires — {classesActives.length} classe(s) active(s), {nbStagiaires} stagiaire(s) affiché(s).
+              <h1 className="font-display text-[1.7rem] leading-tight font-semibold text-white mt-1.5">Tableau de bord Formateur</h1>
+              <p className="text-sm text-white/75 mt-0.5">
+                Avancement réel de vos stagiaires — {classesActives.length} classe(s) active(s), {nbStagiaires} stagiaire(s) affiché(s).
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={charger}
-              disabled={chargement}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-[#1C2459] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-50"
-            >
-              {chargement ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-              <span>Actualiser</span>
-            </button>
-            <button
-              onClick={handleExportCSV}
-              className="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-[#1C2459] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Excel</span>
-            </button>
-            <button
-              onClick={handleExportPDF}
-              className="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-[#1C2459] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors"
-            >
-              <FileText className="w-4 h-4 text-[#D64545]" />
-              <span>PDF</span>
-            </button>
-            <button
-              onClick={() => onNavigate('formateur')}
-              className="px-4 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
-            >
-              <Users className="w-4 h-4" />
-              <span>Mes classes</span>
-            </button>
+            <Button variant="onDark" onClick={charger} disabled={chargement} icon={chargement ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}>
+              Actualiser
+            </Button>
+            <Button variant="onDark" onClick={handleExportCSV} icon={<FileSpreadsheet className="w-4 h-4" />}>Excel</Button>
+            <Button variant="onDark" onClick={handleExportPDF} icon={<FileText className="w-4 h-4" />}>PDF</Button>
+            <Button variant="secondary" onClick={() => onNavigate('formateur')} icon={<Users className="w-4 h-4" />}>Mes classes</Button>
           </div>
         </div>
 
-        {/* Filtres : classe + seuil d'inactivité */}
-        <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs">
+        {/* Barre de filtres claire, posée sur le bandeau */}
+        <div className="mt-5 bg-white/95 rounded-xl px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs shadow-sm">
           <label className="flex items-center gap-2">
-            <span className="text-slate-500 font-medium">Classe :</span>
+            <span className="text-slate-500 font-semibold uppercase tracking-wide text-[10px]">Classe</span>
             <select
               value={classeFiltre}
               onChange={(e) => setClasseFiltre(e.target.value)}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50"
+              className="px-3 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459] bg-[#FBF7F0]"
             >
               <option value="toutes">Toutes les classes</option>
               {classesActives.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nom} ({c.anneeScolaire})
-                </option>
+                <option key={c.id} value={c.id}>{c.nom} ({c.anneeScolaire})</option>
               ))}
             </select>
           </label>
           <label className="flex items-center gap-2">
-            <span className="text-slate-500 font-medium">Seuil d'inactivité :</span>
+            <span className="text-slate-500 font-semibold uppercase tracking-wide text-[10px]">Seuil d'inactivité</span>
             <input
               type="number"
               min={1}
               max={90}
               value={seuilInactivite}
               onChange={(e) => setSeuilInactivite(Math.max(1, Number(e.target.value) || 1))}
-              className="w-16 px-2 py-1.5 border border-slate-200 rounded-lg font-bold text-[#1C2459] bg-slate-50"
+              className="w-16 px-2 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459] bg-[#FBF7F0]"
             />
             <span className="text-slate-500">jour(s)</span>
           </label>
+          {!cloudEnabled && (
+            <span className="inline-flex items-center gap-1.5 text-amber-700">
+              <AlertCircle className="w-3.5 h-3.5" /> Suivi en direct indisponible en mode local.
+            </span>
+          )}
         </div>
-
-        {!cloudEnabled && (
-          <div className="mt-4 pt-4 border-t border-slate-100 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Le suivi en direct nécessite un compte connecté (Supabase). En mode local, aucune donnée stagiaire n'est disponible.
-            </p>
-          </div>
-        )}
-      </div>
+      </ZelligeHeader>
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Stagiaires suivis</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-[#1C2459]"><Users className="w-4 h-4" /></div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-[#1C2459] tabular-nums">{nbStagiaires}</span>
-            <span className="text-xs text-slate-500">comptes</span>
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Avancement moyen</span>
-            <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-[#149D92]"><TrendingUp className="w-4 h-4" /></div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-[#1C2459] tabular-nums">{tauxMoyen}%</span>
-          </div>
-          <div className="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div className={`h-full ${couleurTaux(tauxMoyen)}`} style={{ width: `${tauxMoyen}%` }} />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">À corriger</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-[#E9A23B]"><Clock className="w-4 h-4" /></div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-[#1C2459] tabular-nums">{aCorriger}</span>
-            <span className="text-xs text-slate-500">en attente</span>
-          </div>
-          <button onClick={() => onNavigate('formateur')} className="mt-2 text-[11px] font-semibold text-[#149D92] hover:underline inline-flex items-center gap-1">
-            Corriger <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Inactifs (≥ {seuilInactivite} j)</span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600"><UserX className="w-4 h-4" /></div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className={`text-2xl font-bold tabular-nums ${nbInactifs > 0 ? 'text-rose-600' : 'text-[#1C2459]'}`}>{nbInactifs}</span>
-            <span className="text-xs text-slate-500">à relancer</span>
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Moyenne générale</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700"><CheckCircle2 className="w-4 h-4" /></div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-emerald-700 tabular-nums">
-              {moyenneGenerale !== null ? `${moyenneGenerale.toFixed(1)}` : '—'}
-            </span>
-            <span className="text-xs text-slate-500">/ 20</span>
-          </div>
-          <div className="mt-2 text-[11px] text-slate-500">{notesCorrigees.length} copie(s) corrigée(s)</div>
-        </div>
+        <Kpi
+          label="Stagiaires suivis"
+          tone="navy"
+          icon={<Users className="w-4 h-4" />}
+          value={nbStagiaires}
+          unit="comptes"
+        />
+        <Kpi
+          label="Avancement moyen"
+          tone="teal"
+          icon={<TrendingUp className="w-4 h-4" />}
+          value={`${tauxMoyen}%`}
+          footer={
+            <div className="h-1.5 w-full bg-[#F3ECE1] rounded-full overflow-hidden">
+              <div className={`h-full ${couleurTaux(tauxMoyen)}`} style={{ width: `${tauxMoyen}%` }} />
+            </div>
+          }
+        />
+        <Kpi
+          label="À corriger"
+          tone="safran"
+          icon={<Clock className="w-4 h-4" />}
+          value={aCorriger}
+          unit="en attente"
+          footer={
+            <button onClick={() => onNavigate('formateur')} className="font-semibold text-[#149D92] hover:underline inline-flex items-center gap-1">
+              Corriger <ArrowRight className="w-3 h-3" />
+            </button>
+          }
+        />
+        <Kpi
+          label={`Inactifs (≥ ${seuilInactivite} j)`}
+          tone="terracotta"
+          icon={<UserX className="w-4 h-4" />}
+          value={nbInactifs}
+          unit="à relancer"
+          valueClassName={nbInactifs > 0 ? 'text-[#B4563B]' : 'text-[#1C2459]'}
+        />
+        <Kpi
+          label="Moyenne générale"
+          tone="success"
+          icon={<CheckCircle2 className="w-4 h-4" />}
+          value={moyenneGenerale !== null ? moyenneGenerale.toFixed(1) : '—'}
+          unit="/ 20"
+          valueClassName="text-[#2E9E6B]"
+          footer={`${notesCorrigees.length} copie(s) corrigée(s)`}
+        />
       </div>
 
       {/* Avancement par mission */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-base font-bold text-[#1C2459] flex items-center gap-2">
-              <ListChecks className="w-4 h-4 text-[#149D92]" /> Avancement par mission
-            </h2>
-            <p className="text-xs text-slate-500">Part des stagiaires ayant soumis chaque mission — les plus bloquantes en premier</p>
-          </div>
-        </div>
+      <Card className="p-6">
+        <SectionTitle
+          icon={<ListChecks className="w-4 h-4" />}
+          title="Avancement par mission"
+          subtitle="Part des stagiaires ayant soumis chaque mission — les plus bloquantes en premier"
+        />
 
         {nbStagiaires === 0 ? (
           <p className="text-xs text-slate-400 italic">Aucune donnée pour le périmètre sélectionné.</p>
@@ -411,13 +365,13 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
             {avancementMissions.map((m) => (
               <div key={m.id} className="flex items-center gap-3 text-xs">
-                <span className="w-6 h-6 rounded bg-[#1C2459] text-white font-bold flex items-center justify-center shrink-0">{m.numero}</span>
+                <span className="w-6 h-6 rounded-lg bg-[#1C2459] text-white font-bold flex items-center justify-center shrink-0">{m.numero}</span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-slate-700 truncate">{m.titre}</span>
                     <span className="tabular-nums text-slate-500 shrink-0">{m.soumis}/{nbStagiaires} · {m.taux}%</span>
                   </div>
-                  <div className="mt-1 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div className="mt-1 h-1.5 w-full bg-[#F3ECE1] rounded-full overflow-hidden">
                     <div className={`h-full ${couleurTaux(m.taux)}`} style={{ width: `${m.taux}%` }} />
                   </div>
                 </div>
@@ -425,19 +379,19 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Tableau de suivi par stagiaire */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-base font-bold text-[#1C2459]">Avancement par stagiaire</h2>
-            <p className="text-xs text-slate-500">Missions soumises, corrigées, moyenne et dernière activité</p>
-          </div>
-          <button onClick={() => onNavigate('formateur')} className="text-xs font-semibold text-[#149D92] hover:underline flex items-center gap-1">
-            <span>Espace formateur</span><ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+      <Card className="p-6">
+        <SectionTitle
+          title="Avancement par stagiaire"
+          subtitle="Missions soumises, corrigées, moyenne et dernière activité"
+          right={
+            <button onClick={() => onNavigate('formateur')} className="text-xs font-semibold text-[#149D92] hover:underline flex items-center gap-1">
+              <span>Espace formateur</span><ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          }
+        />
 
         {chargement && suivi.length === 0 ? (
           <div className="flex items-center justify-center py-10 text-slate-400">
@@ -455,7 +409,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="text-[10px] uppercase text-slate-400 border-b border-slate-100">
+                <tr className="text-[10px] uppercase tracking-wide text-slate-400 border-b border-[#ECE3D6]">
                   <th className="py-2 pr-2">Stagiaire</th>
                   <th className="py-2 pr-2">Classe</th>
                   <th className="py-2 pr-2 w-48">Avancement</th>
@@ -468,12 +422,12 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
                 {suivi.map((s) => {
                   const inactif = estInactif(s);
                   return (
-                    <tr key={s.userId} className="border-b border-slate-50 hover:bg-slate-50">
-                      <td className="py-2.5 pr-2 font-semibold text-slate-800">{s.nom}</td>
+                    <tr key={s.userId} className="border-b border-[#F3ECE1] hover:bg-[#FBF7F0]">
+                      <td className="py-2.5 pr-2 font-semibold text-[#1F2440]">{s.nom}</td>
                       <td className="py-2.5 pr-2 text-slate-500">{s.classe}</td>
                       <td className="py-2.5 pr-2">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden min-w-[60px]">
+                          <div className="flex-1 h-1.5 bg-[#F3ECE1] rounded-full overflow-hidden min-w-[60px]">
                             <div className={`h-full ${couleurTaux(s.taux)}`} style={{ width: `${s.taux}%` }} />
                           </div>
                           <span className="tabular-nums text-slate-600 w-16 shrink-0">
@@ -488,10 +442,9 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
                       <td className="py-2.5 pr-2">
                         <span className="text-slate-500">{fmtDate(s.derniereActivite)}</span>
                         {inactif && (
-                          <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-semibold text-[10px]">
-                            <UserX className="w-3 h-3" />
+                          <Badge tone="terracotta" icon={<UserX className="w-3 h-3" />} className="ml-2">
                             {s.inactifJours === null ? 'Jamais actif' : `Inactif ${s.inactifJours}j`}
-                          </span>
+                          </Badge>
                         )}
                       </td>
                     </tr>
@@ -501,7 +454,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

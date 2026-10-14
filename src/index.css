@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
 @theme {
+  /* Typographie — corps Plus Jakarta Sans, titres display Fraunces (serif chaleureux) */
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', 'Plus Jakarta Sans', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --color-navy: #1C2459;
-  --color-teal: #149D92;
-  --color-canvas: #F4F7FA;
+
+  /* Palette « Marocain contemporain » */
+  --color-navy: #1C2459;       /* institutionnel, texte fort */
+  --color-navy-deep: #141A42;  /* bandeaux */
+  --color-teal: #149D92;       /* accent primaire */
+  --color-teal-soft: #E4F3F1;
+  --color-terracotta: #C96A4B; /* accent secondaire chaleureux */
+  --color-terracotta-deep: #B4563B;
+  --color-terracotta-soft: #F8EBE4;
+  --color-safran: #E9A23B;     /* accent doré / alertes douces */
+  --color-safran-soft: #FBEFD8;
+  --color-cream: #FBF7F0;      /* fond principal */
+  --color-sand: #F3ECE1;       /* séparateurs / surfaces chaudes */
+  --color-ink: #1F2440;        /* texte courant */
   --color-dark: #172B4D;
+  --color-canvas: #FBF7F0;
   --color-amber: #E9A23B;
   --color-danger: #D64545;
+  --color-success: #2E9E6B;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #F4F7FA;
-  color: #172B4D;
+  background-color: #FBF7F0;
+  color: #1F2440;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Titres display : réservé aux grands titres pour la touche éditoriale chaleureuse */
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Motif zellige (étoile à 8 branches) en filigrane, posé sur les bandeaux marine.
+   SVG en data-URI, très faible opacité : présence sans bruit visuel.
+--------------------------------------------------------------------------- */
+.bg-zellige {
+  position: relative;
+  isolation: isolate;
+}
+.bg-zellige::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.10' stroke-width='1'%3E%3Crect x='20' y='20' width='24' height='24'/%3E%3Crect x='20' y='20' width='24' height='24' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='4.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 64px 64px;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Carte « douce » chaleureuse réutilisable */
+.card-soft {
+  background: #ffffff;
+  border: 1px solid #ECE3D6;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(28, 36, 89, 0.04), 0 8px 24px -16px rgba(28, 36, 89, 0.18);
+}
+
+/* Liseré supérieur coloré pour les cartes KPI */
+.accent-top {
+  position: relative;
+  overflow: hidden;
+}
+.accent-top::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent, #149D92);
 }
 
 @media print {
@@ -36,5 +101,8 @@ body {
   }
   .print-page-break {
     page-break-before: always;
+  }
+  .bg-zellige::before {
+    display: none !important;
   }
 }
