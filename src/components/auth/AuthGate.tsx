@@ -370,6 +370,11 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
           </div>
         </div>
 
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          En rejoignant une classe, vous permettez à votre formateur de consulter votre dossier de
+          travail pour le corriger. Il ne peut rien y modifier.
+        </p>
+
         <label className="block text-xs font-medium text-slate-700">
           Code de classe
           <input

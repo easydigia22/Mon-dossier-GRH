@@ -210,6 +210,13 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
         </div>
       </div>
 
+      <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-[11px] text-[#1C2459] flex items-start gap-2">
+        <span>
+          Votre formateur peut consulter votre dossier de travail (entreprise, salariés, bulletins)
+          pour corriger vos missions. Il ne peut rien y modifier.
+        </span>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Colonne gauche : Fiche de mission, Contexte, Barème */}
         <div className="lg:col-span-1 space-y-4">
