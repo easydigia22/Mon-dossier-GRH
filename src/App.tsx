@@ -14,6 +14,7 @@ import type { UserRole } from './services/profile';
 // Chargement différé des vues : seule la vue affichée est téléchargée, ce qui
 // réduit fortement le poids du premier chargement (critique pour un partage WhatsApp).
 const DashboardView = lazy(() => import('./components/dashboard/DashboardView').then((m) => ({ default: m.DashboardView })));
+const FormateurDashboard = lazy(() => import('./components/dashboard/FormateurDashboard').then((m) => ({ default: m.FormateurDashboard })));
 const CompanyView = lazy(() => import('./components/company/CompanyView').then((m) => ({ default: m.CompanyView })));
 const EmployeesView = lazy(() => import('./components/employees/EmployeesView').then((m) => ({ default: m.EmployeesView })));
 const ContractsView = lazy(() => import('./components/contracts/ContractsView').then((m) => ({ default: m.ContractsView })));
@@ -48,6 +49,10 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   // L'admin reste « formateur » au sens des onglets : la spec lui garde l'Espace
   // Formateur, qui porte sa vue globale.
   const estFormateur = role === 'formateur' || estAdmin || role === undefined;
+  // Compte formateur/admin « réel » (connecté) : son tableau de bord est le SUIVI
+  // des stagiaires, pas le simulateur de paie de l'entreprise fictive. Le mode local
+  // (role === undefined) et les stagiaires gardent le tableau de bord paie.
+  const estFormateurReel = role === 'formateur' || estAdmin;
 
   const {
     isLoaded,
@@ -223,15 +228,24 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
        <Suspense fallback={<ChargementVue />}>
         {ongletActif === 'dashboard' && (
-          <DashboardView
-            entreprise={entreprise}
-            salaries={salaries}
-            bulletins={bulletins}
-            missions={missions}
-            periodeActive={periodeActive}
-            modePedagogique={modePedagogique}
-            onNavigate={setOngletActif}
-          />
+          estFormateurReel ? (
+            <FormateurDashboard
+              classes={classes}
+              missions={missions}
+              onNavigate={setOngletActif}
+              showNotification={showNotification}
+            />
+          ) : (
+            <DashboardView
+              entreprise={entreprise}
+              salaries={salaries}
+              bulletins={bulletins}
+              missions={missions}
+              periodeActive={periodeActive}
+              modePedagogique={modePedagogique}
+              onNavigate={setOngletActif}
+            />
+          )
         )}
 
         {ongletActif === 'entreprise' && (
