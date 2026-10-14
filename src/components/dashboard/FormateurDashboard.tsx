@@ -34,6 +34,8 @@ interface FormateurDashboardProps {
   missions: MissionExercice[];
   onNavigate: (onglet: OngletNavigation) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
+  /** Aperçu hors-ligne (design) : si fourni, on n'interroge pas Supabase. */
+  previewData?: { tentatives: TentativeLive[]; effectif: MembreClasseLive[] };
 }
 
 /** Ligne consolidée par stagiaire, calculée à partir des remises Supabase. */
@@ -56,10 +58,11 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   classes,
   missions,
   onNavigate,
-  showNotification
+  showNotification,
+  previewData
 }) => {
-  const [tentatives, setTentatives] = useState<TentativeLive[]>([]);
-  const [effectif, setEffectif] = useState<MembreClasseLive[]>([]);
+  const [tentatives, setTentatives] = useState<TentativeLive[]>(previewData?.tentatives ?? []);
+  const [effectif, setEffectif] = useState<MembreClasseLive[]>(previewData?.effectif ?? []);
   const [chargement, setChargement] = useState(false);
   const [classeFiltre, setClasseFiltre] = useState<string>('toutes');
   const [seuilInactivite, setSeuilInactivite] = useState<number>(7);
@@ -68,6 +71,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   const missionsTotal = Math.max(missions.length, 1);
 
   const charger = async () => {
+    if (previewData) return; // aperçu design : données injectées, pas de requête réseau
     if (!cloudEnabled) return;
     setChargement(true);
     try {

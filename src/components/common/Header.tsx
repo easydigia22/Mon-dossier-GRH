@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { canInstall, promptInstall } = useInstallPrompt();
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-20 no-print">
+    <header className="bg-white/90 backdrop-blur-sm border-b border-[#ECE3D6] sticky top-0 z-20 no-print">
       {/* Barre supérieure principale */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
         {/* Zone 1: Identité & Wordmark */}
@@ -48,8 +48,8 @@ export const Header: React.FC<HeaderProps> = ({
           <AppLogo size={36} />
           <div>
             <div className="text-base font-bold text-[#1C2459] leading-tight flex items-center gap-2">
-              <span>MON DOSSIER ADMINISTRATIF</span>
-              <span className="text-[11px] font-medium px-2 py-0.5 bg-[#F4F7FA] text-[#149D92] rounded">
+              <span className="font-display tracking-tight">Mon Dossier Administratif</span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 bg-[#F3ECE1] text-[#0F7D74] rounded-full">
                 Simulateur RH &amp; Paie
               </span>
             </div>
@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({
           <MonthPicker value={periodeActive} onChange={onSelectPeriode} />
 
           {/* Mode Pédagogique (Segmented Control) */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+          <div className="flex items-center bg-[#F3ECE1] p-1 rounded-lg border border-[#ECE3D6]">
             <button
               onClick={() => onSelectMode('demonstration')}
               className={`px-3 py-1 text-xs font-medium rounded transition-colors whitespace-nowrap ${
@@ -101,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Niveau (Essentiel / Avancé) */}
           <button
             onClick={onToggleNiveau}
-            className="text-xs px-2.5 py-1.5 border border-slate-300 rounded text-slate-700 hover:bg-slate-50 transition-colors whitespace-nowrap"
+            className="text-xs px-2.5 py-1.5 border border-[#ECE3D6] rounded-lg text-slate-700 hover:bg-[#FBF7F0] transition-colors whitespace-nowrap"
             title="Basculer entre niveau essentiel et avancé"
           >
             Niveau : <strong className="text-[#1C2459] capitalize">{niveau}</strong>
@@ -124,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
           {modePedagogique === 'demonstration' && (
             <button
               onClick={onResetDemo}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-[#F3ECE1] hover:bg-[#ECE3D6] rounded-lg transition-colors"
               title="Réinitialise le scénario démo à son état initial"
             >
               <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
@@ -152,10 +152,10 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Mention légale discrète requise par le cahier des charges */}
-      <div className="bg-[#1C2459] text-slate-300 text-[11px] py-1 px-4 text-center">
+      <div className="bg-zellige bg-[#1C2459] text-slate-300 text-[11px] py-1.5 px-4 text-center">
         <span>Simulation pédagogique — données fictives — ne vaut pas validation juridique.</span>
-        <span className="mx-2 text-slate-400">·</span>
-        <span>Entreprise simulée : Atlas Services Formation SARL (Marrakech)</span>
+        <span className="mx-2 text-[#5FD0C5]">·</span>
+        <span>Formation professionnelle OFPPT — Maroc</span>
       </div>
     </header>
   );

@@ -110,11 +110,11 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       )}
 
       <aside
-        className={`no-print bg-white border-r border-slate-200 h-screen flex flex-col shrink-0 z-50 transition-transform duration-200 fixed top-0 left-0 lg:sticky lg:translate-x-0 w-72 ${
+        className={`no-print bg-white border-r border-[#ECE3D6] h-screen flex flex-col shrink-0 z-50 transition-transform duration-200 fixed top-0 left-0 lg:sticky lg:translate-x-0 w-72 ${
           reduit ? 'lg:w-16' : 'lg:w-64'
         } ${mobileOuvert ? 'translate-x-0' : '-translate-x-full'}`}
       >
-      <div className={`flex items-center h-16 shrink-0 border-b border-slate-200 px-3 ${reduit ? 'justify-center' : 'justify-between'}`}>
+      <div className={`flex items-center h-16 shrink-0 border-b border-[#ECE3D6] px-3 ${reduit ? 'justify-center' : 'justify-between'}`}>
         {!reduit && (
           <img
             src="/logo-ofppt.jpg"
@@ -124,7 +124,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         )}
         <button
           onClick={() => setReduit((v) => !v)}
-          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 transition-colors"
+          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors"
           title={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
           aria-label={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
         >
@@ -132,7 +132,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         </button>
         <button
           onClick={onFermerMobile}
-          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-slate-100 transition-colors"
+          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors"
           title="Fermer le menu"
           aria-label="Fermer le menu"
         >
@@ -154,7 +154,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
               } ${
                 estActif
                   ? 'bg-[#1C2459] text-white'
-                  : 'text-slate-600 hover:text-[#1C2459] hover:bg-slate-100'
+                  : 'text-slate-600 hover:text-[#1C2459] hover:bg-[#F3ECE1]'
               }`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${estActif ? 'text-[#149D92]' : 'text-slate-400'}`} />
@@ -164,7 +164,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                     estActif
                       ? 'bg-[#149D92] text-white font-bold'
-                      : 'bg-slate-200 text-slate-700'
+                      : 'bg-[#F3ECE1] text-[#1C2459]'
                   }`}
                 >
                   {item.badge}
@@ -176,7 +176,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       </nav>
 
       {onSignOut && (
-        <div className="shrink-0 border-t border-slate-200 p-2">
+        <div className="shrink-0 border-t border-[#ECE3D6] p-2">
           <div className={`flex items-center gap-2 ${reduit ? 'flex-col' : ''}`}>
             {!reduit && (
               <div className="flex-1 min-w-0">
