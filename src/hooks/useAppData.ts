@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CONTRATS_DEMO, DEMANDES_CONGES_DEMO, ENTREPRISE_DEMO, EVENEMENTS_PRESENCE_DEMO, SALARIES_DEMO } from '../data/initialDemoData';
+import { CONTRATS_DEMO, DEMANDES_CONGES_DEMO, ENTREPRISE_DEMO, ENTREPRISE_VIDE, EVENEMENTS_PRESENCE_DEMO, SALARIES_DEMO } from '../data/initialDemoData';
 import { MISSIONS_PEDAGOGIQUES } from '../data/missionsData';
 import { cloudEnabled, loadCloudState, saveCloudState } from '../services/cloudSync';
 import { AppDatabaseState, clearAllLocalData, loadAppState, saveAppState } from '../services/db';
@@ -24,29 +24,20 @@ import {
 export function useAppData() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [cloudOk, setCloudOk] = useState(true);
-  const [entreprise, setEntreprise] = useState<Entreprise>(ENTREPRISE_DEMO);
-  const [salaries, setSalaries] = useState<Salarie[]>(SALARIES_DEMO);
-  const [contrats, setContrats] = useState<Contrat[]>(CONTRATS_DEMO);
-  const [evenementsPresence, setEvenementsPresence] = useState<EvenementPresence[]>(EVENEMENTS_PRESENCE_DEMO);
-  const [demandesConges, setDemandesConges] = useState<DemandeConge[]>(DEMANDES_CONGES_DEMO);
+  // Un nouvel espace de travail démarre VIDE : aucune donnée fictive n'est injectée.
+  // Le jeu de démonstration (SARL Atlas) reste disponible à la demande via
+  // reinitialiserDonneesDemo(). Le vrai travail saisi par les stagiaires/formateurs
+  // est ainsi le seul contenu visible.
+  const [entreprise, setEntreprise] = useState<Entreprise>(ENTREPRISE_VIDE);
+  const [salaries, setSalaries] = useState<Salarie[]>([]);
+  const [contrats, setContrats] = useState<Contrat[]>([]);
+  const [evenementsPresence, setEvenementsPresence] = useState<EvenementPresence[]>([]);
+  const [demandesConges, setDemandesConges] = useState<DemandeConge[]>([]);
   const [bulletins, setBulletins] = useState<BulletinPaie[]>([]);
   const [regles, setRegles] = useState<RegleParametreJuridique[]>(REGLES_JURIDIQUES_MAROC);
   const [missions] = useState<MissionExercice[]>(MISSIONS_PEDAGOGIQUES);
   const [tentatives, setTentatives] = useState<TentativeExercice[]>([]);
-  const [classes, setClasses] = useState<ClassePedagogique[]>([
-    {
-      id: 'cls-01',
-      nom: 'TSGE 2 - Gestion des Entreprises',
-      anneeScolaire: '2024 / 2025',
-      formateurNom: 'M. M. TAHIRI',
-      etablissement: 'ISTA Marrakech Guéliz — OFPPT',
-      stagiaires: [
-        { matricule: 'STG-01', nom: 'BENALI', prenom: 'Amine' },
-        { matricule: 'STG-02', nom: 'EL HADDAD', prenom: 'Sara' },
-        { matricule: 'STG-03', nom: 'NACIRI', prenom: 'Youssef' }
-      ]
-    }
-  ]);
+  const [classes, setClasses] = useState<ClassePedagogique[]>([]);
   const [procedures, setProcedures] = useState<ProcedureDisciplinaire[]>([]);
 
   // Paramètres d'exécution
@@ -89,10 +80,8 @@ export function useAppData() {
             setNiveau(stored.parametresApp.niveau || 'essentiel');
             setNomStagiaireActif(stored.parametresApp.nomStagiaireActif || 'Stagiaire OFPPT');
           }
-        } else {
-          // Calculer les bulletins initiaux pour janvier 2025
-          calculerTousLesBulletinsPeriode('2025-01', SALARIES_DEMO, EVENEMENTS_PRESENCE_DEMO);
         }
+        // Aucun état stocké : l'espace reste vide (pas de bulletins de démonstration).
       } catch (e) {
         console.error('Erreur chargement initial:', e);
       } finally {

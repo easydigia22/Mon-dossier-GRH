@@ -18,6 +18,30 @@ export const ENTREPRISE_DEMO: Entreprise = {
   qualiteRepresentant: 'Gérant'
 };
 
+/**
+ * Entreprise « vide » utilisée comme état initial d'un nouvel espace de travail.
+ * Aucune identité fictive n'est pré-remplie : le stagiaire saisit lui-même les
+ * informations de son entreprise. Seuls les repères légaux marocains
+ * (durée hebdomadaire 44 h, moyenne mensuelle 191 h) sont conservés par défaut.
+ */
+export const ENTREPRISE_VIDE: Entreprise = {
+  id: 'ent-001',
+  raisonSociale: '',
+  formeJuridique: '',
+  siegeSocial: '',
+  ville: '',
+  registreCommerce: '',
+  patente: '',
+  numeroCNSS: '',
+  ice: '',
+  secteur: '',
+  horaireHebdo: 44,
+  horaireMensuelMoyen: 191,
+  dateCreation: '',
+  representantLegal: '',
+  qualiteRepresentant: ''
+};
+
 export const SALARIES_DEMO: Salarie[] = [
   {
     id: 'sal-001',
