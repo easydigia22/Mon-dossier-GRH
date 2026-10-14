@@ -5,6 +5,7 @@ import { exporterJSON } from '../../services/exportService';
 import { cloudEnabled } from '../../services/cloudSync';
 import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
 import { detacherTousDeLaClasse, fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
+import { DossierStagiaireView } from './DossierStagiaireView';
 import type { MembreClasseLive } from '../../types';
 
 interface TrainerViewProps {
@@ -623,6 +624,9 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           )}
         </div>
       )}
+
+      {/* Dossier de travail d'un stagiaire (lecture seule) */}
+      <DossierStagiaireView effectif={effectifLive} showNotification={showNotification} />
 
       {/* Cartes d'action formateur */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
