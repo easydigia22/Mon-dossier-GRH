@@ -150,7 +150,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <h3 className="text-sm font-semibold text-[#1C2459]">Dossiers du Personnel</h3>
           <p className="text-xs text-slate-500 mt-1">
-            Consultez les 12 salariés, leurs pièces administratives, CIN et immatriculations CNSS fictives.
+            Consultez les {salaries.length} salariés, leurs pièces administratives, CIN et immatriculations CNSS fictives.
           </p>
         </div>
 
