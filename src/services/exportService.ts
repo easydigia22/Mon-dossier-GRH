@@ -66,6 +66,129 @@ export function exporterJSON(data: any, nomFichier: string): void {
 }
 
 /**
+ * Ligne de suivi d'un stagiaire, telle qu'exportée par le tableau de bord formateur.
+ */
+export interface LigneSuiviExport {
+  nom: string;
+  classe: string;
+  missionsSoumises: number;
+  missionsCorrigees: number;
+  taux: number; // %
+  moyenne: number | null; // /20
+  derniereActivite: string | null; // ISO
+}
+
+export interface MetaSuiviExport {
+  nbMissions: number;
+  nbStagiaires: number;
+  tauxMoyen: number;
+  aCorriger: number;
+  moyenneGenerale: number | null;
+}
+
+const fmtDateCourt = (iso: string | null): string =>
+  iso ? new Date(iso).toLocaleDateString('fr-FR') : '—';
+
+/**
+ * Export Excel (CSV avec BOM, séparateur « ; ») du suivi des stagiaires.
+ */
+export function exporterSuiviStagiairesCSV(lignes: LigneSuiviExport[], meta: MetaSuiviExport): void {
+  const headers = [
+    'Stagiaire',
+    'Classe',
+    'Missions soumises',
+    `Total missions`,
+    'Taux avancement (%)',
+    'Missions corrigées',
+    'Moyenne /20',
+    'Dernière activité'
+  ];
+  const rows = lignes.map((l) => [
+    `"${l.nom.replace(/"/g, '""')}"`,
+    `"${l.classe.replace(/"/g, '""')}"`,
+    l.missionsSoumises,
+    meta.nbMissions,
+    l.taux,
+    l.missionsCorrigees,
+    l.moyenne !== null ? l.moyenne.toFixed(1) : '',
+    fmtDateCourt(l.derniereActivite)
+  ]);
+
+  const csv =
+    '﻿' +
+    [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Suivi_stagiaires_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Export PDF A4 (paysage) du suivi des stagiaires.
+ */
+export function genererSuiviStagiairesPDF(lignes: LigneSuiviExport[], meta: MetaSuiviExport): void {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  doc.setFillColor(22, 50, 79);
+  doc.rect(0, 0, 297, 22, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SUIVI DES STAGIAIRES — TABLEAU DE BORD FORMATEUR', 148, 11, { align: 'center' });
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Édité le ${new Date().toLocaleDateString('fr-FR')}`, 148, 17, { align: 'center' });
+
+  // Synthèse
+  doc.setTextColor(23, 43, 77);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text(
+    `${meta.nbStagiaires} stagiaire(s)  ·  Avancement moyen ${meta.tauxMoyen}%  ·  ` +
+      `${meta.aCorriger} remise(s) à corriger  ·  Moyenne générale ${meta.moyenneGenerale !== null ? meta.moyenneGenerale.toFixed(1) + '/20' : '—'}`,
+    15,
+    30
+  );
+
+  // En-tête du tableau
+  let y = 40;
+  doc.setFillColor(244, 247, 250);
+  doc.rect(15, y - 5, 267, 8, 'F');
+  doc.setFontSize(8);
+  doc.text('Stagiaire', 18, y);
+  doc.text('Classe', 95, y);
+  doc.text('Avancement', 160, y, { align: 'right' });
+  doc.text('Corrigées', 200, y, { align: 'right' });
+  doc.text('Moyenne', 235, y, { align: 'right' });
+  doc.text('Dernière activité', 280, y, { align: 'right' });
+
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  lignes.forEach((l) => {
+    if (y > 195) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text(l.nom.substring(0, 40), 18, y);
+    doc.text((l.classe || '—').substring(0, 35), 95, y);
+    doc.text(`${l.missionsSoumises}/${meta.nbMissions} · ${l.taux}%`, 160, y, { align: 'right' });
+    doc.text(String(l.missionsCorrigees), 200, y, { align: 'right' });
+    doc.text(l.moyenne !== null ? `${l.moyenne.toFixed(1)}/20` : '—', 235, y, { align: 'right' });
+    doc.text(fmtDateCourt(l.derniereActivite), 280, y, { align: 'right' });
+    y += 5.5;
+  });
+
+  apposerCopyright(doc);
+  doc.save(`Suivi_stagiaires_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
+
+/**
  * Export du livre de paie au format CSV
  */
 export function exporterLivrePaieCSV(lignes: LivrePaieLigne[], periode: string): void {
