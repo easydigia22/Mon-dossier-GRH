@@ -113,9 +113,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <span>Vider l'espace de travail</span>
             </strong>
             <p className="text-[11px] leading-relaxed">
-              Supprime <strong>définitivement toutes les données de ce compte</strong> — la démonstration (SARL Atlas)
-              comme le travail réel — à la fois en local et dans le cloud. À utiliser pour repartir d'un espace
-              totalement vide. Le référentiel juridique est conservé. Cette action est irréversible.
+              Supprime <strong>définitivement les données pédagogiques de ce compte</strong> (entreprise, salariés,
+              contrats, présences, congés, bulletins, tentatives, procédures) — démonstration comme travail réel —
+              en local et dans le cloud. <strong>Vos classes et stagiaires rattachés sont conservés</strong>, ainsi
+              que le référentiel juridique. Cette action est irréversible.
             </p>
             <button
               onClick={onViderEspace}

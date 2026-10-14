@@ -127,7 +127,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   const handleViderEspaceConfirm = () => {
     if (
       confirm(
-        "Vider l'espace de travail supprimera DÉFINITIVEMENT toutes les données de ce compte (démonstration ET travail réel), en local comme dans le cloud. Cette action est irréversible. Continuer ?"
+        "Vider l'espace de travail supprimera DÉFINITIVEMENT les données pédagogiques de ce compte (entreprise, salariés, contrats, présences, congés, bulletins, tentatives, procédures), en local comme dans le cloud. Vos CLASSES et stagiaires rattachés sont CONSERVÉS. Cette action est irréversible. Continuer ?"
       )
     ) {
       viderEspaceDeTravail();

@@ -261,13 +261,16 @@ export function useAppData() {
   };
 
   /**
-   * Vider complètement l'espace de travail (démo ET vrai travail).
+   * Vider les DONNÉES PÉDAGOGIQUES de l'espace de travail (démo ET vrai travail).
    *
-   * Remet l'état à zéro : la sauvegarde automatique propage alors la suppression
-   * aussi bien en local (IndexedDB/localStorage) que dans le cloud — pushDiff
-   * supprime toutes les lignes précédemment synchronisées du compte courant.
-   * Le référentiel juridique (règles) est conservé : ce ne sont pas des données
-   * fictives mais la base légale de l'application.
+   * Efface entreprise, salariés, contrats, présences, congés, bulletins, tentatives
+   * et procédures. La sauvegarde automatique propage la suppression en local et dans
+   * le cloud (pushDiff supprime les lignes correspondantes du compte courant).
+   *
+   * IMPORTANT : les CLASSES et leurs rattachements stagiaires (classe_stagiaires)
+   * sont VOLONTAIREMENT conservés — vider son espace ne doit pas faire perdre au
+   * formateur ses groupes ni déconnecter les stagiaires rattachés. Le référentiel
+   * juridique (règles) est également conservé (base légale, pas une donnée fictive).
    */
   const viderEspaceDeTravail = async () => {
     await clearAllLocalData();
@@ -278,9 +281,9 @@ export function useAppData() {
     setDemandesConges([]);
     setBulletins([]);
     setTentatives([]);
-    setClasses([]);
     setProcedures([]);
-    showNotification('Espace de travail vidé : toutes les données (y compris la démonstration) ont été supprimées.', 'success');
+    // Classes et règles conservées intentionnellement.
+    showNotification('Données pédagogiques vidées. Vos classes et stagiaires rattachés sont conservés.', 'success');
   };
 
   /**
