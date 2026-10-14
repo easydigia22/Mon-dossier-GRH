@@ -14,8 +14,8 @@ export default defineConfig(() => {
         includeAssets: ['apple-touch-icon.png', 'logo-ofppt.jpg'],
         manifest: {
           id: '/',
-          name: 'Mon Dossier Administratif — Simulateur RH & Paie',
-          short_name: 'Dossier RH',
+          name: 'Mon GRH — Simulateur RH & Paie',
+          short_name: 'Mon GRH',
           description: "Simulateur RH et Paie pour la formation professionnelle OFPPT au Maroc.",
           lang: 'fr',
           start_url: '/',

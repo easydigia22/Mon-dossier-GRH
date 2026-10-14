@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
           <AppLogo size={36} />
           <div>
             <div className="text-base font-bold text-[#1C2459] leading-tight flex items-center gap-2">
-              <span className="font-display tracking-tight">Mon Dossier Administratif</span>
+              <span className="font-display tracking-tight">Mon GRH</span>
               <span className="text-[11px] font-semibold px-2 py-0.5 bg-[#F3ECE1] text-[#0F7D74] rounded-full">
                 Simulateur RH &amp; Paie
               </span>

@@ -15,7 +15,7 @@ export const AppLogo: React.FC<{ size?: number; className?: string }> = ({ size 
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`shrink-0 ${className}`}
-      aria-label="Mon Dossier Administratif Logo"
+      aria-label="Mon GRH Logo"
     >
       {/* 1. Chemise / Dossier administratif (fond marine) */}
       <path
