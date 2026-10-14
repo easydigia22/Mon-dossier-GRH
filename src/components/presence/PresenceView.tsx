@@ -247,7 +247,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête principal */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -381,7 +381,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
       {/* VUE 1 : GRILLE MENSUELLE / CALENDRIER DE POINTAGE */}
       {vueMode === 'calendrier' && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider block">
@@ -500,7 +500,7 @@ export const PresenceView: React.FC<PresenceViewProps> = ({
 
       {/* VUE 2 : LISTE DÉTAILLÉE DES ÉVÉNEMENTS */}
       {vueMode === 'liste' && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
               Registre des événements enregistrés ({evenementsMois.length})

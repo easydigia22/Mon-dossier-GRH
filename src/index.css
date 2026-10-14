@@ -42,6 +42,15 @@ body {
   letter-spacing: -0.015em;
 }
 
+/* Généralisation : tous les titres de page/section adoptent la police display.
+   (La graisse reste pilotée par les classes utilitaires ; on ne fixe que la famille
+   et un léger resserrement pour l'allure éditoriale « Marocain contemporain ».) */
+h1, h2 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.012em;
+}
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }

@@ -84,7 +84,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -121,7 +121,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
 
       {/* Garde-fou : une seule procédure ouverte à la fois par salarié */}
       {!procedure && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print text-center space-y-3">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print text-center space-y-3">
           {procedureOuverte ? (
             <p className="text-sm text-slate-600">
               Une procédure disciplinaire est déjà ouverte pour {salarieActif?.nom} {salarieActif?.prenom}
@@ -174,7 +174,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
       {procedure && (
         <>
           {/* Étape 1 — Qualification */}
-          <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
+          <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">1</span>
@@ -242,7 +242,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           </div>
 
           {procedure.motifFaute && (
-            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">2</span>
                 Convocation à l'entretien préalable
@@ -281,7 +281,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.dateConvocation && (
-            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">3</span>
                 Entretien préalable &amp; procès-verbal
@@ -339,7 +339,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.dateEntretien && (
-            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-3">
+            <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-3">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">4</span>
                 Décision disciplinaire
@@ -416,7 +416,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
           )}
 
           {procedure.sanction === 'licenciement' && procedure.dateNotificationSanction && salarieActif && (
-            <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-4">
+            <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-4">
               <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#1C2459] text-white text-xs flex items-center justify-center">5</span>
                 Solde de tout compte
@@ -638,7 +638,7 @@ export const DisciplineView: React.FC<DisciplineViewProps> = ({
       )}
 
       {historiqueClos.length > 0 && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print space-y-2">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print space-y-2">
           <h2 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
             <History className="w-4 h-4 text-[#149D92]" />
             Procédures clôturées pour {salarieActif?.nom} {salarieActif?.prenom}

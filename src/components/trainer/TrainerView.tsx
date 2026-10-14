@@ -274,7 +274,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête Espace Formateur */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -333,7 +333,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
       {/* Effectif de la classe active */}
       {classeActive && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Users className="w-4 h-4 text-[#149D92]" />
@@ -544,7 +544,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
       {/* Suivi en direct des remises (Supabase) */}
       {cloudEnabled && (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Radio className="w-4 h-4 text-[#149D92]" />
@@ -631,7 +631,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
       {/* Cartes d'action formateur */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Colonne 1 : Exporter des paquets d'exercices vers les stagiaires */}
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Download className="w-4 h-4 text-[#149D92]" />
@@ -670,7 +670,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
         </div>
 
         {/* Colonne 2 : Importer les remises stagiaires & Corriger */}
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-4 text-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#1C2459] text-sm flex items-center gap-2">
               <Upload className="w-4 h-4 text-[#149D92]" />

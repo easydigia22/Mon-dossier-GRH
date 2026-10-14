@@ -219,7 +219,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <AppLogo size={40} />
           <img
@@ -361,7 +361,7 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4">
         <div className="flex items-center gap-3">
           <Users className="w-8 h-8 text-[#149D92]" />
           <div>
@@ -447,7 +447,7 @@ const EcranBloquant: React.FC<{
   onSignOut: () => void;
 }> = ({ titre, message, email, onSignOut }) => (
   <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
-    <div className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-xl shadow-sm p-6 space-y-4 text-center">
+    <div className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4 text-center">
       <div className="flex justify-center">
         <AppLogo size={40} />
       </div>

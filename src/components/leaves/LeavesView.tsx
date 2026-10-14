@@ -69,7 +69,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-[#1C2459]">Congés Annuels, Exceptionnels &amp; Maladies</h1>
@@ -116,7 +116,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
       </div>
 
       {/* Tableau des demandes de congés */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Historique des demandes &amp; autorisations ({demandes.length})

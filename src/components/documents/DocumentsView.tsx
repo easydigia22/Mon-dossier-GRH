@@ -34,7 +34,7 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Panneau de sélection des modèles */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">

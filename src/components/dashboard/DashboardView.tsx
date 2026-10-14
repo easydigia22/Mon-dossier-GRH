@@ -188,7 +188,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Tableau récapitulatif des 10 missions de formation */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="font-display text-lg font-semibold text-[#1C2459]">Missions Pédagogiques du Module</h2>

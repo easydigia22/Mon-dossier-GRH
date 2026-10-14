@@ -55,7 +55,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Barre de contrôle et sélection */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm no-print">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm no-print">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -135,7 +135,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
       </div>
 
       {!bulletinActif ? (
-        <div className="bg-white border border-[#ECE3D6] rounded-xl p-12 text-center shadow-sm">
+        <div className="bg-white border border-[#ECE3D6] rounded-2xl p-12 text-center shadow-sm">
           <Receipt className="w-12 h-12 text-slate-300 mx-auto mb-3" />
           <h3 className="text-sm font-bold text-slate-700">Aucun bulletin calculé pour ce salarié en {periodeActive}</h3>
           <p className="text-xs text-slate-500 mt-1">
@@ -346,7 +346,7 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
 
           <div className="space-y-3">
             {bulletinActif.explicationsPedagogiques.map((exp, idx) => (
-              <div key={idx} className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-2">
+              <div key={idx} className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-2">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <h4 className="text-xs font-bold text-[#1C2459] flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-[#1C2459] text-white flex items-center justify-center text-[10px]">

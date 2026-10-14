@@ -95,7 +95,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
   if (!mission) {
     return (
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-8 shadow-sm text-center space-y-2">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-8 shadow-sm text-center space-y-2">
         <GraduationCap className="w-8 h-8 text-slate-300 mx-auto" />
         <p className="text-sm font-bold text-[#1C2459]">Aucune mission pour ce niveau</p>
         <p className="text-xs text-slate-500">Basculez le niveau sur « avancé » dans l'en-tête pour afficher tout le catalogue.</p>
@@ -147,7 +147,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête des missions */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#1C2459] text-white flex items-center justify-center">
@@ -220,7 +220,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Colonne gauche : Fiche de mission, Contexte, Barème */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-4 text-xs">
+          <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#149D92]">
                 Mission N° {mission.numero} / {missions.length}
@@ -289,7 +289,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
           {/* Indices progressifs — indisponibles pendant une évaluation */}
           {enEvaluation ? (
-            <div className="bg-slate-50 border border-[#ECE3D6] rounded-xl p-5 text-xs text-slate-600 flex items-start gap-2.5">
+            <div className="bg-slate-50 border border-[#ECE3D6] rounded-2xl p-5 text-xs text-slate-600 flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
               <span>
                 <strong className="text-[#1C2459]">Mode Évaluation.</strong> Indices, barème et corrigé sont fermés.
@@ -297,7 +297,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               </span>
             </div>
           ) : (
-          <div className="bg-white border border-[#ECE3D6] rounded-xl p-5 shadow-sm space-y-3 text-xs">
+          <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm space-y-3 text-xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-[#1C2459] flex items-center gap-1.5">
                 <HelpCircle className="w-4 h-4 text-[#E9A23B]" />
@@ -337,7 +337,7 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
         {/* Colonne droite : Espace de travail du stagiaire & Remise */}
         <div className="lg:col-span-2 space-y-4">
-          <form onSubmit={handleSoumettre} className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm space-y-5 text-xs">
+          <form onSubmit={handleSoumettre} className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm space-y-5 text-xs">
             <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
               <h3 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span>Espace de réponse du Stagiaire</span>

@@ -40,7 +40,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Carte principale */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
       </div>
 
       {/* Tableau récapitulatif des variables préparées par salarié */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <span className="text-xs font-bold text-[#1C2459] uppercase tracking-wider">
             Pointage des variables de paie par collaborateur ({salaries.length})

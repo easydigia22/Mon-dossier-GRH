@@ -114,7 +114,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
   return (
     <div className="space-y-6">
       {/* En-tête du module */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl p-6 shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-[#1C2459]">Dossiers Administratifs du Personnel</h1>
@@ -177,7 +177,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
       </div>
 
       {/* Tableau des salariés */}
-      <div className="bg-white border border-[#ECE3D6] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-[#FBF7F0] text-slate-600 border-b border-[#ECE3D6] uppercase text-[11px] font-semibold">
