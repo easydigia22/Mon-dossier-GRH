@@ -118,54 +118,29 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   const handleSoumettre = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Calcul de la note automatique indicative sur 20
-    // Barème : Dossier 4pts, Justification règles 4pts, Calculs 8pts, Contrôles 4pts
-    let noteDossier = 4;
-    let noteRegles = 3.5;
-    let noteCalculs = 7;
-    let noteControles = 3.5;
-
-    // Déduction modérée si indices utilisés
-    if (indicesAffiches > 1) {
-      noteRegles = Math.max(2, noteRegles - 0.5 * (indicesAffiches - 1));
-    }
-
-    const noteTotale = noteDossier + noteRegles + noteCalculs + noteControles;
-
     const nouvelleTentative: TentativeExercice = {
       id: `tentative-${mission.id}-${Date.now()}`,
       missionId: mission.id,
       stagiaireNom: nomStagiaireActif,
       dateDebut: new Date(debutMission).toISOString(),
       dateRemise: new Date().toISOString(),
-      statut: 'corrige',
+      statut: 'remis',
       reponsesStagiaire: {
         justificationsTextuelles: reponsesTextuelles,
         valeursCalculees,
         piecesValidees: [],
         controlesEffectues: controlesCoches
       },
-      indicesConsultes: indicesAffiches,
-      correction: {
-        noteDossier,
-        noteRegles,
-        noteCalculs,
-        noteControles,
-        noteTotaleSur20: noteTotale,
-        commentairesFormateur:
-          'Bonne analyse juridique et bonne rigueur dans le décompte des heures et des déductions sociales.',
-        detailsEcarts: []
-      }
+      indicesConsultes: indicesAffiches
+      // Pas de correction : la note est posée par le formateur (TrainerView).
     };
 
     onSoumettreTentative(nouvelleTentative);
 
     if (enEvaluation) {
-      // Copie remise : ni corrigé ni explications, la correction revient au formateur.
-      showNotification('Copie remise. Le corrigé reste fermé jusqu\'à la levée du mode Évaluation.', 'success');
+      showNotification('Copie remise. En attente de correction par le formateur.', 'success');
     } else {
-      setVoirCorrige(true);
-      showNotification('Mission enregistrée. Vous pouvez consulter les explications détaillées.', 'success');
+      showNotification('Mission remise. Votre formateur la corrigera.', 'success');
     }
   };
 
@@ -233,6 +208,13 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
             );
           })}
         </div>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-[11px] text-[#1C2459] flex items-start gap-2">
+        <span>
+          Votre formateur peut consulter votre dossier de travail (entreprise, salariés, bulletins)
+          pour corriger vos missions. Il ne peut rien y modifier.
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -360,8 +342,16 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               <h3 className="text-sm font-bold text-[#1C2459] flex items-center gap-2">
                 <span>Espace de réponse du Stagiaire</span>
                 {tentativeExistante && (
-                  <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
-                    Mission complétée ({tentativeExistante.correction?.noteTotaleSur20 || 20}/20)
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                      tentativeExistante.correction
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
+                    {tentativeExistante.correction
+                      ? `Corrigée (${tentativeExistante.correction.noteTotaleSur20.toFixed(1)}/20)`
+                      : 'Remise — en attente de correction'}
                   </span>
                 )}
               </h3>
