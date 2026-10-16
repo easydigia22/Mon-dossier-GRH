@@ -567,7 +567,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
                   <input
                     type="number"
                     min="3120"
-                    step="10"
+                    step="any"
                     required
                     value={nouveauSalarie.salaireBaseMensuel || 0}
                     onChange={(e) =>

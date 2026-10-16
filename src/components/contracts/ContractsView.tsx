@@ -577,7 +577,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                   </label>
                   <input
                     type="number"
-                    step="10"
+                    step="any"
                     min="1"
                     required
                     value={contratEnEdition.salaireBaseMensuel || 4000}
