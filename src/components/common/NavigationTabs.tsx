@@ -13,6 +13,7 @@ import {
   BookOpenText,
   ShieldAlert,
   ShieldCheck,
+  Send,
   FileText,
   GraduationCap,
   Award,
@@ -35,6 +36,7 @@ export type OngletNavigation =
   | 'bulletins'
   | 'livre_paie'
   | 'cnss'
+  | 'damancom'
   | 'documents'
   | 'missions'
   | 'formateur'
@@ -91,6 +93,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'bulletins', label: 'Bulletins de paie', icon: Receipt },
     { id: 'livre_paie', label: 'Livre de paie', icon: BookOpenText },
     { id: 'cnss', label: 'CNSS & AMO', icon: ShieldCheck },
+    { id: 'damancom', label: 'Télédéclaration DAMANCOM', icon: Send },
     { id: 'documents', label: 'Documents RH', icon: FileText },
     { id: 'missions', label: 'Exercices & Missions', icon: GraduationCap, badge: nombreMissions },
     ...(afficherEspaceFormateur ? [{ id: 'formateur' as const, label: 'Espace Formateur', icon: Award }] : []),

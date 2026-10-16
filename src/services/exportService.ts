@@ -189,6 +189,84 @@ export function genererSuiviStagiairesPDF(lignes: LigneSuiviExport[], meta: Meta
 }
 
 /**
+ * Ligne nominative de déclaration des salaires (DS) pour la télédéclaration DAMANCOM.
+ */
+export interface LigneDeclarationDamancom {
+  numeroImmatriculation: string;
+  matricule: string;
+  nomPrenom: string;
+  joursDeclares: number;
+  salaireReel: number;
+  salairePlafonne: number;
+  situation: string; // Normal / Entrant / Sortant
+}
+
+export interface MetaDeclarationDamancom {
+  numeroAffiliation: string;
+  raisonSociale: string;
+  periode: string; // AAAA-MM
+  totalSalaireReel: number;
+  totalSalairePlafonne: number;
+  totalCotisations: number;
+}
+
+/**
+ * Génère le fichier de télédéclaration DAMANCOM (pédagogique) au format CSV
+ * (séparateur « ; », BOM Excel). Reproduit la structure d'une déclaration
+ * nominative des salaires (BDS) — NON destiné au dépôt officiel.
+ */
+export function exporterDeclarationDamancomCSV(
+  lignes: LigneDeclarationDamancom[],
+  meta: MetaDeclarationDamancom
+): void {
+  const entete = [
+    `# TELEDECLARATION DAMANCOM (SIMULATION PEDAGOGIQUE - NON OFFICIELLE)`,
+    `# N° Affiliation CNSS;${meta.numeroAffiliation}`,
+    `# Employeur;${meta.raisonSociale}`,
+    `# Periode;${meta.periode}`,
+    `# Nombre de salaries declares;${lignes.length}`,
+    ''
+  ];
+  const headers = [
+    'N° Immatriculation CNSS',
+    'Matricule',
+    'Nom & Prénom',
+    'Jours déclarés',
+    'Salaire réel',
+    'Salaire plafonné',
+    'Situation'
+  ];
+  const rows = lignes.map((l) => [
+    l.numeroImmatriculation,
+    l.matricule,
+    `"${l.nomPrenom.replace(/"/g, '""')}"`,
+    l.joursDeclares,
+    l.salaireReel.toFixed(2),
+    l.salairePlafonne.toFixed(2),
+    l.situation
+  ]);
+  const totaux = [
+    '',
+    ['TOTAUX', '', '', '', meta.totalSalaireReel.toFixed(2), meta.totalSalairePlafonne.toFixed(2), ''].join(';'),
+    ['COTISATIONS TOTALES A VERSER', '', '', '', '', meta.totalCotisations.toFixed(2), ''].join(';')
+  ];
+
+  const csv =
+    '﻿' +
+    [...entete, headers.join(';'), ...rows.map((r) => r.join(';')), ...totaux].join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Teledeclaration_DAMANCOM_${meta.periode}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Export du livre de paie au format CSV
  */
 export function exporterLivrePaieCSV(lignes: LivrePaieLigne[], periode: string): void {

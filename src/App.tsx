@@ -26,6 +26,7 @@ const PayrollPreparationView = lazy(() => import('./components/payroll/PayrollPr
 const PayrollSlipsView = lazy(() => import('./components/payroll/PayrollSlipsView').then((m) => ({ default: m.PayrollSlipsView })));
 const PayrollBookView = lazy(() => import('./components/payroll/PayrollBookView').then((m) => ({ default: m.PayrollBookView })));
 const CnssView = lazy(() => import('./components/cnss/CnssView').then((m) => ({ default: m.CnssView })));
+const DamancomView = lazy(() => import('./components/damancom/DamancomView').then((m) => ({ default: m.DamancomView })));
 const DocumentsView = lazy(() => import('./components/documents/DocumentsView').then((m) => ({ default: m.DocumentsView })));
 const MissionsView = lazy(() => import('./components/missions/MissionsView').then((m) => ({ default: m.MissionsView })));
 const TrainerView = lazy(() => import('./components/trainer/TrainerView').then((m) => ({ default: m.TrainerView })));
@@ -357,6 +358,16 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
 
         {ongletActif === 'cnss' && (
           <CnssView
+            entreprise={entreprise}
+            salaries={salaries}
+            bulletins={bulletins}
+            periodeActive={periodeActive}
+            showNotification={showNotification}
+          />
+        )}
+
+        {ongletActif === 'damancom' && (
+          <DamancomView
             entreprise={entreprise}
             salaries={salaries}
             bulletins={bulletins}
