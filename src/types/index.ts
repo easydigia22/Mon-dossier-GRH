@@ -74,7 +74,16 @@ export interface Salarie {
   }[];
 }
 
-export type TypeContrat = 'CDI' | 'CDD' | 'Avenant';
+export type TypeContrat =
+  | 'CDI'
+  | 'CDD'
+  | 'Avenant'
+  | 'ANAPEC'
+  | 'Interim'
+  | 'Stage'
+  | 'Apprentissage'
+  | 'TempsPartiel'
+  | 'Saisonnier';
 export type StatutContrat = 'en_cours' | 'echu' | 'rompu' | 'suspendu';
 export type MotifCDD = 
   | 'remplacement_provisoire' 
@@ -100,6 +109,10 @@ export interface Contrat {
   statut: StatutContrat;
   clausesParticulieres?: string[];
   anomaliesDetectees?: string[]; // Pour les exercices et contrôles
+  // Champs spécifiques aux contrats particuliers (ANAPEC, Intérim, Stage, Apprentissage, Temps partiel)
+  organismeTiers?: string;       // ETT (intérim), établissement/CFA (stage, apprentissage), agence ANAPEC
+  referenceConvention?: string;  // N° de convention ANAPEC / stage / apprentissage / mission
+  dureeHebdoHeures?: number;     // Volume horaire hebdomadaire (temps partiel)
 }
 
 export type TypeEvenementPresence = 

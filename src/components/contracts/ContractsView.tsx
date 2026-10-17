@@ -21,6 +21,97 @@ import {
 import { Contrat, Entreprise, MotifCDD, Salarie, StatutContrat, TypeContrat } from '../../types';
 import { formatMAD, formatDateJJMMAAAA } from '../../services/exportService';
 
+// ──────────────────────────────────────────────────────────────
+// Référentiel des types de contrat autorisés par le Code du Travail
+// marocain (Loi n° 65-99) et ses textes spéciaux : insertion ANAPEC
+// (Idmaj), travail temporaire (intérim), apprentissage, temps partiel…
+// Centralise libellés, encadrement légal et mise en forme.
+// ──────────────────────────────────────────────────────────────
+interface TypeContratMeta {
+  labelCourt: string;        // badge
+  labelMenu: string;         // option du sélecteur
+  dureeDeterminee: boolean;  // impose une date de fin
+  dureeMaxMois?: number;     // plafond légal indicatif (avertissement si dépassé)
+  salarie: boolean;          // vrai contrat salarié (SMIG/CNSS) vs stage/insertion
+  reference: string;         // base légale
+  badge: string;             // classes Tailwind du badge
+  titreActe: string;         // titre du document généré
+  motUnite: string;          // « le présent contrat » / « la présente convention »
+  aide: string;              // texte d'aide sous le sélecteur
+}
+
+const TYPES_CONTRAT: Record<TypeContrat, TypeContratMeta> = {
+  CDI: {
+    labelCourt: 'CDI', labelMenu: 'CDI (Droit commun)', dureeDeterminee: false, salarie: true,
+    reference: 'Droit commun — Loi n° 65-99', badge: 'bg-blue-100 text-[#1C2459]',
+    titreActe: 'CONTRAT DE TRAVAIL À DURÉE INDÉTERMINÉE (CDI)', motUnite: 'le présent contrat',
+    aide: 'Contrat de droit commun, à durée indéterminée.'
+  },
+  CDD: {
+    labelCourt: 'CDD', labelMenu: 'CDD (Dérogatoire Art. 16)', dureeDeterminee: true, dureeMaxMois: 12, salarie: true,
+    reference: 'Contrat à durée déterminée — Art. 16 & 17', badge: 'bg-amber-100 text-amber-800',
+    titreActe: 'CONTRAT DE TRAVAIL À DURÉE DÉTERMINÉE (CDD)', motUnite: 'le présent contrat',
+    aide: 'Dérogatoire : cas de recours limités (Art. 16). Durée max 1 an, renouvelable 1 fois (plafond 2 ans).'
+  },
+  Avenant: {
+    labelCourt: 'Avenant', labelMenu: 'Avenant modificatif', dureeDeterminee: false, salarie: true,
+    reference: 'Modification du contrat initial', badge: 'bg-indigo-100 text-indigo-800',
+    titreActe: 'AVENANT AU CONTRAT DE TRAVAIL', motUnite: 'le présent avenant',
+    aide: 'Modification d\'un contrat existant (poste, salaire, durée…).'
+  },
+  ANAPEC: {
+    labelCourt: 'ANAPEC', labelMenu: 'ANAPEC — Insertion (Idmaj)', dureeDeterminee: true, dureeMaxMois: 24, salarie: false,
+    reference: 'Contrat d\'insertion ANAPEC (Idmaj) — Loi n° 1-93-16', badge: 'bg-emerald-100 text-emerald-800',
+    titreActe: 'CONTRAT DE STAGE D\'INSERTION PROFESSIONNELLE (ANAPEC — IDMAJ)', motUnite: 'le présent contrat',
+    aide: 'Stage d\'insertion ANAPEC : exonération d\'IR et de cotisations CNSS sous conditions. Durée maximale 24 mois.'
+  },
+  Interim: {
+    labelCourt: 'Intérim', labelMenu: 'Intérim (travail temporaire)', dureeDeterminee: true, salarie: true,
+    reference: 'Travail temporaire — Art. 495 à 506', badge: 'bg-purple-100 text-purple-800',
+    titreActe: 'CONTRAT DE MISSION (TRAVAIL TEMPORAIRE)', motUnite: 'le présent contrat de mission',
+    aide: 'Mission via Entreprise de Travail Temporaire (ETT). Cas de recours (Art. 496) et durée (Art. 500) strictement encadrés.'
+  },
+  Stage: {
+    labelCourt: 'Stage', labelMenu: 'Stage (convention)', dureeDeterminee: true, salarie: false,
+    reference: 'Convention de stage de formation', badge: 'bg-sky-100 text-sky-800',
+    titreActe: 'CONVENTION DE STAGE', motUnite: 'la présente convention',
+    aide: 'Convention de stage académique/PFE : pas de lien de subordination salariale, versement d\'une gratification.'
+  },
+  Apprentissage: {
+    labelCourt: 'Apprentissage', labelMenu: 'Apprentissage (Loi 12-00)', dureeDeterminee: true, dureeMaxMois: 36, salarie: true,
+    reference: 'Contrat d\'apprentissage — Loi n° 12-00', badge: 'bg-orange-100 text-orange-800',
+    titreActe: 'CONTRAT D\'APPRENTISSAGE', motUnite: 'le présent contrat',
+    aide: 'Formation par apprentissage : durée de 6 mois à 3 ans, en alternance entreprise / établissement de formation.'
+  },
+  TempsPartiel: {
+    labelCourt: 'Temps partiel', labelMenu: 'Temps partiel', dureeDeterminee: false, salarie: true,
+    reference: 'Travail à temps partiel — Art. 184 & décret n° 2-04-569', badge: 'bg-cyan-100 text-cyan-800',
+    titreActe: 'CONTRAT DE TRAVAIL À TEMPS PARTIEL', motUnite: 'le présent contrat',
+    aide: 'Durée inférieure à la durée normale (44h/sem — 191h/mois). Préciser le volume horaire hebdomadaire.'
+  },
+  Saisonnier: {
+    labelCourt: 'Saisonnier', labelMenu: 'Saisonnier', dureeDeterminee: true, salarie: true,
+    reference: 'Emploi saisonnier (CDD) — Art. 16', badge: 'bg-lime-100 text-lime-800',
+    titreActe: 'CONTRAT DE TRAVAIL SAISONNIER', motUnite: 'le présent contrat',
+    aide: 'Emploi à caractère saisonnier : variété de CDD liée au cycle saisonnier de l\'activité.'
+  }
+};
+
+const metaType = (t?: TypeContrat): TypeContratMeta => TYPES_CONTRAT[t || 'CDI'] ?? TYPES_CONTRAT.CDI;
+
+// Types nécessitant un organisme / établissement tiers
+const TYPES_AVEC_TIERS: TypeContrat[] = ['ANAPEC', 'Interim', 'Stage', 'Apprentissage'];
+
+const libelleTiers = (t?: TypeContrat): string => {
+  switch (t) {
+    case 'Interim': return 'Entreprise de Travail Temporaire (ETT)';
+    case 'Stage': return 'Établissement de formation (école / université)';
+    case 'Apprentissage': return 'Établissement / centre de formation par apprentissage';
+    case 'ANAPEC': return 'Agence ANAPEC de rattachement';
+    default: return 'Organisme tiers';
+  }
+};
+
 interface ContractsViewProps {
   contrats: Contrat[];
   salaries: Salarie[];
@@ -114,34 +205,80 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
     if (!contrat.numeroContrat || contrat.numeroContrat.trim() === '') erreurs.push('Le numéro de contrat est obligatoire.');
     if (!contrat.poste || contrat.poste.trim() === '') erreurs.push('L\'intitulé du poste est obligatoire.');
     if (!contrat.dateEffet) erreurs.push('La date d\'effet du contrat est obligatoire.');
+    const meta = metaType(contrat.type);
+
     if (contrat.salaireBaseMensuel === undefined || contrat.salaireBaseMensuel <= 0) {
-      erreurs.push('Le salaire de base mensuel doit être strictement supérieur à 0 MAD.');
-    } else if (contrat.salaireBaseMensuel < 3120) {
+      erreurs.push(
+        meta.salarie
+          ? 'Le salaire de base mensuel doit être strictement supérieur à 0 MAD.'
+          : 'La gratification / indemnité mensuelle doit être strictement supérieure à 0 MAD.'
+      );
+    } else if (meta.salarie && contrat.salaireBaseMensuel < 3120) {
       avertissements.push('Attention : Le salaire est inférieur au SMIG légal non agricole marocain (~3 120 MAD pour 191h).');
     }
 
     const salarie = salaries.find((s) => s.id === contrat.salarieId);
 
-    // Contrôles spécifiques au CDD
-    if (contrat.type === 'CDD') {
+    // Contrôle de durée pour tous les contrats à durée déterminée
+    // (CDD, ANAPEC/Idmaj, Intérim, Stage, Apprentissage, Saisonnier)
+    let dureeMois: number | null = null;
+    if (meta.dureeDeterminee) {
       if (!contrat.dateFinPrevue) {
-        erreurs.push('Un contrat CDD exige obligatoirement une date de fin prévue (Article 16 du Code du Travail).');
+        erreurs.push(`Un contrat « ${meta.labelCourt} » exige obligatoirement une date de fin (${meta.reference}).`);
       } else if (contrat.dateEffet && new Date(contrat.dateFinPrevue) <= new Date(contrat.dateEffet)) {
-        erreurs.push('Incohérence de dates : la date de fin du CDD doit être strictement postérieure à la date d\'effet.');
+        erreurs.push('Incohérence de dates : la date de fin doit être strictement postérieure à la date d\'effet.');
       } else if (contrat.dateEffet && contrat.dateFinPrevue) {
         const debut = new Date(contrat.dateEffet);
         const fin = new Date(contrat.dateFinPrevue);
-        const diffMois = (fin.getFullYear() - debut.getFullYear()) * 12 + (fin.getMonth() - debut.getMonth());
-        if (diffMois > 12) {
-          avertissements.push('Attention (Art. 16) : La durée maximale initiale d\'un CDD au Maroc est de 1 an (renouvelable 1 fois pour un plafond de 2 ans).');
+        dureeMois = (fin.getFullYear() - debut.getFullYear()) * 12 + (fin.getMonth() - debut.getMonth());
+        if (meta.dureeMaxMois && dureeMois > meta.dureeMaxMois) {
+          avertissements.push(
+            `Attention (${meta.reference}) : la durée dépasse le plafond légal indicatif de ${meta.dureeMaxMois} mois pour ce type de contrat.`
+          );
         }
       }
+    }
 
+    // Motif légal de recours : CDD (Art. 16) et Intérim (Art. 496)
+    if (contrat.type === 'CDD' || contrat.type === 'Interim') {
       if (!contrat.motifCDD) {
-        erreurs.push('Le motif légal du CDD est obligatoire (Code du Travail marocain Art. 16).');
+        erreurs.push(`Le motif légal de recours est obligatoire (${contrat.type === 'CDD' ? 'Art. 16' : 'Art. 496'}).`);
       }
       if (!contrat.justificationCDD || contrat.justificationCDD.trim() === '') {
-        erreurs.push('Une justification factuelle circonstanciée du CDD doit être précisée.');
+        erreurs.push('Une justification factuelle circonstanciée doit être précisée.');
+      }
+    }
+    if (contrat.type === 'Interim') {
+      avertissements.push(
+        'Rappel (Art. 500) : la durée de la mission d\'intérim est strictement limitée selon le motif (ex. 3 mois renouvelable une fois pour un surcroît temporaire d\'activité).'
+      );
+    }
+
+    // Organisme / établissement tiers obligatoire (ANAPEC, Intérim, Stage, Apprentissage)
+    if (TYPES_AVEC_TIERS.includes(contrat.type as TypeContrat)) {
+      if (!contrat.organismeTiers || contrat.organismeTiers.trim() === '') {
+        erreurs.push(`« ${libelleTiers(contrat.type)} » est obligatoire pour ce type de contrat.`);
+      }
+    }
+
+    // Spécificités ANAPEC / Stage
+    if (contrat.type === 'ANAPEC') {
+      avertissements.push(
+        'Contrat d\'insertion ANAPEC (Idmaj) : exonération d\'IR et de cotisations CNSS sous conditions et plafonds réglementaires. Durée maximale 24 mois.'
+      );
+    }
+    if (contrat.type === 'Stage') {
+      avertissements.push(
+        'Convention de stage : la gratification n\'est pas un salaire et il n\'y a pas de lien de subordination salariale classique. Vérifier la convention tripartite.'
+      );
+    }
+
+    // Temps partiel : volume horaire hebdomadaire
+    if (contrat.type === 'TempsPartiel') {
+      if (!contrat.dureeHebdoHeures || contrat.dureeHebdoHeures <= 0) {
+        erreurs.push('Le volume horaire hebdomadaire est obligatoire pour un contrat à temps partiel.');
+      } else if (contrat.dureeHebdoHeures >= 44) {
+        avertissements.push('Un temps partiel doit rester inférieur à la durée normale (44h/semaine). Au-delà, il relève du temps plein.');
       }
     }
 
@@ -149,7 +286,8 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
     const dureeEssai = contrat.dureeEssaiMois ?? 0;
     if (dureeEssai < 0) {
       erreurs.push('La période d\'essai ne peut pas être négative.');
-    } else if (contrat.type === 'CDI') {
+    } else if (!meta.dureeDeterminee) {
+      // Contrats à durée indéterminée (CDI, Temps partiel, Avenant)
       const estCadre = salarie?.qualification === 'Cadre';
       const maxEssai = estCadre ? 3 : 1.5;
       if (dureeEssai > maxEssai) {
@@ -157,14 +295,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           `Dépassement du plafond légal (Art. 14) : La période d'essai initiale maximale pour un ${estCadre ? 'Cadre est de 3 mois' : 'Employé/Agent de maîtrise est de 1,5 mois'}.`
         );
       }
-    } else if (contrat.type === 'CDD' && contrat.dateEffet && contrat.dateFinPrevue) {
-      const debut = new Date(contrat.dateEffet);
-      const fin = new Date(contrat.dateFinPrevue);
-      const diffMois = (fin.getFullYear() - debut.getFullYear()) * 12 + (fin.getMonth() - debut.getMonth());
-      const maxEssaiCDD = diffMois <= 6 ? 0.5 : 1; // 2 semaines si < 6 mois, 1 mois si > 6 mois
+    } else if (dureeMois !== null) {
+      const maxEssaiCDD = dureeMois <= 6 ? 0.5 : 1; // 2 semaines si <= 6 mois, 1 mois sinon
       if (dureeEssai > maxEssaiCDD) {
         avertissements.push(
-          `Dépassement légal CDD (Art. 14) : Pour un contrat de ${diffMois} mois, la période d'essai ne peut dépasser ${maxEssaiCDD === 1 ? '1 mois' : '15 jours'}.`
+          `Dépassement légal (Art. 14) : Pour un contrat de ${dureeMois} mois, la période d'essai ne peut dépasser ${maxEssaiCDD === 1 ? '1 mois' : '15 jours'}.`
         );
       }
     }
@@ -293,9 +428,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 className="px-2.5 py-1 border border-[#ECE3D6] rounded bg-slate-50"
               >
                 <option value="tous">Tous types</option>
-                <option value="CDI">CDI</option>
-                <option value="CDD">CDD</option>
-                <option value="Avenant">Avenant</option>
+                {(Object.keys(TYPES_CONTRAT) as TypeContrat[]).map((t) => (
+                  <option key={t} value={t}>
+                    {TYPES_CONTRAT[t].labelCourt}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -320,7 +457,8 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {contratsFiltres.map((c) => {
           const salarie = salaries.find((s) => s.id === c.salarieId);
-          const estCDD = c.type === 'CDD';
+          const metaC = metaType(c.type);
+          const estDureeDet = metaC.dureeDeterminee;
 
           return (
             <div
@@ -332,11 +470,9 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                   <span className="font-mono text-xs font-bold text-slate-500">{c.numeroContrat}</span>
                   <div className="flex items-center gap-1.5">
                     <span
-                      className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
-                        estCDD ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-[#1C2459]'
-                      }`}
+                      className={`text-[11px] font-semibold px-2 py-0.5 rounded ${metaC.badge}`}
                     >
-                      {c.type}
+                      {metaC.labelCourt}
                     </span>
                     <span
                       className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
@@ -364,7 +500,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     <span className="font-medium text-slate-800 tabular-nums">{formatDateJJMMAAAA(c.dateEffet)}</span>
                   </div>
 
-                  {estCDD && (
+                  {estDureeDet && (
                     <div className="flex justify-between">
                       <span className="text-slate-400">Date d'échéance :</span>
                       <span className="font-bold text-amber-700 tabular-nums">
@@ -373,19 +509,33 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     </div>
                   )}
 
+                  {c.organismeTiers && (
+                    <div className="flex justify-between gap-2">
+                      <span className="text-slate-400">{libelleTiers(c.type)} :</span>
+                      <span className="font-medium text-slate-800 text-right">{c.organismeTiers}</span>
+                    </div>
+                  )}
+
+                  {c.type === 'TempsPartiel' && c.dureeHebdoHeures ? (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Volume horaire :</span>
+                      <span className="font-medium text-slate-800">{c.dureeHebdoHeures} h/sem.</span>
+                    </div>
+                  ) : null}
+
                   <div className="flex justify-between">
                     <span className="text-slate-400">Période d'essai :</span>
                     <span className="font-medium text-slate-800">{c.dureeEssaiMois} mois</span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Salaire mensuel :</span>
+                    <span className="text-slate-400">{metaC.salarie ? 'Salaire mensuel :' : 'Gratification :'}</span>
                     <span className="font-bold text-[#1C2459] tabular-nums">{formatMAD(c.salaireBaseMensuel)}</span>
                   </div>
 
-                  {estCDD && c.justificationCDD && (
+                  {(c.type === 'CDD' || c.type === 'Interim') && c.justificationCDD && (
                     <div className="mt-2 p-2 bg-amber-50 rounded text-[11px] text-amber-900 border border-amber-200">
-                      <strong>Motif Art. 16 :</strong> {c.justificationCDD}
+                      <strong>Motif {c.type === 'CDD' ? 'Art. 16' : 'Art. 496'} :</strong> {c.justificationCDD}
                     </div>
                   )}
                 </div>
@@ -516,20 +666,27 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     value={contratEnEdition.type || 'CDI'}
                     onChange={(e) => {
                       const t = e.target.value as TypeContrat;
-                      const nextNum = `CTR-${t}-${new Date().getFullYear()}-${String(contrats.length + 1).padStart(3, '0')}`;
+                      const nextNum = `CTR-${t.toUpperCase()}-${new Date().getFullYear()}-${String(contrats.length + 1).padStart(3, '0')}`;
+                      const metaT = metaType(t);
                       setContratEnEdition({
                         ...contratEnEdition,
                         type: t,
                         numeroContrat: nextNum,
-                        motifCDD: t === 'CDD' ? 'remplacement_provisoire' : undefined
+                        motifCDD: t === 'CDD' || t === 'Interim' ? 'remplacement_provisoire' : undefined,
+                        // On vide la date de fin pour les contrats à durée indéterminée
+                        dateFinPrevue: metaT.dureeDeterminee ? contratEnEdition.dateFinPrevue : undefined,
+                        organismeTiers: TYPES_AVEC_TIERS.includes(t) ? contratEnEdition.organismeTiers : undefined
                       });
                     }}
                     className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-bold"
                   >
-                    <option value="CDI">CDI (Droit commun)</option>
-                    <option value="CDD">CDD (Dérogatoire Art. 16)</option>
-                    <option value="Avenant">Avenant modificatif</option>
+                    {(Object.keys(TYPES_CONTRAT) as TypeContrat[]).map((t) => (
+                      <option key={t} value={t}>
+                        {TYPES_CONTRAT[t].labelMenu}
+                      </option>
+                    ))}
                   </select>
+                  <span className="text-[10px] text-slate-500 block mt-1 leading-tight">{metaType(contratEnEdition.type).aide}</span>
                 </div>
 
                 <div>
@@ -573,7 +730,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
                 <div>
                   <label className="block font-medium text-slate-700 mb-1">
-                    Salaire de base mensuel (MAD) <span className="text-red-500">*</span>
+                    {metaType(contratEnEdition.type).salarie ? 'Salaire de base mensuel (MAD)' : 'Gratification / indemnité mensuelle (MAD)'} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -586,7 +743,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                     }
                     className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded font-semibold text-[#1C2459]"
                   />
-                  <span className="text-[10px] text-slate-500">Pour 191h moyennes mensuelles (Art. 184)</span>
+                  <span className="text-[10px] text-slate-500">
+                    {metaType(contratEnEdition.type).salarie
+                      ? 'Pour 191h moyennes mensuelles (Art. 184)'
+                      : 'Non soumis au SMIG salarial (stage / insertion)'}
+                  </span>
                 </div>
               </div>
 
@@ -605,12 +766,12 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
 
                 <div>
                   <label className="block font-medium text-slate-700 mb-1">
-                    Date de fin prévue {contratEnEdition.type === 'CDD' && <span className="text-red-500">* (CDD)</span>}
+                    Date de fin prévue {metaType(contratEnEdition.type).dureeDeterminee && <span className="text-red-500">*</span>}
                   </label>
                   <input
                     type="date"
-                    disabled={contratEnEdition.type !== 'CDD'}
-                    required={contratEnEdition.type === 'CDD'}
+                    disabled={!metaType(contratEnEdition.type).dureeDeterminee}
+                    required={metaType(contratEnEdition.type).dureeDeterminee}
                     value={contratEnEdition.dateFinPrevue || ''}
                     onChange={(e) => setContratEnEdition({ ...contratEnEdition, dateFinPrevue: e.target.value })}
                     className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded disabled:bg-slate-100 disabled:text-slate-400 font-semibold"
@@ -632,16 +793,22 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 </div>
               </div>
 
-              {/* Bloc spécial CDD */}
-              {contratEnEdition.type === 'CDD' && (
+              {/* Bloc motif légal : CDD (Art. 16) et Intérim (Art. 496) */}
+              {(contratEnEdition.type === 'CDD' || contratEnEdition.type === 'Interim') && (
                 <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
                   <div className="flex items-center gap-1.5 text-amber-900 font-bold">
                     <ShieldAlert className="w-4 h-4 text-amber-700" />
-                    <span>Encadrement obligatoire du CDD (Article 16 Code du Travail)</span>
+                    <span>
+                      {contratEnEdition.type === 'CDD'
+                        ? 'Encadrement obligatoire du CDD (Article 16 Code du Travail)'
+                        : 'Encadrement de la mission d\'intérim (Articles 496 & 500)'}
+                    </span>
                   </div>
 
                   <div>
-                    <label className="block font-medium text-amber-950 mb-1">Motif légal d'ouverture du CDD <span className="text-red-500">*</span></label>
+                    <label className="block font-medium text-amber-950 mb-1">
+                      Motif légal de recours <span className="text-red-500">*</span>
+                    </label>
                     <select
                       value={contratEnEdition.motifCDD || 'remplacement_provisoire'}
                       onChange={(e) => setContratEnEdition({ ...contratEnEdition, motifCDD: e.target.value as MotifCDD })}
@@ -665,6 +832,67 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                       className="w-full px-3 py-1.5 border border-amber-300 rounded bg-white text-xs"
                     />
                   </div>
+                </div>
+              )}
+
+              {/* Bloc organisme / établissement tiers : ANAPEC, Intérim, Stage, Apprentissage */}
+              {TYPES_AVEC_TIERS.includes(contratEnEdition.type as TypeContrat) && (
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
+                  <div className="flex items-center gap-1.5 text-slate-800 font-bold">
+                    <Briefcase className="w-4 h-4 text-slate-500" />
+                    <span>Partie tierce — {metaType(contratEnEdition.type).reference}</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        {libelleTiers(contratEnEdition.type)} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={
+                          contratEnEdition.type === 'Interim'
+                            ? 'Ex: Intérim Atlas RH SARL'
+                            : contratEnEdition.type === 'ANAPEC'
+                            ? 'Ex: Agence ANAPEC Marrakech-Guéliz'
+                            : 'Ex: OFPPT / Université Cadi Ayyad'
+                        }
+                        value={contratEnEdition.organismeTiers || ''}
+                        onChange={(e) => setContratEnEdition({ ...contratEnEdition, organismeTiers: e.target.value })}
+                        className="w-full px-3 py-1.5 border border-slate-300 rounded bg-white text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">N° de convention / référence</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: IDMAJ-2026-04582"
+                        value={contratEnEdition.referenceConvention || ''}
+                        onChange={(e) => setContratEnEdition({ ...contratEnEdition, referenceConvention: e.target.value })}
+                        className="w-full px-3 py-1.5 border border-slate-300 rounded bg-white text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Bloc temps partiel : volume horaire hebdomadaire */}
+              {contratEnEdition.type === 'TempsPartiel' && (
+                <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
+                  <label className="block font-medium text-cyan-900 mb-1">
+                    Volume horaire hebdomadaire (heures) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="1"
+                    max="43"
+                    placeholder="Ex: 24"
+                    value={contratEnEdition.dureeHebdoHeures ?? ''}
+                    onChange={(e) => setContratEnEdition({ ...contratEnEdition, dureeHebdoHeures: Number(e.target.value) })}
+                    className="w-full px-3 py-1.5 border border-cyan-300 rounded bg-white text-xs font-semibold"
+                  />
+                  <span className="text-[10px] text-cyan-700">Doit rester inférieur à la durée normale (44h/semaine).</span>
                 </div>
               )}
 
@@ -754,8 +982,9 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
             <div className="p-8 text-xs text-slate-800 space-y-5 leading-relaxed font-sans">
               <div className="text-center border-b-2 border-[#1C2459] pb-4">
                 <h2 className="text-base font-extrabold uppercase tracking-wider text-[#1C2459]">
-                  CONTRAT DE TRAVAIL {contratAVisualiser.type === 'CDD' ? 'À DURÉE DÉTERMINÉE (CDD)' : 'À DURÉE INDÉTERMINÉE (CDI)'}
+                  {metaType(contratAVisualiser.type).titreActe}
                 </h2>
+                <div className="text-[10px] text-slate-500 mt-0.5">{metaType(contratAVisualiser.type).reference}</div>
                 <div className="text-xs text-slate-500 font-mono mt-1">N° {contratAVisualiser.numeroContrat}</div>
                 <div className="text-[10px] text-slate-400 italic mt-1">
                   Simulation pédagogique — données fictives — ne vaut pas validation juridique.
@@ -791,10 +1020,39 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div>
                   <strong className="text-slate-900 block">Article 1 : Engagement et Nature du Contrat</strong>
                   <p>
-                    L'Employeur engage le Salarié sous contrat de travail à durée {contratAVisualiser.type === 'CDD' ? 'déterminée (CDD)' : 'indéterminée (CDI)'}, régi par les dispositions du Code du Travail marocain (Loi n° 65-99).
-                    {contratAVisualiser.type === 'CDD' && (
+                    {(() => {
+                      switch (contratAVisualiser.type) {
+                        case 'CDI':
+                          return 'L\'Employeur engage le Salarié sous contrat de travail à durée indéterminée (CDI), régi par les dispositions du Code du Travail marocain (Loi n° 65-99).';
+                        case 'CDD':
+                          return 'L\'Employeur engage le Salarié sous contrat de travail à durée déterminée (CDD), régi par les Articles 16 et 17 du Code du Travail marocain (Loi n° 65-99).';
+                        case 'Avenant':
+                          return 'Le présent avenant a pour objet de modifier le contrat de travail initial liant les parties, dans les conditions ci-après, le reste des stipulations demeurant inchangé.';
+                        case 'ANAPEC':
+                          return 'Les parties concluent un contrat de stage d\'insertion professionnelle dans le cadre du programme Idmaj de l\'ANAPEC (Loi n° 1-93-16), ouvrant droit aux exonérations fiscales et sociales prévues par la réglementation.';
+                        case 'Interim':
+                          return 'L\'Employeur (Entreprise Utilisatrice) recourt aux services du Salarié mis à disposition par une Entreprise de Travail Temporaire, dans le cadre des Articles 495 à 506 du Code du Travail.';
+                        case 'Stage':
+                          return 'La présente convention définit les modalités du stage de formation effectué par le Stagiaire au sein de l\'entreprise ; elle n\'emporte pas de lien de subordination salariale et ne constitue pas un contrat de travail.';
+                        case 'Apprentissage':
+                          return 'L\'Employeur engage l\'Apprenti dans le cadre d\'un contrat d\'apprentissage régi par la Loi n° 12-00, en vue d\'une formation professionnelle en alternance.';
+                        case 'TempsPartiel':
+                          return 'L\'Employeur engage le Salarié dans le cadre d\'un contrat de travail à temps partiel, régi par le Code du Travail (Art. 184 et textes d\'application), pour une durée inférieure à la durée normale de travail.';
+                        case 'Saisonnier':
+                          return 'L\'Employeur engage le Salarié sous contrat de travail saisonnier, variété de contrat à durée déterminée liée au caractère saisonnier de l\'activité (Art. 16).';
+                        default:
+                          return 'L\'Employeur engage le Salarié conformément aux dispositions du Code du Travail marocain (Loi n° 65-99).';
+                      }
+                    })()}
+                    {(contratAVisualiser.type === 'CDD' || contratAVisualiser.type === 'Interim') && contratAVisualiser.justificationCDD && (
                       <span className="block mt-1 p-2 bg-amber-50 border border-amber-200 rounded font-semibold text-amber-900">
-                        Motif légal justifiant le recours au CDD (Art. 16) : {contratAVisualiser.justificationCDD}.
+                        Motif légal justifiant le recours ({contratAVisualiser.type === 'CDD' ? 'Art. 16' : 'Art. 496'}) : {contratAVisualiser.justificationCDD}.
+                      </span>
+                    )}
+                    {contratAVisualiser.organismeTiers && (
+                      <span className="block mt-1 p-2 bg-slate-50 border border-slate-200 rounded text-slate-800">
+                        {libelleTiers(contratAVisualiser.type)} : <strong>{contratAVisualiser.organismeTiers}</strong>
+                        {contratAVisualiser.referenceConvention ? ` — Réf. ${contratAVisualiser.referenceConvention}` : ''}.
                       </span>
                     )}
                   </p>
@@ -810,11 +1068,11 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div>
                   <strong className="text-slate-900 block">Article 3 : Date d'effet, Durée et Période d'Essai</strong>
                   <p>
-                    Le contrat prend effet à compter du <strong>{formatDateJJMMAAAA(contratAVisualiser.dateEffet)}</strong>.
-                    {contratAVisualiser.type === 'CDD' ? (
-                      <span> Le contrat prendra fin de plein droit le <strong>{formatDateJJMMAAAA(contratAVisualiser.dateFinPrevue)}</strong>, sans préavis ni indemnité de fin de contrat.</span>
+                    {metaType(contratAVisualiser.type).motUnite.charAt(0).toUpperCase() + metaType(contratAVisualiser.type).motUnite.slice(1)} prend effet à compter du <strong>{formatDateJJMMAAAA(contratAVisualiser.dateEffet)}</strong>.
+                    {metaType(contratAVisualiser.type).dureeDeterminee ? (
+                      <span> Il prendra fin de plein droit le <strong>{formatDateJJMMAAAA(contratAVisualiser.dateFinPrevue)}</strong>, sans préavis ni indemnité de fin de contrat.</span>
                     ) : (
-                      <span> Le présent contrat est conclu pour une durée indéterminée.</span>
+                      <span> {metaType(contratAVisualiser.type).motUnite.charAt(0).toUpperCase() + metaType(contratAVisualiser.type).motUnite.slice(1)} est conclu pour une durée indéterminée.</span>
                     )}
                     <br />
                     Conformément à l'Article 14 du Code du Travail, le présent engagement est soumis à une période d'essai initiale de <strong>{contratAVisualiser.dureeEssaiMois} mois</strong> de travail effectif, durant laquelle chacune des parties pourra rompre le contrat sans préavis ni indemnité.
@@ -824,14 +1082,24 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
                 <div>
                   <strong className="text-slate-900 block">Article 4 : Durée du Travail</strong>
                   <p>
-                    La durée du travail est fixée à <strong>44 heures par semaine</strong>, soit une moyenne mensuelle de <strong>191 heures</strong> (Article 184 du Code du Travail pour les activités non agricoles).
+                    {contratAVisualiser.type === 'TempsPartiel' && contratAVisualiser.dureeHebdoHeures ? (
+                      <>La durée du travail est fixée à <strong>{contratAVisualiser.dureeHebdoHeures} heures par semaine</strong> (temps partiel), inférieure à la durée normale de 44 heures hebdomadaires (Article 184 du Code du Travail).</>
+                    ) : (
+                      <>La durée du travail est fixée à <strong>44 heures par semaine</strong>, soit une moyenne mensuelle de <strong>191 heures</strong> (Article 184 du Code du Travail pour les activités non agricoles).</>
+                    )}
                   </p>
                 </div>
 
                 <div>
-                  <strong className="text-slate-900 block">Article 5 : Rémunération</strong>
+                  <strong className="text-slate-900 block">Article 5 : {metaType(contratAVisualiser.type).salarie ? 'Rémunération' : 'Gratification'}</strong>
                   <p>
-                    En contrepartie de ses prestations, le Salarié percevra un salaire mensuel de base brut de <strong>{formatMAD(contratAVisualiser.salaireBaseMensuel)}</strong>, sous déduction des cotisations sociales légales obligatoires (CNSS, AMO) et de l'Impôt sur le Revenu (IR) précompté à la source.
+                    {metaType(contratAVisualiser.type).salarie ? (
+                      <>En contrepartie de ses prestations, {contratAVisualiser.type === 'Apprentissage' ? 'l\'Apprenti' : 'le Salarié'} percevra un salaire mensuel de base brut de <strong>{formatMAD(contratAVisualiser.salaireBaseMensuel)}</strong>, sous déduction des cotisations sociales légales obligatoires (CNSS, AMO) et de l'Impôt sur le Revenu (IR) précompté à la source.</>
+                    ) : contratAVisualiser.type === 'ANAPEC' ? (
+                      <>{contratAVisualiser.type === 'ANAPEC' ? 'Le Stagiaire inséré' : 'Le Stagiaire'} percevra une indemnité de stage mensuelle de <strong>{formatMAD(contratAVisualiser.salaireBaseMensuel)}</strong>, exonérée d'IR et de cotisations CNSS dans les limites et conditions prévues par la réglementation du programme Idmaj (ANAPEC).</>
+                    ) : (
+                      <>Le Stagiaire percevra une gratification mensuelle de <strong>{formatMAD(contratAVisualiser.salaireBaseMensuel)}</strong>. Cette gratification ne constitue pas un salaire au sens du Code du Travail.</>
+                    )}
                   </p>
                 </div>
 
