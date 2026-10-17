@@ -119,7 +119,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       >
       <div
         className={`relative flex shrink-0 border-b border-[#ECE3D6] ${
-          reduit ? 'h-16 items-center justify-center' : 'flex-col items-center text-center px-4 pt-10 pb-4'
+          reduit ? 'h-16 items-center justify-center' : 'flex-col items-center text-center px-4 py-4'
         }`}
       >
         <button
@@ -142,16 +142,11 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         </button>
 
         {!reduit && (
-          <>
-            <p className="text-[11px] font-semibold text-[#1C2459] leading-snug max-w-[12rem]">
-              Formation professionnelle OFPPT — Gestion administrative du personnel
-            </p>
-            <img
-              src="/logo-ofppt.jpg"
-              alt="Office de la Formation Professionnelle et de la Promotion du Travail"
-              className="w-14 h-14 rounded-full object-cover border border-slate-200 mt-3"
-            />
-          </>
+          <img
+            src="/logo-ofppt.jpg"
+            alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+            className="w-14 h-14 rounded-full object-cover border border-slate-200"
+          />
         )}
       </div>
 
