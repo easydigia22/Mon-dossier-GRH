@@ -154,6 +154,23 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
     return matchTexte && matchType && matchStatut;
   });
 
+  // Salariés actifs ne disposant encore d'AUCUN contrat : sans cette liste, un
+  // salarié créé mais jamais contractualisé reste totalement invisible dans ce
+  // module (c'était la cause du « 6e salarié qui ne s'affiche pas »). On les
+  // présente en cartes « Contrat à établir ». On ne les montre que lorsque les
+  // filtres de type/statut n'isolent pas une catégorie de contrat existant.
+  const idsSalariesAvecContrat = new Set(contrats.map((c) => c.salarieId));
+  const salariesSansContrat =
+    filtreType === 'tous' && filtreStatut === 'tous'
+      ? salaries.filter((s) => {
+          if (idsSalariesAvecContrat.has(s.id)) return false;
+          if (s.statut === 'sorti') return false;
+          const terme = recherche.toLowerCase();
+          const nomComplet = `${s.nom} ${s.prenom} ${s.matricule}`.toLowerCase();
+          return nomComplet.includes(terme) || s.poste.toLowerCase().includes(terme);
+        })
+      : [];
+
   // Métriques
   const totalCDI = contrats.filter((c) => c.type === 'CDI' && c.statut === 'en_cours').length;
   const totalCDD = contrats.filter((c) => c.type === 'CDD' && c.statut === 'en_cours').length;
@@ -165,15 +182,18 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
     return new Date() <= dateFinEssai;
   }).length;
 
-  const handleNouveau = () => {
-    const sal = salaries[0];
+  // Ouvre le formulaire de création. Si un salarié est fourni (bouton « Établir
+  // le contrat » d'une carte « à établir »), le contrat est pré-rempli pour lui ;
+  // sinon on retombe sur le premier salarié de la liste.
+  const handleNouveau = (salariePreselectionne?: Salarie) => {
+    const sal = salariePreselectionne ?? salaries[0];
     const generatedNum = `CTR-CDI-${new Date().getFullYear()}-${String(contrats.length + 1).padStart(3, '0')}`;
     setContratEnEdition({
       id: `ctr-${Date.now()}`,
       salarieId: sal?.id || '',
       type: 'CDI',
       numeroContrat: generatedNum,
-      dateEffet: new Date().toISOString().split('T')[0],
+      dateEffet: sal?.dateEmbauche || new Date().toISOString().split('T')[0],
       dureeEssaiMois: sal?.qualification === 'Cadre' ? 3 : 1.5,
       salaireBaseMensuel: sal?.salaireBaseMensuel || 4000,
       poste: sal?.poste || 'Agent Administratif',
@@ -378,7 +398,7 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           </div>
 
           <button
-            onClick={handleNouveau}
+            onClick={() => handleNouveau()}
             className="px-4 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm self-start sm:self-auto"
           >
             <Plus className="w-4 h-4" />
@@ -452,6 +472,22 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Alerte : salariés enregistrés mais sans contrat établi */}
+      {salariesSansContrat.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 no-print">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-amber-900">
+            <p className="font-bold">
+              {salariesSansContrat.length} salarié(s) sans contrat de travail enregistré.
+            </p>
+            <p className="mt-0.5 text-amber-800">
+              Ces collaborateurs figurent dans le registre du personnel mais aucun contrat ne leur est
+              encore associé. Cliquez sur « Établir le contrat » pour régulariser leur situation.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Cartes des contrats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -572,6 +608,58 @@ export const ContractsView: React.FC<ContractsViewProps> = ({
             </div>
           );
         })}
+
+        {/* Cartes « Contrat à établir » : salariés sans contrat associé */}
+        {salariesSansContrat.map((s) => (
+          <div
+            key={`sans-contrat-${s.id}`}
+            className="bg-amber-50/40 border border-dashed border-amber-300 rounded-2xl p-5 shadow-sm flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-mono text-xs font-bold text-slate-500">{s.matricule}</span>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                  Contrat à établir
+                </span>
+              </div>
+
+              <h3 className="text-sm font-bold text-[#1C2459]">
+                {s.nom} {s.prenom}
+              </h3>
+              <div className="text-xs text-slate-600 font-medium mt-0.5 flex items-center gap-1">
+                <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+                <span>{s.poste}</span>
+              </div>
+
+              <div className="mt-3.5 space-y-1.5 text-xs text-slate-600 border-t border-amber-200/70 pt-3">
+                <div className="flex items-start gap-2 text-amber-800">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>Aucun contrat de travail n'est encore associé à ce salarié.</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Date d'embauche :</span>
+                  <span className="font-medium text-slate-800 tabular-nums">
+                    {formatDateJJMMAAAA(s.dateEmbauche)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Salaire de référence :</span>
+                  <span className="font-bold text-[#1C2459] tabular-nums">{formatMAD(s.salaireBaseMensuel)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-amber-200/70 flex items-center justify-end">
+              <button
+                onClick={() => handleNouveau(s)}
+                className="px-3 py-1.5 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Établir le contrat</span>
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Modal Création & Modification de contrat */}
