@@ -3,6 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { Download, Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
 import { Copyright } from '../common/Copyright';
+import { LandingView } from '../landing/LandingView';
 import { supabase } from '../../services/supabase';
 import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
@@ -32,6 +33,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   const [maClasse, setMaClasse] = useState<MembreClasseLive | null>(null);
   const [classeLoading, setClasseLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+  // La page d'accueil publique précède le formulaire tant que le visiteur n'a pas
+  // cliqué « Se connecter » (et seulement s'il n'est pas déjà authentifié).
+  const [vueAccueil, setVueAccueil] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [compteRole, setCompteRole] = useState<UserRole>('stagiaire');
@@ -217,9 +221,27 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     }
   };
 
+  // Visiteur non authentifié : on montre d'abord la page d'accueil publique.
+  if (vueAccueil) {
+    return (
+      <LandingView
+        onEntrer={() => setVueAccueil(false)}
+        canInstall={canInstall}
+        onInstaller={promptInstall}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4">
+        <button
+          type="button"
+          onClick={() => setVueAccueil(true)}
+          className="text-xs text-slate-500 hover:text-[#1C2459] transition-colors"
+        >
+          ← Retour à l'accueil
+        </button>
         <div className="flex items-center gap-3">
           <AppLogo size={40} />
           <img
