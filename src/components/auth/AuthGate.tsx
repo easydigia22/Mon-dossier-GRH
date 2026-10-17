@@ -250,7 +250,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             className="w-10 h-10 rounded-full object-cover shrink-0 border border-[#ECE3D6]"
           />
           <div>
-            <div className="text-sm font-bold text-[#1C2459] leading-tight">MON GRH</div>
+            <div className="text-sm font-bold text-[#1C2459] leading-tight">SIMULRH</div>
             <div className="text-xs text-slate-500">Simulateur RH &amp; Paie — OFPPT</div>
           </div>
         </div>

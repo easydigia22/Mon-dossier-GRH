@@ -21,7 +21,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   showNotification
 }) => {
   const handleExportBackup = () => {
-    exporterJSON(fullAppState, `Sauvegarde_MonGRH_${new Date().toISOString().split('T')[0]}`);
+    exporterJSON(fullAppState, `Sauvegarde_SIMULRH_${new Date().toISOString().split('T')[0]}`);
     showNotification('Sauvegarde JSON complète téléchargée.', 'success');
   };
 

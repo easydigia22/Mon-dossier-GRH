@@ -117,17 +117,16 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
           reduit ? 'lg:w-16' : 'lg:w-64'
         } ${mobileOuvert ? 'translate-x-0' : '-translate-x-full'}`}
       >
-      <div className={`flex items-center h-16 shrink-0 border-b border-[#ECE3D6] px-3 ${reduit ? 'justify-center' : 'justify-between'}`}>
-        {!reduit && (
-          <img
-            src="/logo-ofppt.jpg"
-            alt="Office de la Formation Professionnelle et de la Promotion du Travail"
-            className="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200"
-          />
-        )}
+      <div
+        className={`relative flex shrink-0 border-b border-[#ECE3D6] ${
+          reduit ? 'h-16 items-center justify-center' : 'flex-col items-center text-center px-4 pt-10 pb-4'
+        }`}
+      >
         <button
           onClick={() => setReduit((v) => !v)}
-          className="hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors"
+          className={`hidden lg:flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors ${
+            reduit ? '' : 'absolute top-2 right-2'
+          }`}
           title={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
           aria-label={reduit ? 'Agrandir le menu' : 'Réduire le menu'}
         >
@@ -135,12 +134,25 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
         </button>
         <button
           onClick={onFermerMobile}
-          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors"
+          className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-[#1C2459] hover:bg-[#F3ECE1] transition-colors absolute top-2 right-2"
           title="Fermer le menu"
           aria-label="Fermer le menu"
         >
           <X className="w-4 h-4" />
         </button>
+
+        {!reduit && (
+          <>
+            <p className="text-[11px] font-semibold text-[#1C2459] leading-snug max-w-[12rem]">
+              Formation professionnelle OFPPT — Gestion administrative du personnel
+            </p>
+            <img
+              src="/logo-ofppt.jpg"
+              alt="Office de la Formation Professionnelle et de la Promotion du Travail"
+              className="w-14 h-14 rounded-full object-cover border border-slate-200 mt-3"
+            />
+          </>
+        )}
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-1">

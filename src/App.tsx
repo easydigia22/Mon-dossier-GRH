@@ -1,5 +1,5 @@
 /**
- * MON GRH
+ * SIMULRH
  * Simulateur RH & Paie — Formation OFPPT
  */
 
@@ -181,7 +181,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
       <div className="min-h-screen bg-[#FBF7F0] flex items-center justify-center relative">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 border-4 border-[#1C2459] border-t-[#149D92] rounded-full animate-spin mx-auto"></div>
-          <p className="text-xs font-semibold text-[#1C2459]">Chargement de Mon GRH...</p>
+          <p className="text-xs font-semibold text-[#1C2459]">Chargement de SIMULRH...</p>
         </div>
         <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
       </div>
@@ -442,7 +442,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
               alt="Office de la Formation Professionnelle et de la Promotion du Travail"
               className="w-6 h-6 rounded-full object-cover shrink-0 border border-[#ECE3D6]"
             />
-            MON GRH — Simulateur RH &amp; Paie (Formation professionnelle OFPPT)
+            SIMULRH — Simulateur RH &amp; Paie (Formation professionnelle OFPPT)
           </span>
           <span className="text-slate-400">
             Conforme Code du Travail (Loi 65-99), Dahir CNSS et CGI Article 73 · Sauvegarde locale sécurisée IndexedDB
