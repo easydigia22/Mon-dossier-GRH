@@ -1,8 +1,9 @@
 import React from 'react';
-import { CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, RotateCcw } from 'lucide-react';
+import { CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, Moon, RotateCcw, Sun } from 'lucide-react';
 import { AppLogo } from './AppLogo';
 import { MonthPicker } from './MonthPicker';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
+import { useTheme } from '../../hooks/useTheme';
 import { ModePedagogique, NiveauPedagogique } from '../../types';
 
 interface HeaderProps {
@@ -30,6 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOuvrirMenu
 }) => {
   const { canInstall, promptInstall } = useInstallPrompt();
+  const { theme, toggle: toggleTheme } = useTheme();
 
   return (
     <header className="bg-white/90 backdrop-blur-sm border-b border-[#ECE3D6] sticky top-0 z-20 no-print">
@@ -47,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <AppLogo size={36} />
           <div>
-            <div className="text-base font-bold text-[#1C2459] leading-tight flex items-center gap-2">
+            <div className="text-base font-bold text-[#1C2459] leading-tight flex flex-col items-start gap-1">
               <span className="font-display tracking-tight">SIMULRH</span>
               <span className="text-[11px] font-semibold px-2 py-0.5 bg-[#F3ECE1] text-[#0F7D74] rounded-full">
                 Simulateur RH &amp; Paie
@@ -57,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Zone 2: Mois de simulation & Mode Pédagogique */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           {/* Sélecteur de mois de simulation (calendrier) */}
           <MonthPicker value={periodeActive} onChange={onSelectPeriode} />
 
@@ -107,6 +109,16 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Actions & Réinitialisation */}
         <div className="flex items-center gap-2">
+          {/* Bascule thème clair / sombre */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 bg-[#F3ECE1] hover:bg-[#ECE3D6] transition-colors shrink-0"
+            title={theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'}
+            aria-label={theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           {canInstall && (
             <button
               onClick={promptInstall}
