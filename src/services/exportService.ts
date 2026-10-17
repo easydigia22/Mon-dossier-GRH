@@ -329,6 +329,152 @@ export function exporterLivrePaieCSV(lignes: LivrePaieLigne[], periode: string):
 }
 
 /**
+ * Paramètres de génération d'un certificat de complétion de parcours.
+ */
+export interface CertificatParams {
+  nomStagiaire: string;
+  classe?: string;
+  etablissement?: string;
+  moyenneSur20: number;
+  nbMissions: number;
+  reference: string;
+  dateObtention?: Date;
+  /** Nom du formateur délivrant le certificat (bloc signature). */
+  formateurNom?: string;
+}
+
+/**
+ * Génère un certificat de complétion PDF (A4 paysage) attestant la réussite du
+ * parcours pédagogique SIMULRH. Document pédagogique : ne vaut pas diplôme officiel.
+ */
+export function genererCertificatPDF(p: CertificatParams): void {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const W = 297;
+  const H = 210;
+  const date = p.dateObtention ?? new Date();
+
+  const NAVY: [number, number, number] = [28, 36, 89];
+  const TEAL: [number, number, number] = [20, 157, 146];
+  const SAFRAN: [number, number, number] = [233, 162, 59];
+  const INK: [number, number, number] = [31, 36, 64];
+  const GRIS: [number, number, number] = [110, 116, 140];
+
+  // Fond crème léger
+  doc.setFillColor(251, 247, 240);
+  doc.rect(0, 0, W, H, 'F');
+
+  // Double cadre décoratif
+  doc.setDrawColor(...NAVY);
+  doc.setLineWidth(1.6);
+  doc.rect(10, 10, W - 20, H - 20);
+  doc.setDrawColor(...TEAL);
+  doc.setLineWidth(0.4);
+  doc.rect(13.5, 13.5, W - 27, H - 27);
+
+  // Filets d'accent safran dans deux coins
+  doc.setDrawColor(...SAFRAN);
+  doc.setLineWidth(1.2);
+  doc.line(16, 24, 34, 24);
+  doc.line(W - 34, H - 24, W - 16, H - 24);
+
+  // Bandeau de titre
+  let y = 34;
+  doc.setTextColor(...TEAL);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('SIMULRH — SIMULATEUR RH & PAIE', W / 2, y, { align: 'center' });
+  y += 6;
+  doc.setTextColor(...GRIS);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text('Formation professionnelle OFPPT — Maroc', W / 2, y, { align: 'center' });
+
+  y += 16;
+  doc.setTextColor(...NAVY);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(30);
+  doc.text('CERTIFICAT DE COMPLÉTION', W / 2, y, { align: 'center' });
+
+  y += 14;
+  doc.setTextColor(...GRIS);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.text('Ce certificat atteste que', W / 2, y, { align: 'center' });
+
+  // Nom du stagiaire
+  y += 13;
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.text(p.nomStagiaire.toUpperCase(), W / 2, y, { align: 'center' });
+  // Soulignement teal centré sous le nom
+  doc.setDrawColor(...TEAL);
+  doc.setLineWidth(0.6);
+  doc.line(W / 2 - 55, y + 3, W / 2 + 55, y + 3);
+
+  // Corps du texte
+  y += 14;
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  const corps =
+    `a complété avec succès le parcours pédagogique « Gestion administrative du personnel & Paie »,`;
+  doc.text(corps, W / 2, y, { align: 'center' });
+  y += 6;
+  doc.text(
+    `composé de ${p.nbMissions} mission(s), avec une moyenne générale de ${p.moyenneSur20.toFixed(1)} / 20.`,
+    W / 2,
+    y,
+    { align: 'center' }
+  );
+
+  // Classe / établissement
+  if (p.classe || p.etablissement) {
+    y += 8;
+    doc.setTextColor(...GRIS);
+    doc.setFontSize(10);
+    const ligne = [p.classe, p.etablissement].filter(Boolean).join('  —  ');
+    doc.text(ligne, W / 2, y, { align: 'center' });
+  }
+
+  // Pied : date + référence (gauche) · signature (droite)
+  const yPied = H - 38;
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text(`Délivré le ${date.toLocaleDateString('fr-FR')}`, 28, yPied);
+  doc.setTextColor(...GRIS);
+  doc.setFontSize(8);
+  doc.text(`Référence : ${p.reference}`, 28, yPied + 5);
+
+  // Bloc signature à droite
+  doc.setDrawColor(...NAVY);
+  doc.setLineWidth(0.4);
+  doc.line(W - 95, yPied, W - 28, yPied);
+  doc.setTextColor(...GRIS);
+  doc.setFontSize(8);
+  doc.text(p.formateurNom ? `${p.formateurNom} — Formateur` : 'Le formateur / L\'établissement', W - 61.5, yPied + 5, {
+    align: 'center'
+  });
+
+  // Mention pédagogique
+  doc.setTextColor(...GRIS);
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(7.5);
+  doc.text(
+    'Document pédagogique — atteste la réussite d\'un parcours de simulation. Ne constitue pas un diplôme ni une certification officielle.',
+    W / 2,
+    H - 20,
+    { align: 'center' }
+  );
+
+  apposerCopyright(doc);
+
+  const slug = p.nomStagiaire.trim().replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+  doc.save(`Certificat_${slug || 'stagiaire'}_${date.toISOString().slice(0, 10)}.pdf`);
+}
+
+/**
  * Générateur PDF pour un bulletin de paie au format A4
  */
 export function genererBulletinPDF(bulletin: BulletinPaie, entrepriseRaisonSociale: string): void {

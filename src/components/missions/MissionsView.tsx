@@ -14,6 +14,7 @@ import {
   FileCheck
 } from 'lucide-react';
 import { MissionExercice, ModePedagogique, NiveauPedagogique, TentativeExercice } from '../../types';
+import { evaluerParcours } from '../../services/certificat';
 
 /** mm:ss, borné à zéro : un chrono négatif n'a pas de sens à l'écran. */
 function formaterChrono(secondes: number): string {
@@ -48,6 +49,10 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   const [voirCorrige, setVoirCorrige] = useState<boolean>(false);
 
   const enEvaluation = modePedagogique === 'evaluation';
+
+  // État du parcours : le certificat devient disponible (auprès du formateur)
+  // quand toutes les missions sont corrigées avec une moyenne ≥ 10/20.
+  const statutParcours = evaluerParcours(missions, tentatives);
 
   // Le niveau avancé donne accès à tout le catalogue ; le niveau essentiel ne
   // retient que les missions de base, celles sur lesquelles le module se valide.
@@ -146,6 +151,28 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Bannière de réussite du parcours — certificat délivrable par le formateur */}
+      {statutParcours.reussi && statutParcours.moyenne !== null && (
+        <div className="rounded-2xl p-5 text-white shadow-sm flex flex-col sm:flex-row sm:items-center gap-4"
+          style={{ background: 'linear-gradient(135deg, #1C2459 0%, #0F7D74 160%)' }}
+        >
+          <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
+            <Award className="w-6 h-6 text-[#5FD0C5]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="font-display text-lg font-semibold text-white">Parcours complété — félicitations !</h2>
+            <p className="text-sm text-white/80 mt-0.5">
+              Vous avez validé les {statutParcours.nbMissions} missions avec une moyenne de{' '}
+              <strong className="text-white">{statutParcours.moyenne.toFixed(1)}/20</strong>. Votre certificat de
+              complétion peut vous être délivré par votre formateur.
+            </p>
+          </div>
+          <span className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white/15 border border-white/20">
+            <FileCheck className="w-4 h-4" /> Certificat disponible
+          </span>
+        </div>
+      )}
+
       {/* En-tête des missions */}
       <div className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

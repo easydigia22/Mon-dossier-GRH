@@ -23,9 +23,11 @@ import { fetchEffectifLive } from '../../services/classeJoin';
 import {
   exporterSuiviStagiairesCSV,
   genererSuiviStagiairesPDF,
+  genererCertificatPDF,
   LigneSuiviExport,
   MetaSuiviExport
 } from '../../services/exportService';
+import { estParcoursReussi, referenceCertificat } from '../../services/certificat';
 import { OngletNavigation } from '../common/NavigationTabs';
 import { Card, Kpi, Badge, SectionTitle, ZelligeHeader, Button } from '../ui/kit';
 
@@ -236,6 +238,26 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
     showNotification('Export PDF généré.', 'success');
   };
 
+  // Le parcours est réussi — et le certificat délivrable — quand toutes les
+  // missions sont corrigées avec une moyenne ≥ 10/20.
+  const parcoursReussi = (s: SuiviStagiaire) =>
+    estParcoursReussi(s.missionsCorrigees, missions.length, s.moyenne);
+
+  const handleCertificat = (s: SuiviStagiaire) => {
+    if (!parcoursReussi(s) || s.moyenne === null) return;
+    const classe = classesActives.find((c) => c.id === s.classeId);
+    genererCertificatPDF({
+      nomStagiaire: s.nom,
+      classe: classe?.nom ?? (s.classe !== '—' ? s.classe : undefined),
+      etablissement: classe?.etablissement,
+      formateurNom: classe?.formateurNom,
+      moyenneSur20: s.moyenne,
+      nbMissions: missions.length,
+      reference: referenceCertificat(s.nom)
+    });
+    showNotification(`Certificat de ${s.nom} généré.`, 'success');
+  };
+
   return (
     <div className="space-y-6">
       {/* Bandeau formateur — zellige */}
@@ -420,6 +442,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
                   <th className="py-2 pr-2 text-center">Corrigées</th>
                   <th className="py-2 pr-2 text-center">Moyenne</th>
                   <th className="py-2 pr-2">Dernière activité</th>
+                  <th className="py-2 pr-2 text-center">Certificat</th>
                 </tr>
               </thead>
               <tbody>
@@ -449,6 +472,29 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
                           <Badge tone="terracotta" icon={<UserX className="w-3 h-3" />} className="ml-2">
                             {s.inactifJours === null ? 'Jamais actif' : `Inactif ${s.inactifJours}j`}
                           </Badge>
+                        )}
+                      </td>
+                      <td className="py-2.5 pr-2 text-center">
+                        {parcoursReussi(s) ? (
+                          <button
+                            onClick={() => handleCertificat(s)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#149D92] hover:bg-[#11857c] text-white text-[11px] font-semibold transition-colors"
+                            title={`Générer le certificat de complétion de ${s.nom}`}
+                          >
+                            <Award className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Certificat</span>
+                          </button>
+                        ) : (
+                          <span
+                            className="text-[11px] text-slate-400"
+                            title={
+                              s.missionsCorrigees < missions.length
+                                ? `${s.missionsCorrigees}/${missions.length} missions corrigées`
+                                : 'Moyenne inférieure à 10/20'
+                            }
+                          >
+                            —
+                          </span>
                         )}
                       </td>
                     </tr>
