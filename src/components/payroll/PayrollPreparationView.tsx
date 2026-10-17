@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Calculator, Play, CheckCircle2, Lock, RefreshCw, AlertTriangle, ArrowRight, Eye } from 'lucide-react';
-import { BulletinPaie, EvenementPresence, Salarie } from '../../types';
+import { CheckCircle2, Lock, RefreshCw, Eye, SlidersHorizontal } from 'lucide-react';
+import { BulletinPaie, EvenementPresence, RubriquePersonnalisee, Salarie } from '../../types';
 import { formatMAD } from '../../services/exportService';
+import { RubriquesSalariePanel } from './RubriquesSalariePanel';
 
 interface PayrollPreparationViewProps {
   salaries: Salarie[];
@@ -11,6 +12,10 @@ interface PayrollPreparationViewProps {
   onCalculerTous: (periode: string) => void;
   onCloturerPeriode: (periode: string) => void;
   onVoirBulletin: (salarieId: string) => void;
+  getRubriquesSalarie: (salarieId: string, periode: string) => RubriquePersonnalisee[];
+  onAjouterRubrique: (salarieId: string, periode: string, rubrique: RubriquePersonnalisee) => void;
+  onSupprimerRubrique: (salarieId: string, periode: string, index: number) => void;
+  onAppliquerRubriqueCategorie: (categorie: string | null, periode: string, rubrique: RubriquePersonnalisee) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
 }
 
@@ -22,10 +27,15 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
   onCalculerTous,
   onCloturerPeriode,
   onVoirBulletin,
+  getRubriquesSalarie,
+  onAjouterRubrique,
+  onSupprimerRubrique,
+  onAppliquerRubriqueCategorie,
   showNotification
 }) => {
   const bulletinsPeriode = bulletins.filter((b) => b.periodeMois === periodeActive);
   const estCloturee = bulletinsPeriode.length > 0 && bulletinsPeriode.every((b) => b.estSnapshotScelle);
+  const [salarieRubriques, setSalarieRubriques] = useState<Salarie | null>(null);
 
   const handleLancerCalcul = () => {
     onCalculerTous(periodeActive);
@@ -132,6 +142,7 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                 <th className="py-3 px-4 text-center">Heures Sup</th>
                 <th className="py-3 px-4 text-center">Absences</th>
                 <th className="py-3 px-4 text-center">Ancienneté</th>
+                <th className="py-3 px-4 text-center">Rubriques</th>
                 <th className="py-3 px-4 text-right">Brut Calculé</th>
                 <th className="py-3 px-4 text-right">Net à Payer</th>
                 <th className="py-3 px-4 text-center">État</th>
@@ -179,6 +190,22 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
                     <td className="py-3 px-4 text-center">
                       <span className="text-slate-700">{bull ? `${bull.tauxAnciennete}%` : '-'}</span>
                     </td>
+                    <td className="py-3 px-4 text-center">
+                      {(() => {
+                        const nb = getRubriquesSalarie(sal.id, periodeActive).length;
+                        return (
+                          <button
+                            onClick={() => setSalarieRubriques(sal)}
+                            disabled={estCloturee}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold border border-slate-200 text-[#1C2459] hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                            title="Gérer les primes, indemnités et avantages de ce salarié"
+                          >
+                            <SlidersHorizontal className="w-3.5 h-3.5" />
+                            {nb > 0 ? `${nb} rubrique${nb > 1 ? 's' : ''}` : 'Ajouter'}
+                          </button>
+                        );
+                      })()}
+                    </td>
                     <td className="py-3 px-4 text-right tabular-nums font-semibold text-[#1C2459]">
                       {bull ? formatMAD(bull.salaireBrutGlobal) : 'À calculer'}
                     </td>
@@ -217,6 +244,18 @@ export const PayrollPreparationView: React.FC<PayrollPreparationViewProps> = ({
           </table>
         </div>
       </div>
+
+      {salarieRubriques && (
+        <RubriquesSalariePanel
+          salarie={salarieRubriques}
+          periode={periodeActive}
+          rubriques={getRubriquesSalarie(salarieRubriques.id, periodeActive)}
+          onAjouter={onAjouterRubrique}
+          onSupprimer={onSupprimerRubrique}
+          onAppliquerCategorie={onAppliquerRubriqueCategorie}
+          onFermer={() => setSalarieRubriques(null)}
+        />
+      )}
     </div>
   );
 };

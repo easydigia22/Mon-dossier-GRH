@@ -1,4 +1,4 @@
-import { Contrat, DemandeConge, Entreprise, EvenementPresence, Salarie } from '../types';
+import { Contrat, DemandeConge, Entreprise, EvenementPresence, RubriquesSalariePeriode, Salarie } from '../types';
 
 export const ENTREPRISE_DEMO: Entreprise = {
   id: 'ent-atlas-001',
@@ -755,5 +755,20 @@ export const DEMANDES_CONGES_DEMO: DemandeConge[] = [
     avisResponsable: 'Félicitations de la direction',
     dateDemande: '2025-02-20',
     dateDecision: '2025-02-22'
+  }
+];
+
+/**
+ * Rubriques saisies de démonstration : illustrent la saisie de primes et
+ * d'indemnités par salarié/période (ici le cadre M001 sur janvier 2025).
+ */
+export const RUBRIQUES_SAISIES_DEMO: RubriquesSalariePeriode[] = [
+  {
+    salarieId: 'sal-001',
+    periodeMois: '2025-01',
+    rubriques: [
+      { libelle: 'Prime de fonction & responsabilité', montant: 1500, type: 'prime' },
+      { libelle: 'Indemnité de transport légale', montant: 500, type: 'indemnite_exoneree' }
+    ]
   }
 ];

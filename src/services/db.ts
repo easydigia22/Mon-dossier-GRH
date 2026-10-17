@@ -19,6 +19,7 @@ export interface AppDatabaseState {
   tentatives: any[];
   classes: any[];
   procedures?: any[];
+  rubriquesSaisies?: any[];
   parametresApp: {
     periodeActive: string;
     modePedagogique: 'demonstration' | 'entrainement' | 'evaluation';

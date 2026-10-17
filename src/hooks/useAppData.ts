@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
-import { CONTRATS_DEMO, DEMANDES_CONGES_DEMO, ENTREPRISE_DEMO, ENTREPRISE_VIDE, EVENEMENTS_PRESENCE_DEMO, SALARIES_DEMO } from '../data/initialDemoData';
+import { CONTRATS_DEMO, DEMANDES_CONGES_DEMO, ENTREPRISE_DEMO, ENTREPRISE_VIDE, EVENEMENTS_PRESENCE_DEMO, RUBRIQUES_SAISIES_DEMO, SALARIES_DEMO } from '../data/initialDemoData';
 import { MISSIONS_PEDAGOGIQUES } from '../data/missionsData';
 import { cloudEnabled, loadCloudState, saveCloudState } from '../services/cloudSync';
 import { AppDatabaseState, clearAllLocalData, loadAppState, saveAppState } from '../services/db';
 import { calculerBulletinPaie } from '../services/payrollEngine';
+import {
+  ajouterRubrique as ajouterRubriqueStore,
+  appliquerRubriqueCategorie as appliquerRubriqueCategorieStore,
+  getRubriques,
+  repartirRubriques,
+  supprimerRubrique as supprimerRubriqueStore
+} from '../services/rubriques';
 import { REGLES_JURIDIQUES_MAROC } from '../services/rulesData';
 import {
   BulletinPaie,
@@ -17,6 +24,8 @@ import {
   NiveauPedagogique,
   ProcedureDisciplinaire,
   RegleParametreJuridique,
+  RubriquePersonnalisee,
+  RubriquesSalariePeriode,
   Salarie,
   TentativeExercice
 } from '../types';
@@ -34,6 +43,7 @@ export function useAppData() {
   const [evenementsPresence, setEvenementsPresence] = useState<EvenementPresence[]>([]);
   const [demandesConges, setDemandesConges] = useState<DemandeConge[]>([]);
   const [bulletins, setBulletins] = useState<BulletinPaie[]>([]);
+  const [rubriquesSaisies, setRubriquesSaisies] = useState<RubriquesSalariePeriode[]>([]);
   const [regles, setRegles] = useState<RegleParametreJuridique[]>(REGLES_JURIDIQUES_MAROC);
   const [missions] = useState<MissionExercice[]>(MISSIONS_PEDAGOGIQUES);
   const [tentatives, setTentatives] = useState<TentativeExercice[]>([]);
@@ -53,6 +63,9 @@ export function useAppData() {
       try {
         // Priorité au cloud (compte connecté) ; à défaut, reprise des données locales
         // (ce qui migre automatiquement un ancien espace IndexedDB vers Supabase à la 1re sauvegarde).
+        // La copie locale est toujours lue : elle sert de source pour les données
+        // non encore synchronisées dans le cloud (ex. rubriques saisies).
+        const local = await loadAppState();
         let stored: AppDatabaseState | null = null;
         if (cloudEnabled) {
           try {
@@ -62,7 +75,10 @@ export function useAppData() {
             setCloudOk(false);
           }
         }
-        if (!stored) stored = await loadAppState();
+        if (!stored) stored = local;
+        // Rubriques saisies : non portées par l'état cloud → repli sur la copie locale.
+        const rubriquesStockees = stored?.rubriquesSaisies ?? local?.rubriquesSaisies;
+        if (rubriquesStockees) setRubriquesSaisies(rubriquesStockees);
         if (stored) {
           if (stored.entreprise) setEntreprise(stored.entreprise);
           if (stored.salaries && stored.salaries.length > 0) setSalaries(stored.salaries);
@@ -109,6 +125,7 @@ export function useAppData() {
         tentatives,
         classes,
         procedures,
+        rubriquesSaisies,
         parametresApp: {
           periodeActive,
           modePedagogique,
@@ -142,6 +159,7 @@ export function useAppData() {
     tentatives,
     classes,
     procedures,
+    rubriquesSaisies,
     periodeActive,
     modePedagogique,
     niveau,
@@ -159,7 +177,8 @@ export function useAppData() {
   const calculerTousLesBulletinsPeriode = (
     periode: string,
     listeSalaries: Salarie[] = salaries,
-    listeEvts: EvenementPresence[] = evenementsPresence
+    listeEvts: EvenementPresence[] = evenementsPresence,
+    listeRubriques: RubriquesSalariePeriode[] = rubriquesSaisies
   ) => {
     const nouveauxBulletins: BulletinPaie[] = [];
 
@@ -183,17 +202,12 @@ export function useAppData() {
         }
       });
 
-      // Vérifier si le salarié a été embauché au cours de ce mois (proratisation)
-      let primes: { libelle: string; montant: number; imposable: boolean; cotisable: boolean }[] = [];
-      let indemnitesExonerees: { libelle: string; montant: number }[] = [];
-      let avantages: { libelle: string; montant: number }[] = [];
-      let acomptes = 0;
+      // Rubriques saisies par l'utilisateur pour ce salarié et ce mois, réparties
+      // vers les familles attendues par le moteur selon leur traitement fiscal/social.
+      const { primesDiverses: primes, indemnitesNonImposables: indemnitesExonerees, avantagesEnNature: avantages } =
+        repartirRubriques(getRubriques(listeRubriques, sal.id, periode));
 
-      // Exemple variables démo
-      if (sal.matricule === 'M001') {
-        primes.push({ libelle: 'Prime de fonction & responsabilité', montant: 1500, imposable: true, cotisable: true });
-        indemnitesExonerees.push({ libelle: 'Indemnité de transport légale', montant: 500 });
-      }
+      let acomptes = 0;
       if (sal.matricule === 'M002' && periode === '2025-01') {
         acomptes = 1000;
       }
@@ -256,7 +270,8 @@ export function useAppData() {
     setRegles(REGLES_JURIDIQUES_MAROC);
     setTentatives([]);
     setProcedures([]);
-    calculerTousLesBulletinsPeriode('2025-01', SALARIES_DEMO, EVENEMENTS_PRESENCE_DEMO);
+    setRubriquesSaisies(RUBRIQUES_SAISIES_DEMO);
+    calculerTousLesBulletinsPeriode('2025-01', SALARIES_DEMO, EVENEMENTS_PRESENCE_DEMO, RUBRIQUES_SAISIES_DEMO);
     showNotification('Jeu de données de démonstration réinitialisé avec succès.', 'info');
   };
 
@@ -282,6 +297,7 @@ export function useAppData() {
     setBulletins([]);
     setTentatives([]);
     setProcedures([]);
+    setRubriquesSaisies([]);
     // Classes et règles conservées intentionnellement.
     showNotification('Données pédagogiques vidées. Vos classes et stagiaires rattachés sont conservés.', 'success');
   };
@@ -427,6 +443,43 @@ export function useAppData() {
     showNotification('Votre mission a été enregistrée et soumise avec succès.', 'success');
   };
 
+  /**
+   * Ajouter une rubrique de paie (prime, indemnité ou avantage) à un salarié
+   * pour une période donnée.
+   */
+  const ajouterRubriqueSalarie = (salarieId: string, periode: string, rubrique: RubriquePersonnalisee) => {
+    setRubriquesSaisies((prev) => ajouterRubriqueStore(prev, salarieId, periode, rubrique));
+    showNotification(`Rubrique « ${rubrique.libelle} » ajoutée. Relancez le calcul pour l'appliquer.`, 'success');
+  };
+
+  /** Supprimer la rubrique à l'index donné pour un salarié/période. */
+  const supprimerRubriqueSalarie = (salarieId: string, periode: string, index: number) => {
+    setRubriquesSaisies((prev) => supprimerRubriqueStore(prev, salarieId, periode, index));
+    showNotification('Rubrique supprimée. Relancez le calcul pour mettre à jour le bulletin.', 'info');
+  };
+
+  /**
+   * Appliquer une rubrique à tous les salariés d'une catégorie (qualification),
+   * ou à tous si aucune catégorie n'est précisée, pour la période indiquée.
+   */
+  const appliquerRubriqueCategorieSalaries = (
+    categorie: string | null,
+    periode: string,
+    rubrique: RubriquePersonnalisee
+  ) => {
+    const cibles = salaries.filter((s) => categorie === null || s.qualification === categorie);
+    const ids = cibles.map((s) => s.id);
+    setRubriquesSaisies((prev) => appliquerRubriqueCategorieStore(prev, ids, periode, rubrique));
+    showNotification(
+      `Rubrique « ${rubrique.libelle} » appliquée à ${ids.length} salarié(s). Relancez le calcul.`,
+      'success'
+    );
+  };
+
+  /** Rubriques saisies pour un salarié et une période (lecture pour l'UI). */
+  const getRubriquesSalarie = (salarieId: string, periode: string): RubriquePersonnalisee[] =>
+    getRubriques(rubriquesSaisies, salarieId, periode);
+
   return {
     isLoaded,
     cloudEnabled,
@@ -466,6 +519,11 @@ export function useAppData() {
     upsertEvenementPresence,
     deleteEvenementPresence,
     upsertDemandeConge,
-    soumettreTentative
+    soumettreTentative,
+    rubriquesSaisies,
+    getRubriquesSalarie,
+    ajouterRubriqueSalarie,
+    supprimerRubriqueSalarie,
+    appliquerRubriqueCategorieSalaries
   };
 }

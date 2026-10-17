@@ -166,6 +166,26 @@ export interface DemandeConge {
   dateDecision?: string;
 }
 
+/**
+ * Rubrique de paie saisie manuellement par l'utilisateur (formateur/stagiaire)
+ * pour un salarié et un mois donnés. Le `type` pilote le traitement fiscal et
+ * social lors de la répartition vers le moteur de calcul.
+ */
+export type TypeRubriquePersonnalisee = 'prime' | 'indemnite_exoneree' | 'avantage_nature';
+
+export interface RubriquePersonnalisee {
+  libelle: string;
+  montant: number;
+  type: TypeRubriquePersonnalisee;
+}
+
+/** Ensemble des rubriques saisies pour un salarié sur une période de paie. */
+export interface RubriquesSalariePeriode {
+  salarieId: string;
+  periodeMois: string; // "AAAA-MM"
+  rubriques: RubriquePersonnalisee[];
+}
+
 export interface RubriquePaieLigne {
   code: string;
   libelle: string;

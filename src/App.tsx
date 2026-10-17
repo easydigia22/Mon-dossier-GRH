@@ -94,7 +94,11 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     upsertEvenementPresence,
     deleteEvenementPresence,
     upsertDemandeConge,
-    soumettreTentative
+    soumettreTentative,
+    getRubriquesSalarie,
+    ajouterRubriqueSalarie,
+    supprimerRubriqueSalarie,
+    appliquerRubriqueCategorieSalaries
   } = useAppData();
 
   const [menuMobileOuvert, setMenuMobileOuvert] = useState(false);
@@ -329,6 +333,10 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             onCalculerTous={calculerTousLesBulletinsPeriode}
             onCloturerPeriode={cloturerPeriode}
             onVoirBulletin={handleVoirBulletin}
+            getRubriquesSalarie={getRubriquesSalarie}
+            onAjouterRubrique={ajouterRubriqueSalarie}
+            onSupprimerRubrique={supprimerRubriqueSalarie}
+            onAppliquerRubriqueCategorie={appliquerRubriqueCategorieSalaries}
             showNotification={showNotification}
           />
         )}
