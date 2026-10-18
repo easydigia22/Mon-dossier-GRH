@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-export type UserRole = 'stagiaire' | 'formateur' | 'admin';
+export type UserRole = 'stagiaire' | 'formateur' | 'admin' | 'superadmin';
 export type StatutCompte = 'en_attente' | 'approuve' | 'refuse' | 'desactive';
 
 export interface MonProfil {
@@ -8,6 +8,8 @@ export interface MonProfil {
   statut: StatutCompte;
   email?: string;
   motifRefus?: string;
+  /** Établissement de rattachement (null pour le super-admin global, ou formateur pas encore rattaché). */
+  etablissementId?: string | null;
   /** Aucune ligne de profil lisible : compte en cours de création, statut inconnu. */
   profilAbsent?: boolean;
 }
@@ -24,7 +26,7 @@ export async function fetchMonProfil(): Promise<MonProfil> {
   // renvoie toutes les lignes à un admin, et `maybeSingle()` échoue au-delà d'une.
   const { data, error } = await supabase
     .from('profiles')
-    .select('role, statut, email, motif_refus')
+    .select('role, statut, email, motif_refus, etablissement_id')
     .eq('user_id', userId)
     .maybeSingle();
   if (error) throw error;
@@ -38,6 +40,7 @@ export async function fetchMonProfil(): Promise<MonProfil> {
     role: (data.role as UserRole) ?? 'stagiaire',
     statut: (data.statut as StatutCompte) ?? 'en_attente',
     email: data.email ?? undefined,
-    motifRefus: data.motif_refus ?? undefined
+    motifRefus: data.motif_refus ?? undefined,
+    etablissementId: (data.etablissement_id as string | null) ?? null
   };
 }

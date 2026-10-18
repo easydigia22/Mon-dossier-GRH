@@ -22,6 +22,7 @@ const PresenceView = lazy(() => import('./components/presence/PresenceView').the
 const LeavesView = lazy(() => import('./components/leaves/LeavesView').then((m) => ({ default: m.LeavesView })));
 const DisciplineView = lazy(() => import('./components/discipline/DisciplineView').then((m) => ({ default: m.DisciplineView })));
 const AdminView = lazy(() => import('./components/admin/AdminView').then((m) => ({ default: m.AdminView })));
+const SuperAdminView = lazy(() => import('./components/admin/SuperAdminView').then((m) => ({ default: m.SuperAdminView })));
 const PayrollPreparationView = lazy(() => import('./components/payroll/PayrollPreparationView').then((m) => ({ default: m.PayrollPreparationView })));
 const PayrollSlipsView = lazy(() => import('./components/payroll/PayrollSlipsView').then((m) => ({ default: m.PayrollSlipsView })));
 const PayrollBookView = lazy(() => import('./components/payroll/PayrollBookView').then((m) => ({ default: m.PayrollBookView })));
@@ -46,7 +47,9 @@ interface AppProps {
 
 export default function App({ userEmail, role, onSignOut }: AppProps) {
   // mode local sans compte (role === undefined) : accès complet, comme avant.
-  const estAdmin = role === 'admin';
+  const estSuperAdmin = role === 'superadmin';
+  // Le super-admin a les capacités d'un admin (plus l'espace Établissements).
+  const estAdmin = role === 'admin' || estSuperAdmin;
   // L'admin reste « formateur » au sens des onglets : la spec lui garde l'Espace
   // Formateur, qui porte sa vue globale.
   const estFormateur = role === 'formateur' || estAdmin || role === undefined;
@@ -107,6 +110,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     // Un stagiaire ne doit jamais atterrir sur les espaces réservés au formateur
     const ongletsFormateur: OngletNavigation[] = ['formateur', 'discipline'];
     if (onglet === 'administration' && !estAdmin) return setOngletActifBrut('dashboard');
+    if (onglet === 'etablissements' && !estSuperAdmin) return setOngletActifBrut('dashboard');
     setOngletActifBrut(ongletsFormateur.includes(onglet) && !estFormateur ? 'dashboard' : onglet);
   };
   const [selectedSalarieIdPourBulletin, setSelectedSalarieIdPourBulletin] = useState<string | undefined>(undefined);
@@ -198,6 +202,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
         nombreMissions={missions.length}
         afficherEspaceFormateur={estFormateur}
         afficherAdministration={estAdmin}
+        afficherSuperAdmin={estSuperAdmin}
         userEmail={userEmail}
         role={role}
         onSignOut={onSignOut}
@@ -406,6 +411,10 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
 
         {ongletActif === 'administration' && estAdmin && (
           <AdminView showNotification={showNotification} />
+        )}
+
+        {ongletActif === 'etablissements' && estSuperAdmin && (
+          <SuperAdminView showNotification={showNotification} />
         )}
 
         {ongletActif === 'formateur' && estFormateur && (

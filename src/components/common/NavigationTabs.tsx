@@ -18,6 +18,7 @@ import {
   GraduationCap,
   Award,
   Sliders,
+  Building,
   PanelLeftClose,
   PanelLeftOpen,
   LogOut,
@@ -41,6 +42,7 @@ export type OngletNavigation =
   | 'missions'
   | 'formateur'
   | 'administration'
+  | 'etablissements'
   | 'parametres';
 
 interface NavigationTabsProps {
@@ -51,6 +53,8 @@ interface NavigationTabsProps {
   /** Masque l'onglet « Espace Formateur » pour les comptes stagiaire */
   afficherEspaceFormateur?: boolean;
   afficherAdministration?: boolean;
+  /** Onglet « Établissements » réservé au super-admin. */
+  afficherSuperAdmin?: boolean;
   userEmail?: string;
   role?: UserRole;
   onSignOut?: () => void;
@@ -66,6 +70,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   nombreMissions,
   afficherEspaceFormateur = true,
   afficherAdministration = false,
+  afficherSuperAdmin = false,
   userEmail,
   role,
   onSignOut,
@@ -97,6 +102,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     { id: 'documents', label: 'Documents RH', icon: FileText },
     { id: 'missions', label: 'Exercices & Missions', icon: GraduationCap, badge: nombreMissions },
     ...(afficherEspaceFormateur ? [{ id: 'formateur' as const, label: 'Espace Formateur', icon: Award }] : []),
+    ...(afficherSuperAdmin ? [{ id: 'etablissements' as const, label: 'Établissements', icon: Building }] : []),
     ...(afficherAdministration ? [{ id: 'administration' as const, label: 'Administration', icon: ShieldAlert }] : []),
     { id: 'parametres', label: 'Paramètres & Lois', icon: Sliders }
   ];
@@ -193,7 +199,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 {role && (
                   <span
                     className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                      role === 'formateur' || role === 'admin' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
+                      role === 'formateur' || role === 'admin' || role === 'superadmin' ? 'bg-[#1C2459] text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {role}

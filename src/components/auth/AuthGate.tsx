@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { Download, Loader2, LogIn, LogOut, UserPlus, Users } from 'lucide-react';
+import { Building2, Download, Loader2, LogIn, LogOut, Plus, UserPlus, Users } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
 import { Copyright } from '../common/Copyright';
 import { LandingView } from '../landing/LandingView';
@@ -9,6 +9,12 @@ import { resetCloudCache } from '../../services/cloudSync';
 import { clearAllLocalData } from '../../services/db';
 import { fetchMonProfil, MonProfil, UserRole } from '../../services/profile';
 import { fetchMaClasse, rejoindreClasse } from '../../services/classeJoin';
+import {
+  listerEtablissementsPublics,
+  choisirEtablissement,
+  proposerEtablissement,
+  EtablissementPublic
+} from '../../services/etablissements';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import type { MembreClasseLive } from '../../types';
 
@@ -119,6 +125,15 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     };
   }, [session?.user.id, role]);
 
+  // Re-lecture du profil après une action qui le modifie (ex. choix d'établissement).
+  const rafraichirProfil = async () => {
+    try {
+      setProfil(await fetchMonProfil());
+    } catch (e) {
+      console.error('Rafraîchissement du profil impossible:', e);
+    }
+  };
+
   if (!supabase) return <>{children({})}</>;
 
   // Tant que le profil n'est pas connu, on attend : sans cela `role === undefined`
@@ -166,6 +181,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           onSignOut={signOut}
         />
       );
+    }
+
+    // Un formateur doit être rattaché à un établissement avant toute validation :
+    // il choisit un centre existant ou en propose un nouveau (qui sera validé par le
+    // super-admin). Le super-admin (etablissementId null) n'est jamais concerné.
+    if (profil && profil.role === 'formateur' && !profil.etablissementId) {
+      return <ChoisirEtablissementScreen onDone={rafraichirProfil} onSignOut={signOut} />;
     }
 
     if (profil && profil.role === 'formateur' && profil.statut !== 'approuve') {
@@ -450,6 +472,153 @@ const JoinClasseScreen: React.FC<JoinClasseScreenProps> = ({ onJoined, onSignOut
         >
           {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
           Rejoindre la classe
+        </button>
+
+        <button type="button" onClick={onSignOut} className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-[#D64545]">
+          <LogOut className="w-3.5 h-3.5" />
+          Se déconnecter
+        </button>
+      </form>
+      <Copyright className="absolute bottom-4 left-0 right-0 px-4" />
+    </div>
+  );
+};
+
+interface ChoisirEtablissementScreenProps {
+  onDone: () => void;
+  onSignOut: () => void;
+}
+
+/**
+ * Étape obligatoire pour un formateur pas encore rattaché : rejoindre un établissement
+ * existant OU en proposer un nouveau (qui passera en validation du super-admin).
+ */
+const ChoisirEtablissementScreen: React.FC<ChoisirEtablissementScreenProps> = ({ onDone, onSignOut }) => {
+  const [mode, setMode] = useState<'existant' | 'nouveau'>('existant');
+  const [liste, setListe] = useState<EtablissementPublic[]>([]);
+  const [listeLoading, setListeLoading] = useState(true);
+  const [choixId, setChoixId] = useState('');
+  const [nom, setNom] = useState('');
+  const [ville, setVille] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    listerEtablissementsPublics()
+      .then((l) => {
+        setListe(l);
+        if (l.length > 0) setChoixId(l[0].id);
+        else setMode('nouveau');
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setListeLoading(false));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      if (mode === 'existant') {
+        if (!choixId) throw new Error('Sélectionnez un établissement.');
+        await choisirEtablissement(choixId);
+      } else {
+        if (!nom.trim()) throw new Error("Indiquez le nom de l'établissement.");
+        await proposerEtablissement(nom.trim(), ville.trim() || undefined);
+      }
+      onDone();
+    } catch (e: any) {
+      setError(e.message || 'Action impossible.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <Building2 className="w-8 h-8 text-[#149D92]" />
+          <div>
+            <div className="text-sm font-bold text-[#1C2459] leading-tight">Votre établissement</div>
+            <div className="text-xs text-slate-500">Rattachez votre compte formateur à un centre</div>
+          </div>
+        </div>
+
+        <div className="flex gap-2 text-xs">
+          {(['existant', 'nouveau'] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={`flex-1 px-3 py-2 border rounded-lg font-semibold transition-colors ${
+                mode === m ? 'border-[#149D92] bg-teal-50 text-[#1C2459]' : 'border-[#E3D8C8] text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {m === 'existant' ? 'Rejoindre un centre' : 'Créer mon centre'}
+            </button>
+          ))}
+        </div>
+
+        {mode === 'existant' ? (
+          <label className="block text-xs font-medium text-slate-700">
+            Établissement
+            {listeLoading ? (
+              <div className="mt-1 flex items-center gap-2 text-slate-400 text-xs"><Loader2 className="w-4 h-4 animate-spin" /> Chargement…</div>
+            ) : liste.length === 0 ? (
+              <p className="mt-1 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                Aucun établissement disponible. Créez le vôtre dans l'onglet « Créer mon centre ».
+              </p>
+            ) : (
+              <select
+                value={choixId}
+                onChange={(e) => setChoixId(e.target.value)}
+                className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm"
+              >
+                {liste.map((e) => (
+                  <option key={e.id} value={e.id}>{e.nom}{e.ville ? ` — ${e.ville}` : ''}</option>
+                ))}
+              </select>
+            )}
+          </label>
+        ) : (
+          <>
+            <label className="block text-xs font-medium text-slate-700">
+              Nom de l'établissement
+              <input
+                type="text"
+                value={nom}
+                onChange={(e) => setNom(e.target.value)}
+                placeholder="Ex: ISTA Marrakech Guéliz - OFPPT"
+                className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block text-xs font-medium text-slate-700">
+              Ville (optionnel)
+              <input
+                type="text"
+                value={ville}
+                onChange={(e) => setVille(e.target.value)}
+                placeholder="Marrakech"
+                className="mt-1 w-full border border-[#E3D8C8] rounded px-3 py-2 text-sm"
+              />
+            </label>
+            <p className="text-[11px] text-slate-500">
+              Le centre que vous créez sera validé par l'administrateur de la plateforme avant
+              d'être actif.
+            </p>
+          </>
+        )}
+
+        {error && <p className="text-xs text-[#D64545]" role="alert">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={busy}
+          className="w-full flex items-center justify-center gap-2 bg-[#1C2459] text-white text-sm font-medium rounded py-2 hover:bg-[#1d4266] disabled:opacity-60 transition-colors"
+        >
+          {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+          {mode === 'existant' ? 'Rejoindre cet établissement' : "Créer et continuer"}
         </button>
 
         <button type="button" onClick={onSignOut} className="w-full flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-[#D64545]">
