@@ -8,6 +8,17 @@ import { detacherTousDeLaClasse, fetchEffectifLive, genererCodeInvitation, retir
 import { DossierStagiaireView } from './DossierStagiaireView';
 import type { MembreClasseLive } from '../../types';
 
+/**
+ * Année de formation courante au format « AAAA / AAAA+1 ».
+ * L'année scolaire OFPPT démarre en septembre : de septembre à décembre on est
+ * sur l'année AAAA / AAAA+1, de janvier à août sur AAAA-1 / AAAA.
+ */
+const anneeScolaireActuelle = (): string => {
+  const d = new Date();
+  const debut = d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1;
+  return `${debut} / ${debut + 1}`;
+};
+
 interface TrainerViewProps {
   classes: ClassePedagogique[];
   setClasses: React.Dispatch<React.SetStateAction<ClassePedagogique[]>>;
@@ -32,11 +43,14 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   const [modalClasseOuverte, setModalClasseOuverte] = useState(false);
   const [nouvelleClasse, setNouvelleClasse] = useState<Partial<ClassePedagogique>>({
     nom: 'TSGE 1 - Groupe A',
-    anneeScolaire: '2024 / 2025',
+    anneeScolaire: anneeScolaireActuelle(),
     formateurNom: 'Formateur OFPPT',
     etablissement: 'ISTA Guéliz Marrakech',
     stagiaires: []
   });
+
+  // Édition d'un groupe existant (nom / année de formation / établissement)
+  const [classeEnEdition, setClasseEnEdition] = useState<ClassePedagogique | null>(null);
 
   const classesActives = classes.filter((c) => !c.archiveeLe);
   const classesArchivees = classes.filter((c) => c.archiveeLe);
@@ -231,7 +245,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     const c: ClassePedagogique = {
       id: `cls-${Date.now()}`,
       nom: nouvelleClasse.nom,
-      anneeScolaire: nouvelleClasse.anneeScolaire || '2024 / 2025',
+      anneeScolaire: nouvelleClasse.anneeScolaire || anneeScolaireActuelle(),
       formateurNom: nouvelleClasse.formateurNom || 'Formateur OFPPT',
       etablissement: nouvelleClasse.etablissement || 'ISTA OFPPT',
       codeInvitation: genererCodeInvitation(),
@@ -241,6 +255,19 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     setClasseActiveId(c.id);
     setModalClasseOuverte(false);
     showNotification(`Classe « ${c.nom} » créée.`, 'success');
+  };
+
+  const handleEnregistrerEdition = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!classeEnEdition || !classeEnEdition.nom.trim()) return;
+    const maj = {
+      nom: classeEnEdition.nom.trim(),
+      anneeScolaire: (classeEnEdition.anneeScolaire || '').trim() || anneeScolaireActuelle(),
+      etablissement: (classeEnEdition.etablissement || '').trim()
+    };
+    setClasses((prev) => prev.map((c) => (c.id === classeEnEdition.id ? { ...c, ...maj } : c)));
+    setClasseEnEdition(null);
+    showNotification(`Groupe mis à jour : « ${maj.nom} » (${maj.anneeScolaire}).`, 'success');
   };
 
   const handleExporterPaquetExercice = (mission: MissionExercice) => {
@@ -323,6 +350,17 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 </optgroup>
               )}
             </select>
+            {!lectureSeule && classeActive && (
+              <button
+                type="button"
+                onClick={() => setClasseEnEdition({ ...classeActive })}
+                title="Modifier le nom du groupe et l'année de formation"
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-white border border-[#ECE3D6] hover:bg-slate-50 text-[#1C2459] font-semibold rounded-lg transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                <span>Modifier</span>
+              </button>
+            )}
           </div>
 
           <div className="text-[11px] text-slate-500">
@@ -815,6 +853,17 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
             </div>
 
             <div>
+              <label className="block font-medium text-slate-700 mb-1">Année de formation (ex: 2026 / 2027)</label>
+              <input
+                type="text"
+                value={nouvelleClasse.anneeScolaire || ''}
+                onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, anneeScolaire: e.target.value })}
+                placeholder={anneeScolaireActuelle()}
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+              />
+            </div>
+
+            <div>
               <label className="block font-medium text-slate-700 mb-1">Établissement OFPPT</label>
               <input
                 type="text"
@@ -847,6 +896,89 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 className="px-4 py-1.5 bg-[#149D92] text-white font-semibold rounded hover:bg-[#11857c]"
               >
                 Enregistrer la classe
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Modal Édition d'un groupe : nom, année de formation, établissement */}
+      {classeEnEdition && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <form
+            onSubmit={handleEnregistrerEdition}
+            className="bg-white rounded-xl shadow-xl border border-[#ECE3D6] w-full max-w-md p-6 space-y-4 text-xs"
+          >
+            <div className="flex justify-between items-center border-b pb-2">
+              <h3 className="font-bold text-sm text-[#1C2459] flex items-center gap-2">
+                <Pencil className="w-4 h-4 text-[#149D92]" />
+                <span>Modifier le groupe</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setClasseEnEdition(null)}
+                className="text-slate-400 hover:text-slate-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Nom du groupe / classe</label>
+              <input
+                type="text"
+                required
+                value={classeEnEdition.nom}
+                onChange={(e) => setClasseEnEdition({ ...classeEnEdition, nom: e.target.value })}
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Année de formation (ex: 2026 / 2027)</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={classeEnEdition.anneeScolaire}
+                  onChange={(e) => setClasseEnEdition({ ...classeEnEdition, anneeScolaire: e.target.value })}
+                  placeholder={anneeScolaireActuelle()}
+                  className="flex-1 px-3 py-1.5 border border-[#ECE3D6] rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => setClasseEnEdition({ ...classeEnEdition, anneeScolaire: anneeScolaireActuelle() })}
+                  title="Utiliser l'année de formation en cours"
+                  className="flex items-center gap-1 px-2.5 py-1.5 bg-white border border-[#ECE3D6] hover:bg-slate-50 text-[#1C2459] font-semibold rounded whitespace-nowrap"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Actuelle</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-medium text-slate-700 mb-1">Établissement OFPPT</label>
+              <input
+                type="text"
+                value={classeEnEdition.etablissement}
+                onChange={(e) => setClasseEnEdition({ ...classeEnEdition, etablissement: e.target.value })}
+                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setClasseEnEdition(null)}
+                className="px-3 py-1.5 text-slate-700 bg-slate-100 rounded"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-1.5 bg-[#149D92] text-white font-semibold rounded hover:bg-[#11857c]"
+              >
+                Enregistrer les modifications
               </button>
             </div>
           </form>
