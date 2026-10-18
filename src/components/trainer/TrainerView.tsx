@@ -392,7 +392,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                 </optgroup>
               )}
             </select>
-            {!lectureSeule && classeActive && (
+            {classeActive && (
               <button
                 type="button"
                 onClick={() => setClasseEnEdition({ ...classeActive })}
