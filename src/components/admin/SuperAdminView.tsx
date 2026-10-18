@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Building2, Plus, Check, X, ShieldCheck, Loader2, RefreshCw, KeyRound, Users } from 'lucide-react';
+import { Building2, Plus, Check, X, ShieldCheck, Loader2, RefreshCw, KeyRound, Users, ArrowRightLeft } from 'lucide-react';
 import { Card, Button, Badge, SectionTitle } from '../ui/kit';
 import {
   Etablissement,
@@ -8,6 +8,7 @@ import {
   creerEtablissement,
   deciderEtablissement,
   designerAdminEtablissement,
+  reaffecterCompteEtablissement,
   fetchComptesParEtablissement
 } from '../../services/etablissements';
 
@@ -27,6 +28,8 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ showNotification
   const [gereId, setGereId] = useState<string | null>(null);
   const [comptes, setComptes] = useState<CompteEtablissement[]>([]);
   const [comptesLoading, setComptesLoading] = useState(false);
+  // Destination choisie par compte pour la réaffectation.
+  const [deplacerVers, setDeplacerVers] = useState<Record<string, string>>({});
 
   const charger = async () => {
     setChargement(true);
@@ -101,6 +104,31 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ showNotification
     }
   };
 
+  const handleDeplacer = async (userId: string, sourceEtabId: string) => {
+    const dest = deplacerVers[userId];
+    if (!dest) {
+      showNotification('Choisissez un établissement de destination.', 'warning');
+      return;
+    }
+    try {
+      await reaffecterCompteEtablissement(userId, dest);
+      showNotification('Compte réaffecté (classes et stagiaires inclus).', 'success');
+      // Le compte quitte l'établissement courant : on recharge la liste affichée.
+      setComptes(await fetchComptesParEtablissement(sourceEtabId));
+      setDeplacerVers((m) => {
+        const n = { ...m };
+        delete n[userId];
+        return n;
+      });
+      await charger();
+    } catch (e: any) {
+      showNotification(e.message, 'error');
+    }
+  };
+
+  // Établissements approuvés, hors celui affiché, pour les destinations.
+  const destinations = (sauf: string) => etabs.filter((e) => e.statut === 'approuve' && e.id !== sauf);
+
   const LigneEtab: React.FC<{ e: Etablissement }> = ({ e }) => (
     <div className="border border-[#ECE3D6] rounded-xl p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -147,25 +175,54 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ showNotification
           ) : comptes.length === 0 ? (
             <p className="text-xs text-slate-400 italic">Aucun compte rattaché à cet établissement.</p>
           ) : (
-            <div className="space-y-1.5">
-              {comptes.map((c) => (
-                <div key={c.userId} className="flex items-center justify-between gap-2 text-xs">
-                  <span className="min-w-0 truncate">
-                    <span className="text-slate-700">{c.email}</span>
-                    <span className="ml-2 text-[10px] uppercase font-bold text-slate-400">{c.role}</span>
-                  </span>
-                  {c.role === 'admin' ? (
-                    <Badge tone="navy" icon={<ShieldCheck className="w-3 h-3" />}>Admin actuel</Badge>
-                  ) : c.role === 'formateur' || c.role === 'stagiaire' ? (
-                    <button
-                      onClick={() => handleDesignerAdmin(c.userId, e.id)}
-                      className="px-2.5 py-1 rounded-lg bg-[#1C2459] hover:bg-[#161c47] text-white text-[11px] font-semibold transition-colors"
-                    >
-                      Désigner admin
-                    </button>
-                  ) : null}
-                </div>
-              ))}
+            <div className="space-y-2.5">
+              {comptes.map((c) => {
+                const dests = destinations(e.id);
+                return (
+                  <div key={c.userId} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between gap-x-3 text-xs">
+                    <span className="min-w-0 truncate">
+                      <span className="text-slate-700">{c.email}</span>
+                      <span className="ml-2 text-[10px] uppercase font-bold text-slate-400">{c.role}</span>
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {c.role === 'admin' ? (
+                        <Badge tone="navy" icon={<ShieldCheck className="w-3 h-3" />}>Admin actuel</Badge>
+                      ) : c.role === 'formateur' || c.role === 'stagiaire' ? (
+                        <button
+                          onClick={() => handleDesignerAdmin(c.userId, e.id)}
+                          className="px-2.5 py-1 rounded-lg bg-[#1C2459] hover:bg-[#161c47] text-white text-[11px] font-semibold transition-colors"
+                        >
+                          Désigner admin
+                        </button>
+                      ) : null}
+
+                      {dests.length > 0 && (
+                        <span className="inline-flex items-center gap-1.5">
+                          <select
+                            value={deplacerVers[c.userId] ?? ''}
+                            onChange={(ev) => setDeplacerVers((m) => ({ ...m, [c.userId]: ev.target.value }))}
+                            className="border border-[#ECE3D6] rounded-lg px-2 py-1 text-[11px] bg-white max-w-[9rem] truncate"
+                            title="Déplacer vers un autre établissement"
+                          >
+                            <option value="">Déplacer vers…</option>
+                            {dests.map((d) => (
+                              <option key={d.id} value={d.id}>{d.nom}</option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={() => handleDeplacer(c.userId, e.id)}
+                            disabled={!deplacerVers[c.userId]}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#C96A4B] hover:bg-[#B4563B] disabled:opacity-40 text-white text-[11px] font-semibold transition-colors"
+                            title="Réaffecter ce compte (classes et stagiaires inclus)"
+                          >
+                            <ArrowRightLeft className="w-3 h-3" /> Déplacer
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

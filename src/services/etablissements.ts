@@ -99,6 +99,16 @@ export interface CompteEtablissement {
   statut: 'en_attente' | 'approuve' | 'refuse' | 'desactive';
 }
 
+/** Réaffecter un compte (et, pour un formateur, ses classes + stagiaires) à un autre établissement. */
+export async function reaffecterCompteEtablissement(userId: string, etablissementId: string): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase.rpc('reaffecter_compte_etablissement', {
+    p_user_id: userId,
+    p_etablissement_id: etablissementId
+  });
+  if (error) throw error;
+}
+
 /** Comptes rattachés à un établissement (super-admin via RLS). */
 export async function fetchComptesParEtablissement(etablissementId: string): Promise<CompteEtablissement[]> {
   if (!supabase) return [];
