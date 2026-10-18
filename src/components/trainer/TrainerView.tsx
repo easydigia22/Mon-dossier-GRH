@@ -5,6 +5,7 @@ import { exporterJSON } from '../../services/exportService';
 import { cloudEnabled } from '../../services/cloudSync';
 import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
 import { detacherTousDeLaClasse, fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
+import { listerEtablissementsPublics, proposerEtablissement, EtablissementPublic } from '../../services/etablissements';
 import { DossierStagiaireView } from './DossierStagiaireView';
 import type { MembreClasseLive } from '../../types';
 
@@ -51,6 +52,18 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
   // Édition d'un groupe existant (nom / année de formation / établissement)
   const [classeEnEdition, setClasseEnEdition] = useState<ClassePedagogique | null>(null);
+
+  // Établissements approuvés (pour le choix à la création de classe) + mode « créer un nouveau ».
+  const [etabsListe, setEtabsListe] = useState<EtablissementPublic[]>([]);
+  const [modeNouvelEtab, setModeNouvelEtab] = useState(false);
+  const [nouvelEtab, setNouvelEtab] = useState({ nom: '', ville: '' });
+
+  useEffect(() => {
+    if (!cloudEnabled) return;
+    listerEtablissementsPublics()
+      .then(setEtabsListe)
+      .catch(() => setEtabsListe([]));
+  }, []);
 
   const classesActives = classes.filter((c) => !c.archiveeLe);
   const classesArchivees = classes.filter((c) => c.archiveeLe);
@@ -239,21 +252,50 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
     }
   };
 
-  const handleAjouterClasse = (e: React.FormEvent) => {
+  const handleAjouterClasse = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nouvelleClasse.nom) return;
+
+    // Résolution de l'établissement de la classe (modèle « établissement par classe »).
+    let etablissementId: string | null | undefined = nouvelleClasse.etablissementId ?? null;
+    let etablissementLabel = nouvelleClasse.etablissement || '';
+    try {
+      if (cloudEnabled && modeNouvelEtab) {
+        if (!nouvelEtab.nom.trim()) {
+          showNotification("Indiquez le nom du nouvel établissement.", 'warning');
+          return;
+        }
+        etablissementId = await proposerEtablissement(nouvelEtab.nom.trim(), nouvelEtab.ville.trim() || undefined);
+        etablissementLabel = nouvelEtab.nom.trim();
+      } else if (cloudEnabled) {
+        const choisi = etabsListe.find((x) => x.id === etablissementId);
+        if (!choisi) {
+          showNotification("Choisissez un établissement (ou créez-en un).", 'warning');
+          return;
+        }
+        etablissementLabel = choisi.nom;
+      }
+    } catch (err: any) {
+      showNotification(`Création de l'établissement impossible : ${err.message}`, 'error');
+      return;
+    }
+
     const c: ClassePedagogique = {
       id: `cls-${Date.now()}`,
       nom: nouvelleClasse.nom,
       anneeScolaire: nouvelleClasse.anneeScolaire || anneeScolaireActuelle(),
       formateurNom: nouvelleClasse.formateurNom || 'Formateur OFPPT',
-      etablissement: nouvelleClasse.etablissement || 'ISTA OFPPT',
+      etablissement: etablissementLabel || 'ISTA OFPPT',
+      etablissementId: etablissementId ?? undefined,
       codeInvitation: genererCodeInvitation(),
       stagiaires: nouvelleClasse.stagiaires || []
     };
     setClasses([...classes, c]);
     setClasseActiveId(c.id);
     setModalClasseOuverte(false);
+    setModeNouvelEtab(false);
+    setNouvelEtab({ nom: '', ville: '' });
+    // Si un nouvel établissement a été proposé, il apparaîtra après validation du super-admin.
     showNotification(`Classe « ${c.nom} » créée.`, 'success');
   };
 
@@ -865,12 +907,61 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
 
             <div>
               <label className="block font-medium text-slate-700 mb-1">Établissement OFPPT</label>
-              <input
-                type="text"
-                value={nouvelleClasse.etablissement || ''}
-                onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, etablissement: e.target.value })}
-                className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
-              />
+              {!cloudEnabled ? (
+                <input
+                  type="text"
+                  value={nouvelleClasse.etablissement || ''}
+                  onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, etablissement: e.target.value })}
+                  className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+                />
+              ) : modeNouvelEtab ? (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Nom du nouvel établissement (ex: ISTA Marrakech Guéliz - OFPPT)"
+                    value={nouvelEtab.nom}
+                    onChange={(e) => setNouvelEtab({ ...nouvelEtab, nom: e.target.value })}
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ville (optionnel)"
+                    value={nouvelEtab.ville}
+                    onChange={(e) => setNouvelEtab({ ...nouvelEtab, ville: e.target.value })}
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded"
+                  />
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setModeNouvelEtab(false)}
+                      className="text-[11px] text-slate-500 hover:text-[#1C2459] underline"
+                    >
+                      ← Choisir un établissement existant
+                    </button>
+                    <span className="text-[10px] text-amber-700">Sera validé par l'administrateur</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <select
+                    value={nouvelleClasse.etablissementId || ''}
+                    onChange={(e) => setNouvelleClasse({ ...nouvelleClasse, etablissementId: e.target.value })}
+                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-white"
+                  >
+                    <option value="">— Choisir un établissement —</option>
+                    {etabsListe.map((x) => (
+                      <option key={x.id} value={x.id}>{x.nom}{x.ville ? ` — ${x.ville}` : ''}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setModeNouvelEtab(true)}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#149D92] hover:underline"
+                  >
+                    <Plus className="w-3 h-3" /> Créer un nouvel établissement
+                  </button>
+                </div>
+              )}
             </div>
 
             <div>

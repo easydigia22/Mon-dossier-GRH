@@ -11,6 +11,8 @@ interface Collection {
   rows: (state: AppDatabaseState) => any[];
   /** Colonnes de liaison dérivées d'un objet (pour les index SQL) */
   extra?: (item: any) => Record<string, any>;
+  /** Colonnes à lire (défaut « id, data ») ; certaines tables exposent des colonnes de liaison. */
+  select?: string;
 }
 
 const COLLECTIONS: Collection[] = [
@@ -30,7 +32,12 @@ const COLLECTIONS: Collection[] = [
   },
   { table: 'regles', rows: (s) => s.regles },
   { table: 'tentatives', rows: (s) => s.tentatives, extra: (i) => ({ mission_id: i.missionId }) },
-  { table: 'classes', rows: (s) => s.classes, extra: (i) => ({ code_invitation: i.codeInvitation ?? null }) },
+  {
+    table: 'classes',
+    rows: (s) => s.classes,
+    extra: (i) => ({ code_invitation: i.codeInvitation ?? null, etablissement_id: i.etablissementId ?? null }),
+    select: 'id, data, etablissement_id'
+  },
   { table: 'procedures', rows: (s) => s.procedures ?? [], extra: (i) => ({ salarie_id: i.salarieId }) }
 ];
 
@@ -62,12 +69,12 @@ function resetIfUserChanged(userId: string) {
 // Filtre explicite sur le propriétaire : RLS laisse désormais un formateur lire les
 // tentatives de ses stagiaires et un admin celles de tout le monde. Sans ce filtre,
 // l'espace de travail local se remplit des lignes d'autrui.
-async function fetchAll(table: string, userId: string): Promise<any[]> {
+async function fetchAll(table: string, userId: string, select = 'id, data'): Promise<any[]> {
   const out: any[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
     const { data, error } = await supabase!
       .from(table)
-      .select('id, data')
+      .select(select)
       .eq('user_id', userId)
       .range(from, from + PAGE_SIZE - 1);
     if (error) throw error;
@@ -86,7 +93,7 @@ export async function loadCloudState(): Promise<AppDatabaseState | null> {
   if (!supabase || !userId) return null;
   resetIfUserChanged(userId);
 
-  const results = await Promise.all(COLLECTIONS.map((c) => fetchAll(c.table, userId)));
+  const results = await Promise.all(COLLECTIONS.map((c) => fetchAll(c.table, userId, c.select)));
   const { data: paramsRow, error: paramsError } = await supabase
     .from('parametres_app')
     .select('data')
@@ -99,8 +106,17 @@ export async function loadCloudState(): Promise<AppDatabaseState | null> {
 
   const byTable: Record<string, any[]> = {};
   COLLECTIONS.forEach((c, idx) => {
-    byTable[c.table] = results[idx].map((r) => r.data);
-    synced[c.table] = new Map(results[idx].map((r) => [r.id as string, JSON.stringify(r.data)]));
+    const lignes = results[idx].map((r) => {
+      let d = r.data;
+      // La colonne etablissement_id (lue pour les classes) est recopiée dans l'objet
+      // afin que le client connaisse l'établissement sans l'écraser au prochain envoi.
+      if (c.table === 'classes' && d && r.etablissement_id != null && d.etablissementId == null) {
+        d = { ...d, etablissementId: r.etablissement_id };
+      }
+      return { id: r.id as string, data: d };
+    });
+    byTable[c.table] = lignes.map((l) => l.data);
+    synced[c.table] = new Map(lignes.map((l) => [l.id, JSON.stringify(l.data)]));
   });
   syncedParams = paramsRow ? JSON.stringify(paramsRow.data) : null;
 

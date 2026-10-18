@@ -434,7 +434,9 @@ export interface ClassePedagogique {
   nom: string;
   anneeScolaire: string;
   formateurNom: string;
-  etablissement: string; // Ex: "ISTA Marrakech Guéliz - OFPPT"
+  etablissement: string; // Libellé affiché, Ex: "ISTA Marrakech Guéliz - OFPPT"
+  /** FK vers l'établissement (tenant) ; pilote le cloisonnement RLS de la classe. */
+  etablissementId?: string | null;
   /** Code à communiquer aux stagiaires pour rejoindre cette classe depuis leur propre compte */
   codeInvitation?: string;
   /**
