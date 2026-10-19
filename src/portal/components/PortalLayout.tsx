@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, Download } from 'lucide-react';
 import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
 import { ContentProvider } from '../content/ContentContext';
 import { SocialToasts } from './SocialToasts';
+import { InstallApp, INSTALL_HELP_EVENT } from './InstallApp';
+import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 
 const LIENS_PRINCIPAUX = [
   { to: '/cours', label: 'Cours' },
@@ -17,6 +19,8 @@ const LIENS_PRINCIPAUX = [
 export const PortalLayout: React.FC = () => {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const location = useLocation();
+  const { isInstalled } = useInstallPrompt();
+  const demanderInstall = () => window.dispatchEvent(new Event(INSTALL_HELP_EVENT));
 
   // Ferme le menu mobile à chaque changement de page.
   // Corps en bloc : éviter que la flèche ne renvoie la valeur de setMenuOuvert()
@@ -63,15 +67,28 @@ export const PortalLayout: React.FC = () => {
             </a>
           </div>
 
-          <button
-            type="button"
-            className="lg:hidden p-2 rounded-lg text-navy hover:bg-sand"
-            onClick={() => setMenuOuvert((v) => !v)}
-            aria-label={menuOuvert ? 'Fermer le menu' : 'Ouvrir le menu'}
-            aria-expanded={menuOuvert}
-          >
-            {menuOuvert ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="lg:hidden flex items-center gap-1">
+            {!isInstalled && (
+              <button
+                type="button"
+                onClick={demanderInstall}
+                className="inline-flex items-center gap-1.5 bg-navy text-white text-[13px] font-semibold rounded-lg px-2.5 py-2 hover:bg-navy-deep transition-colors"
+                aria-label="Installer l'application"
+              >
+                <Download className="w-4 h-4" />
+                Installer
+              </button>
+            )}
+            <button
+              type="button"
+              className="p-2 rounded-lg text-navy hover:bg-sand"
+              onClick={() => setMenuOuvert((v) => !v)}
+              aria-label={menuOuvert ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={menuOuvert}
+            >
+              {menuOuvert ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {menuOuvert && (
@@ -86,6 +103,15 @@ export const PortalLayout: React.FC = () => {
             <a href="/app" className="mt-2 flex items-center gap-1.5 bg-navy text-white text-sm font-semibold rounded-lg px-3.5 py-2.5">
               <LogIn className="w-4 h-4" /> Ouvrir l'application
             </a>
+            {!isInstalled && (
+              <button
+                type="button"
+                onClick={demanderInstall}
+                className="w-full mt-1.5 flex items-center gap-1.5 bg-teal-soft text-teal text-sm font-semibold rounded-lg px-3.5 py-2.5"
+              >
+                <Download className="w-4 h-4" /> Installer l'application
+              </button>
+            )}
           </nav>
         )}
       </header>
@@ -95,6 +121,7 @@ export const PortalLayout: React.FC = () => {
           <Outlet />
           <SocialToasts />
         </ContentProvider>
+        <InstallApp />
       </main>
 
       <footer className="bg-navy-deep text-white/80 mt-16">
