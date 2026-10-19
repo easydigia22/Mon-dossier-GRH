@@ -3,8 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Menu, X, LogIn } from 'lucide-react';
 import { AppLogo } from '../../components/common/AppLogo';
 import { RUBRIQUES } from '../lib/rubriques';
-import { DemoBanner } from './DemoBanner';
-import { existeContenuPublic } from '../content/store';
+import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
 
 const LIENS_PRINCIPAUX = [
@@ -28,7 +27,7 @@ export const PortalLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-cream text-ink" style={{ fontFamily: 'var(--font-sans)' }}>
-      {!existeContenuPublic() && <DemoBanner />}
+      <TaglineBar />
 
       <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur border-b border-[#ECE3D6]">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16 gap-4">
