@@ -51,11 +51,6 @@ export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
         </span>
         <span className="text-ink/40">·</span>
         <span className="text-ink/60">{LIBELLE_NIVEAU[contenu.niveau]}</span>
-        {contenu.demo && (
-          <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-[#B4563B] bg-terracotta-soft px-1.5 py-0.5 rounded">
-            Démo
-          </span>
-        )}
       </div>
       <h3 className="font-display font-semibold text-navy text-[17px] leading-snug">{contenu.titre}</h3>
       <p className="text-[13.5px] text-ink/70 leading-relaxed line-clamp-3">{contenu.resume}</p>

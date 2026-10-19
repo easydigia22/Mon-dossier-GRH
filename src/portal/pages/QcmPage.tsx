@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, XCircle, RotateCcw, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
 import { useSeo } from '../lib/seo';
 import { parSlug } from '../content/store';
 import { NotFoundPage } from './NotFoundPage';
@@ -36,13 +36,6 @@ export const QcmPage: React.FC = () => {
       <Link to="/qcm" className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-navy mb-6">
         <ArrowLeft className="w-4 h-4" /> Retour aux QCM
       </Link>
-
-      {contenu.demo && (
-        <div className="flex items-start gap-2 text-[13px] bg-terracotta-soft border border-[#C96A4B]/30 text-[#8a3f28] rounded-lg px-3 py-2 mb-6">
-          <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-          <span>QCM de démonstration. Contenu illustratif, non vérifié.</span>
-        </div>
-      )}
 
       <h1 className="font-display text-3xl font-bold text-navy mb-2">{contenu.titre}</h1>
       <p className="text-ink/70 mb-8">{contenu.resume}</p>

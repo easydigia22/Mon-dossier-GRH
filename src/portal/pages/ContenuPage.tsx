@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Download, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Eye, Download } from 'lucide-react';
 import { useSeo } from '../lib/seo';
 import { parSlug } from '../content/store';
 import { Markdown } from '../lib/Markdown';
@@ -30,13 +30,6 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
       <Link to={retour} className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-navy mb-6">
         <ArrowLeft className="w-4 h-4" /> Retour
       </Link>
-
-      {contenu.demo && (
-        <div className="flex items-start gap-2 text-[13px] bg-terracotta-soft border border-[#C96A4B]/30 text-[#8a3f28] rounded-lg px-3 py-2 mb-6">
-          <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-          <span>Contenu de démonstration, non vérifié et non publiable. Les éléments chiffrés sont illustratifs.</span>
-        </div>
-      )}
 
       <h1 className="font-display text-3xl font-bold text-navy leading-tight">{contenu.titre}</h1>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-[13px] text-ink/55">
