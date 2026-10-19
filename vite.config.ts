@@ -10,7 +10,7 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: 'prompt',
         includeAssets: ['apple-touch-icon.png', 'logo-ofppt.jpg'],
         manifest: {
           id: '/',
