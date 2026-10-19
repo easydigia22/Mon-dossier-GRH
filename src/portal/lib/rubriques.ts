@@ -12,6 +12,8 @@ export interface RubriqueMeta {
   icon: LucideIcon;
   /** Photo d'illustration (en-tête des cartes de rubrique). */
   image: string;
+  /** Vidéo d'illustration optionnelle, affichée en fond du bandeau de rubrique. */
+  video?: string;
   /** Sous-thèmes présentés sur la page de rubrique (structure éditoriale). */
   sousThemes: string[];
 }
@@ -33,6 +35,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     description: 'Cours, lecture du bulletin, cas pratiques, exercices corrigés et outils de simulation.',
     icon: Calculator,
     image: '/portal/rubriques/paie.jpg',
+    video: '/portal/rubriques/paie.mp4',
     sousThemes: ['Cours de paie', 'Lecture du bulletin', 'Cas pratiques', 'Exercices corrigés', 'Simulateurs'],
   },
   {

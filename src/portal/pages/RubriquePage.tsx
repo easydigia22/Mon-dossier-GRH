@@ -15,13 +15,28 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
   return (
     <>
       <section className="relative overflow-hidden bg-navy-deep text-white">
-        {/* Photo d'illustration de la rubrique, posée en fond. */}
-        <img
-          src={meta.image}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-45"
-        />
+        {/* Illustration de la rubrique posée en fond : vidéo si disponible, sinon photo. */}
+        {meta.video ? (
+          <video
+            className="absolute inset-0 w-full h-full object-cover opacity-45"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={meta.image}
+            aria-hidden="true"
+          >
+            <source src={meta.video} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={meta.image}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover opacity-45"
+          />
+        )}
         {/* Dégradé marine pour garantir la lisibilité du texte (plus dense à gauche). */}
         <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/90 to-navy-deep/45" />
         <div className="absolute inset-0 zellige-layer opacity-40" aria-hidden="true" />

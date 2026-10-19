@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Menu, X, LogIn } from 'lucide-react';
-import { AppLogo } from '../../components/common/AppLogo';
 import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
@@ -36,12 +35,12 @@ export const PortalLayout: React.FC = () => {
 
       <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur border-b border-[#ECE3D6]">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16 gap-4">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <AppLogo size={34} />
-            <span className="flex flex-col leading-tight">
-              <span className="font-display font-bold text-navy text-lg">SimulRH</span>
-              <span className="text-[10.5px] text-ink/60 -mt-0.5 hidden sm:block">Portail GRH · Paie · Droit · Fiscalité</span>
-            </span>
+          <Link to="/" className="flex items-center shrink-0" aria-label="SimulRH — accueil">
+            <img
+              src="/portal/brand/logo-simulrh.png"
+              alt="SimulRH — Simulateur RH & Paie"
+              className="h-9 sm:h-10 w-auto"
+            />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1" aria-label="Rubriques">
@@ -99,9 +98,14 @@ export const PortalLayout: React.FC = () => {
       <footer className="bg-navy-deep text-white/80 mt-16">
         <div className="max-w-6xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-sm">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <AppLogo size={28} />
-              <span className="font-display font-bold text-white text-base">SimulRH</span>
+            <div className="mb-3">
+              <span className="inline-flex bg-white rounded-xl px-3 py-2 shadow-sm">
+                <img
+                  src="/portal/brand/logo-simulrh.png"
+                  alt="SimulRH — Simulateur RH & Paie"
+                  className="h-7 w-auto"
+                />
+              </span>
             </div>
             <p className="text-white/60 text-[13px] leading-relaxed">
               Portail pédagogique marocain dédié à la GRH, à la paie, au droit du travail et à la fiscalité.
