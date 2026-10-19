@@ -31,6 +31,26 @@ export const DocumentsView: React.FC<DocumentsViewProps> = ({
     window.print();
   };
 
+  // Sans salarié, tous les modèles ci-dessous liraient `salarie.xxx` sur `undefined`
+  // et feraient planter le rendu (page blanche). On affiche plutôt un état vide
+  // guidant l'utilisateur vers « Dossiers du personnel ». Fréquent sur un compte
+  // formateur/stagiaire neuf (0 salarié).
+  if (!salarie) {
+    return (
+      <div className="bg-white border border-[#ECE3D6] rounded-2xl p-8 shadow-sm text-center space-y-3">
+        <div className="w-12 h-12 rounded-xl bg-[#1C2459] text-white flex items-center justify-center mx-auto">
+          <FileText className="w-6 h-6 text-[#149D92]" />
+        </div>
+        <h1 className="text-lg font-bold text-[#1C2459]">Générateur de Documents RH Pédagogiques</h1>
+        <p className="text-sm text-slate-500 max-w-md mx-auto">
+          Aucun salarié n'est encore enregistré dans l'entreprise fictive. Ajoutez au moins un
+          salarié dans la section <strong>« Dossiers du personnel »</strong> pour pouvoir générer
+          attestations, certificats et autres documents RH.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Panneau de sélection des modèles */}
