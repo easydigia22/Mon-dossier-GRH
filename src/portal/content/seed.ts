@@ -13,6 +13,52 @@ const AUTEUR = 'Équipe SimulRH (démo)';
 
 export const CONTENUS_DEMO: Contenu[] = [
   {
+    // Contenu RÉEL (texte officiel) — pas une démo.
+    id: 'code-du-travail-maroc',
+    slug: 'code-du-travail-marocain-loi-65-99',
+    type: 'ressource',
+    rubrique: 'droit-du-travail',
+    titre: 'Code du travail marocain (Loi 65-99) — FR & AR',
+    resume:
+      'Texte de référence régissant les relations de travail au Maroc, à télécharger en français et en arabe. Promulgué par le Dahir n° 1-03-194 (11 septembre 2003), entré en vigueur le 8 juin 2004.',
+    publics: ['etudiant', 'stagiaire', 'formateur', 'professionnel'],
+    niveau: 'intermediaire',
+    statut: 'publie',
+    demo: false,
+    datePublication: '2026-10-19',
+    dateMiseAJour: '2026-10-19',
+    auteur: 'Textes officiels',
+    tags: ['code du travail', 'loi 65-99', 'droit du travail', 'مدونة الشغل', 'PDF', 'français', 'arabe'],
+    corps: [
+      '## Le texte de référence',
+      "Le Code du travail (loi n° 65-99) est le texte fondamental qui encadre les relations individuelles et collectives de travail au Maroc : contrats, durée du travail, salaire, congés, représentation des salariés, rupture du contrat, etc.",
+      '## Télécharger',
+      "Les deux versions ci-dessous sont proposées au téléchargement : la version française et la version arabe (مدونة الشغل).",
+      '## Important — vérifier la version applicable',
+      "La version française mise à disposition est une **version consolidée au 26 octobre 2011** (source officielle, portail Adala du Ministère de la Justice). La version arabe est une **version consolidée plus récente**. Pour un usage juridique, vérifiez toujours les amendements postérieurs à la date de consolidation et référez-vous au Bulletin officiel.",
+    ].join('\n\n'),
+    fichiers: [
+      { langue: 'fr', url: '/documents/code-du-travail-maroc-fr.pdf', label: 'Version française (PDF)', taille: '1,5 Mo' },
+      { langue: 'ar', url: '/documents/code-du-travail-maroc-ar.pdf', label: 'النسخة العربية (PDF)', taille: '1,8 Mo' },
+    ],
+    sources: [
+      {
+        intitule: 'Version française — Portail Adala, Ministère de la Justice (version consolidée au 26/10/2011)',
+        url: 'https://adala.justice.gov.ma/api/uploads/2024/04/30/code%20du%20travail-1714463246806.pdf',
+        statutTexte: 'en_vigueur',
+        periodeApplication: 'En vigueur depuis le 08/06/2004 (consolidation FR : 26/10/2011)',
+        dateVerification: '2026-10-19',
+      },
+      {
+        intitule: 'Version arabe — Wikimedia Commons (مدونة الشغل، صيغة محيَّنة 16/07/2026)',
+        url: 'https://commons.wikimedia.org/wiki/File:%D9%85%D8%AF%D9%88%D9%86%D8%A9_%D8%A7%D9%84%D8%B4%D8%BA%D9%84_(%D8%A7%D9%84%D9%85%D8%BA%D8%B1%D8%A8)_%D8%B1%D9%82%D9%85_65.99.pdf',
+        statutTexte: 'en_vigueur',
+        periodeApplication: 'Consolidation AR indiquée : 16/07/2026',
+        dateVerification: '2026-10-19',
+      },
+    ],
+  },
+  {
     id: 'demo-paie-lecture-bulletin',
     slug: 'lire-un-bulletin-de-paie-marocain',
     type: 'cours',

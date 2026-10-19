@@ -46,6 +46,17 @@ export interface Source {
   statutTexte?: 'adopte' | 'propose' | 'en_vigueur';
 }
 
+/** Un document téléchargeable, dans une langue donnée (ex. Code du travail FR / AR). */
+export interface FichierTelechargeable {
+  langue: 'fr' | 'ar';
+  /** URL du fichier (hébergé dans /public ou lien externe officiel). */
+  url: string;
+  /** Libellé du bouton (ex. « Version française (PDF) »). */
+  label: string;
+  /** Taille indicative affichée à l'utilisateur (ex. « 1,5 Mo »). */
+  taille?: string;
+}
+
 export interface OptionQcm {
   texte: string;
   correcte: boolean;
@@ -87,6 +98,8 @@ export interface Contenu {
   correction?: string;
   /** Pour un QCM. */
   questions?: QuestionQcm[];
-  /** Pour une ressource téléchargeable (gabarit, fiche). */
+  /** Pour une ressource téléchargeable (gabarit, fiche) — fichier unique. */
   fichierUrl?: string;
+  /** Pour une ressource à plusieurs fichiers / langues (ex. Code du travail FR + AR). */
+  fichiers?: FichierTelechargeable[];
 }

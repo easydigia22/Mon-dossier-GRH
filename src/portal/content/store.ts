@@ -23,14 +23,13 @@ export function existeContenuPublic(): boolean {
 }
 
 /**
- * Contenus affichables dans la préversion. En Phase 1 on montre les contenus
- * démo (étiquetés), sinon on ne verrait rien. Quand de vrais contenus publiés
- * existeront, ils primeront et les contenus démo pourront être masqués.
+ * Contenus affichés sur le site : tout ce qui n'est pas explicitement dépublié.
+ * On mélange donc les contenus réels (publiés, ex. Code du travail) et les
+ * exemples en cours (brouillons). Quand le CMS arrivera, on pourra restreindre
+ * aux seuls `estPublic()`.
  */
 export function contenusAffichables(): Contenu[] {
-  const publics = CONTENUS_DEMO.filter(estPublic);
-  if (publics.length > 0) return publics;
-  return CONTENUS_DEMO; // préversion : démos étiquetées
+  return CONTENUS_DEMO.filter((c) => c.statut !== 'depublie');
 }
 
 export function parRubrique(rubrique: Rubrique): Contenu[] {
