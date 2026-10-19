@@ -66,15 +66,26 @@ export const HomePage: React.FC = () => {
             const Icone = r.icon;
             return (
               <Reveal key={r.cle} delay={i * 70} className="h-full">
-                <Link to={r.path} className="card-soft p-6 group hover:-translate-y-0.5 transition-transform h-full block">
-                  <div className="w-11 h-11 rounded-xl bg-teal-soft text-teal flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                    <Icone className="w-6 h-6" />
+                <Link to={r.path} className="card-soft group hover:-translate-y-0.5 transition-transform h-full block overflow-hidden">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-teal-soft">
+                    <img
+                      src={r.image}
+                      alt={r.label}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy/55 via-navy/10 to-transparent" />
+                    <div className="absolute bottom-3 left-3 w-10 h-10 rounded-xl bg-white/95 text-teal shadow-sm flex items-center justify-center backdrop-blur-sm">
+                      <Icone className="w-5 h-5" />
+                    </div>
                   </div>
-                  <h3 className="font-display font-semibold text-navy text-lg mb-1.5 flex items-center gap-1">
-                    {r.label}
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                  </h3>
-                  <p className="text-[13.5px] text-ink/70 leading-relaxed">{r.description}</p>
+                  <div className="p-6">
+                    <h3 className="font-display font-semibold text-navy text-lg mb-1.5 flex items-center gap-1">
+                      {r.label}
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                    </h3>
+                    <p className="text-[13.5px] text-ink/70 leading-relaxed">{r.description}</p>
+                  </div>
                 </Link>
               </Reveal>
             );

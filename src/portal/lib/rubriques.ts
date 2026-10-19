@@ -10,6 +10,8 @@ export interface RubriqueMeta {
   label: string;
   description: string;
   icon: LucideIcon;
+  /** Photo d'illustration (en-tête des cartes de rubrique). */
+  image: string;
   /** Sous-thèmes présentés sur la page de rubrique (structure éditoriale). */
   sousThemes: string[];
 }
@@ -21,6 +23,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'GRH',
     description: 'Recrutement, compétences, formation, évaluation et administration du personnel.',
     icon: Users,
+    image: '/portal/rubriques/grh.jpg',
     sousThemes: ['Recrutement', 'Gestion des compétences', 'Formation', 'Évaluation', 'Administration du personnel'],
   },
   {
@@ -29,6 +32,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Paie au Maroc',
     description: 'Cours, lecture du bulletin, cas pratiques, exercices corrigés et outils de simulation.',
     icon: Calculator,
+    image: '/portal/rubriques/paie.jpg',
     sousThemes: ['Cours de paie', 'Lecture du bulletin', 'Cas pratiques', 'Exercices corrigés', 'Simulateurs'],
   },
   {
@@ -37,6 +41,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Droit du travail',
     description: 'Contrats, durée du travail, congés, rupture du contrat et relations professionnelles.',
     icon: Gavel,
+    image: '/portal/rubriques/droit-du-travail.jpg',
     sousThemes: ['Contrats', 'Durée du travail', 'Congés', 'Rupture du contrat', 'Relations professionnelles'],
   },
   {
@@ -45,6 +50,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Fiscalité & lois de finances',
     description: 'Dossiers classés par année, explications pédagogiques et cas pratiques.',
     icon: Receipt,
+    image: '/portal/rubriques/fiscalite.jpg',
     sousThemes: ['Lois de finances par année', 'Impôt sur le revenu', 'Explications pédagogiques', 'Cas pratiques'],
   },
   {
@@ -53,6 +59,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Actualités',
     description: 'Articles économiques et financiers classés par thème, date et source.',
     icon: Newspaper,
+    image: '/portal/rubriques/actualites.jpg',
     sousThemes: ['Social', 'Fiscal', 'Économie', 'Entreprise'],
   },
   {
@@ -61,6 +68,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Espace OFPPT',
     description: 'Ressources organisées par filière, module et niveau lorsque les correspondances sont vérifiées.',
     icon: GraduationCap,
+    image: '/portal/rubriques/ofppt.jpg',
     sousThemes: ['Par filière', 'Par module', 'Par niveau'],
   },
   {
@@ -69,6 +77,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     label: 'Ressources pro',
     description: 'Modèles, fiches pratiques, tableaux et documents téléchargeables.',
     icon: Folder,
+    image: '/portal/rubriques/ressources.jpg',
     sousThemes: ['Modèles de documents', 'Fiches pratiques', 'Tableaux', 'Check-lists'],
   },
 ];
