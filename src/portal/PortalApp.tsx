@@ -17,7 +17,13 @@ const LegacyApp = lazy(() => import('./LegacyAppMount').then((m) => ({ default: 
 /** Replace le défilement en haut à chaque navigation. */
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  // Corps en bloc OBLIGATOIRE : une flèche à retour implicite renverrait la
+  // valeur de window.scrollTo(), que React 19 prend pour une fonction de
+  // nettoyage et rappelle à la navigation suivante → « destroy is not a
+  // function » et page blanche. On ne retourne donc rien.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 };
 

@@ -18,7 +18,11 @@ export const PortalLayout: React.FC = () => {
   const location = useLocation();
 
   // Ferme le menu mobile à chaque changement de page.
-  React.useEffect(() => setMenuOuvert(false), [location.pathname]);
+  // Corps en bloc : éviter que la flèche ne renvoie la valeur de setMenuOuvert()
+  // à React comme fausse fonction de nettoyage (cf. ScrollToTop dans PortalApp).
+  React.useEffect(() => {
+    setMenuOuvert(false);
+  }, [location.pathname]);
 
   const lienClasse = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
