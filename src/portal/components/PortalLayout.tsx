@@ -5,6 +5,7 @@ import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
 import { ContentProvider } from '../content/ContentContext';
+import { SocialToasts } from './SocialToasts';
 
 const LIENS_PRINCIPAUX = [
   { to: '/cours', label: 'Cours' },
@@ -92,6 +93,7 @@ export const PortalLayout: React.FC = () => {
       <main className="flex-1">
         <ContentProvider>
           <Outlet />
+          <SocialToasts />
         </ContentProvider>
       </main>
 
