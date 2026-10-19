@@ -14,6 +14,6 @@ dist
 # Captures perso déposées dans public/ — ne jamais publier en prod
 public/Image ChatGPT*.png
 # Captures d'aperçu dev générées localement
-preview-trainer-*.png
+preview-*.png
 # Artefacts locaux du CLI Supabase
 supabase/.temp

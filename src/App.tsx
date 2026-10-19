@@ -7,6 +7,7 @@ import React, { Suspense, lazy, useState } from 'react';
 import { useAppData } from './hooks/useAppData';
 import { Header } from './components/common/Header';
 import { NavigationTabs, OngletNavigation } from './components/common/NavigationTabs';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Copyright, CopyrightImpression } from './components/common/Copyright';
 import { CheckCircle2, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
 import type { UserRole } from './services/profile';
@@ -247,6 +248,9 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
 
       {/* Contenu principal de la vue active */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+       {/* Filet de sécurité : un plantage de vue n'affiche plus une page blanche.
+           La `key` sur l'onglet réinitialise l'erreur quand on change de section. */}
+       <ErrorBoundary key={ongletActif}>
        <Suspense fallback={<ChargementVue />}>
         {ongletActif === 'dashboard' && (
           estFormateurReel ? (
@@ -441,6 +445,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
           />
         )}
        </Suspense>
+       </ErrorBoundary>
       </main>
 
       {/* Pied de page sobre */}
