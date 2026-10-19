@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ArrowRight } from 'lucide-react';
 import { useContenus } from '../content/ContentContext';
+import { usePresenceCount } from '../lib/usePresence';
 import { lienContenu } from './ContenuCard';
 
 /* ==========================================================================
@@ -41,6 +42,7 @@ const TESTIMONIALS: { texte: string; auteur: string }[] = [];
 
 export const SocialToasts: React.FC = () => {
   const { contenus, recents } = useContenus();
+  const presents = usePresenceCount();
   const [idx, setIdx] = useState(0);
   const [shown, setShown] = useState(false);
   const stopped = useRef(false);
@@ -48,6 +50,11 @@ export const SocialToasts: React.FC = () => {
 
   const queue = useMemo<Toast[]>(() => {
     const items: Toast[] = [];
+    // Présence RÉELLE : affichée seulement s'il y a au moins 2 personnes
+    // (sinon ce serait juste le visiteur lui-même → on n'affiche rien).
+    if (presents != null && presents >= 2) {
+      items.push({ emoji: '👀', text: `${presents} personnes consultent le portail en ce moment.` });
+    }
     items.push({
       emoji: '💼',
       text: "Besoin d'un audit ou d'un accompagnement RH & paie ? Demandez un devis.",
@@ -79,7 +86,7 @@ export const SocialToasts: React.FC = () => {
     });
     TESTIMONIALS.forEach((t) => items.push({ emoji: '⭐', text: `« ${t.texte} » — ${t.auteur}` }));
     return items;
-  }, [contenus, recents]);
+  }, [contenus, recents, presents]);
 
   useEffect(() => {
     if (queue.length === 0) return;
