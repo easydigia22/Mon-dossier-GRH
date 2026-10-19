@@ -18,7 +18,7 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
         {/* Illustration de la rubrique posée en fond : vidéo si disponible, sinon photo. */}
         {meta.video ? (
           <video
-            className="absolute inset-0 w-full h-full object-cover opacity-45"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.65]"
             autoPlay
             muted
             loop
@@ -34,11 +34,11 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
             src={meta.image}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover opacity-45"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.65]"
           />
         )}
-        {/* Dégradé marine pour garantir la lisibilité du texte (plus dense à gauche). */}
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/90 to-navy-deep/45" />
+        {/* Dégradé marine allégé : assez dense à gauche pour la lisibilité, dégagé à droite. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/90 via-navy-deep/60 to-navy-deep/25" />
         <div className="absolute inset-0 zellige-layer opacity-40" aria-hidden="true" />
         <div className="relative max-w-6xl mx-auto px-4 py-14 sm:py-16 flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center shrink-0 backdrop-blur-sm">
@@ -57,6 +57,29 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
             <span key={s} className="text-sm bg-sand text-navy/90 rounded-full px-3 py-1.5 border border-[#ECE3D6]">{s}</span>
           ))}
         </div>
+
+        {meta.video && (
+          <div className="mb-12">
+            <h2 className="font-display text-xl font-bold text-navy mb-1.5">{meta.label} en vidéo</h2>
+            <p className="text-ink/60 text-[14px] mb-4">Un aperçu animé pour mettre en contexte la rubrique.</p>
+            <figure className="card-soft overflow-hidden">
+              <div className="aspect-video bg-navy-deep">
+                <video
+                  className="w-full h-full object-contain"
+                  controls
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster={meta.image}
+                >
+                  <source src={meta.video} type="video/mp4" />
+                  Votre navigateur ne prend pas en charge la lecture vidéo.
+                </video>
+              </div>
+            </figure>
+          </div>
+        )}
 
         <h2 className="font-display text-xl font-bold text-navy mb-5">Contenus de la rubrique</h2>
         {contenus.length === 0 ? (
