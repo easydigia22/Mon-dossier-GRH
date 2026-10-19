@@ -11,10 +11,10 @@ import React, { useEffect, useRef, useState } from 'react';
  */
 
 const IMAGES = [
-  '/portal/hero/hero-1.jpg',
-  '/portal/hero/hero-2.jpg',
-  '/portal/hero/hero-3.jpg',
-  '/portal/hero/hero-4.jpg',
+  '/portal/hero/hero-casa-dashboard.jpg', // présentation tableau de bord RH, skyline Casablanca
+  '/portal/hero/hero-casa-reunion.jpg', // réunion d'équipe, vue sur Casablanca
+  '/portal/hero/hero-2.jpg', // collaboration (high-five) autour de documents
+  '/portal/hero/hero-3.jpg', // poignée de main (recrutement / accord)
 ];
 
 const INTERVALLE = 6000; // ms entre deux photos

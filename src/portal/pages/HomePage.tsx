@@ -106,18 +106,30 @@ export const HomePage: React.FC = () => {
 
       {/* Bandeau application */}
       <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="card-soft p-8 sm:p-10 bg-navy text-white bg-zellige flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
-          <div className="max-w-xl">
-            <h2 className="font-display text-2xl font-bold mb-2">Passez à la pratique</h2>
-            <p className="text-white/80">
-              L'application SimulRH simule une entreprise fictive : contrats, présences, congés, moteur de paie
-              et bulletins conformes. Idéale pour s'exercer en conditions réelles.
-            </p>
+        <Reveal>
+          <div className="overflow-hidden rounded-2xl shadow-xl bg-navy text-white bg-zellige grid md:grid-cols-2 items-center gap-8 p-8 sm:p-10">
+            <div className="max-w-xl">
+              <h2 className="font-display text-2xl font-bold mb-2">Passez à la pratique</h2>
+              <p className="text-white/80">
+                L'application SimulRH simule une entreprise fictive : contrats, présences, congés, moteur de paie
+                et bulletins conformes. Idéale pour s'exercer en conditions réelles.
+              </p>
+              <a href="/app" className="mt-6 inline-flex items-center gap-2 bg-teal hover:bg-[#108a80] text-white font-semibold rounded-xl px-6 py-3 transition-colors">
+                Ouvrir l'application <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+            <div className="relative">
+              <img
+                src="/portal/hero/hero-casa-ecran.jpg"
+                alt="Tableau de bord RH de l'application SimulRH : effectif, présences, congés et masse salariale"
+                className="rounded-xl shadow-2xl ring-1 ring-white/15 w-full h-auto"
+                loading="lazy"
+                width={1672}
+                height={941}
+              />
+            </div>
           </div>
-          <a href="/app" className="shrink-0 inline-flex items-center gap-2 bg-teal hover:bg-[#108a80] text-white font-semibold rounded-xl px-6 py-3 transition-colors">
-            Ouvrir l'application <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
+        </Reveal>
       </section>
     </>
   );
