@@ -13,7 +13,7 @@ import { Reveal } from '../components/Reveal';
 const CONTACT_EMAIL = 'contact@easydigia.com';
 const TEL_AFFICHE = '+212 781 99 56 65';
 const TEL_LIEN = '+212781995665';
-const LOCALISATION = 'Maroc';
+const LOCALISATION = 'Marrakech, Maroc';
 const DERNIERE_MAJ = '19 octobre 2026';
 
 /* --------------------------------------------------------------------------

@@ -14,14 +14,24 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
 
   return (
     <>
-      <section className="bg-navy text-white bg-zellige">
-        <div className="max-w-6xl mx-auto px-4 py-12 flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+      <section className="relative overflow-hidden bg-navy-deep text-white">
+        {/* Photo d'illustration de la rubrique, posée en fond. */}
+        <img
+          src={meta.image}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-45"
+        />
+        {/* Dégradé marine pour garantir la lisibilité du texte (plus dense à gauche). */}
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/90 to-navy-deep/45" />
+        <div className="absolute inset-0 zellige-layer opacity-40" aria-hidden="true" />
+        <div className="relative max-w-6xl mx-auto px-4 py-14 sm:py-16 flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center shrink-0 backdrop-blur-sm">
             <Icone className="w-7 h-7 text-teal-soft" />
           </div>
           <div>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold">{meta.label}</h1>
-            <p className="mt-2 text-white/80 max-w-2xl">{meta.description}</p>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold drop-shadow-sm">{meta.label}</h1>
+            <p className="mt-2 text-white/85 max-w-2xl">{meta.description}</p>
           </div>
         </div>
       </section>
