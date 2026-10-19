@@ -11,7 +11,6 @@ import { Reveal } from '../components/Reveal';
    Coordonnées officielles du portail (cadre pédagogique, sans entité commerciale).
 -------------------------------------------------------------------------- */
 const CONTACT_EMAIL = 'contact@easydigia.com';
-const CONTACT_EMAIL_ALT = 'ezzouhir2122@gmail.com';
 const TEL_AFFICHE = '+212 781 99 56 65';
 const TEL_LIEN = '+212781995665';
 const LOCALISATION = 'Maroc';
@@ -214,19 +213,10 @@ export const ContactPage: React.FC = () => {
             Pour un retour sur un contenu précis (cours, exercice, QCM), indiquez son titre et, si
             possible, le passage concerné : cela nous permet de corriger plus vite.
           </p>
-          <p className="text-[13.5px] text-ink/70">
-            Adresse secondaire :{' '}
-            <a href={`mailto:${CONTACT_EMAIL_ALT}`} className="text-teal font-medium hover:underline">{CONTACT_EMAIL_ALT}</a>
+          <p>
+            Nous nous efforçons de répondre à chaque message sous 48 heures ouvrées.
           </p>
         </Bloc>
-
-        <div className="flex items-start gap-2.5 rounded-xl bg-safran-soft border border-[#E9A23B]/40 text-[#8a5a12] px-4 py-3 text-[13.5px]">
-          <Info className="w-4 h-4 mt-0.5 shrink-0" />
-          <span>
-            Un formulaire de contact en ligne sera ajouté ultérieurement. Pour l'instant, l'e-mail et
-            le téléphone ci-dessus sont les moyens opérationnels.
-          </span>
-        </div>
       </Wrap>
     </>
   );
