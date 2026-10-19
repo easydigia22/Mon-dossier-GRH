@@ -10,6 +10,13 @@ interface SettingsViewProps {
   fullAppState: any;
   onRestoreState: (state: any) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
+  /**
+   * Autorise les actions destructrices sur les données (Réinitialiser la démo,
+   * Vider l'espace de travail). Masquées pour le rôle stagiaire : il ne doit pas
+   * pouvoir effacer son travail en un clic. Export/restauration et consultation
+   * des lois restent accessibles à tous.
+   */
+  peutGererDonnees?: boolean;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
@@ -18,7 +25,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onViderEspace,
   fullAppState,
   onRestoreState,
-  showNotification
+  showNotification,
+  peutGererDonnees = true
 }) => {
   const handleExportBackup = () => {
     exporterJSON(fullAppState, `Sauvegarde_SIMULRH_${new Date().toISOString().split('T')[0]}`);
@@ -91,41 +99,46 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </label>
           </div>
 
-          <div className="p-3.5 bg-red-50 border border-red-200 rounded-lg space-y-2 text-red-900">
-            <strong className="block font-bold text-red-950 flex items-center gap-1.5">
-              <RotateCcw className="w-4 h-4 text-red-700" />
-              <span>Réinitialisation de la démonstration</span>
-            </strong>
-            <p className="text-[11px] leading-relaxed">
-              Efface les modifications locales et restaure les 12 salariés et les événements originaux de la SARL Atlas.
-            </p>
-            <button
-              onClick={onResetDemo}
-              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded text-xs transition-colors"
-            >
-              Réinitialiser la copie démo
-            </button>
-          </div>
+          {/* Actions destructrices : masquées pour le stagiaire (peutGererDonnees=false). */}
+          {peutGererDonnees && (
+            <>
+              <div className="p-3.5 bg-red-50 border border-red-200 rounded-lg space-y-2 text-red-900">
+                <strong className="block font-bold text-red-950 flex items-center gap-1.5">
+                  <RotateCcw className="w-4 h-4 text-red-700" />
+                  <span>Réinitialisation de la démonstration</span>
+                </strong>
+                <p className="text-[11px] leading-relaxed">
+                  Efface les modifications locales et restaure les 12 salariés et les événements originaux de la SARL Atlas.
+                </p>
+                <button
+                  onClick={onResetDemo}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded text-xs transition-colors"
+                >
+                  Réinitialiser la copie démo
+                </button>
+              </div>
 
-          <div className="md:col-span-2 p-3.5 bg-red-50 border border-red-300 rounded-lg space-y-2 text-red-900">
-            <strong className="block font-bold text-red-950 flex items-center gap-1.5">
-              <Trash2 className="w-4 h-4 text-red-700" />
-              <span>Vider l'espace de travail</span>
-            </strong>
-            <p className="text-[11px] leading-relaxed">
-              Supprime <strong>définitivement les données pédagogiques de ce compte</strong> (entreprise, salariés,
-              contrats, présences, congés, bulletins, tentatives, procédures) — démonstration comme travail réel —
-              en local et dans le cloud. <strong>Vos classes et stagiaires rattachés sont conservés</strong>, ainsi
-              que le référentiel juridique. Cette action est irréversible.
-            </p>
-            <button
-              onClick={onViderEspace}
-              className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white font-semibold rounded text-xs transition-colors inline-flex items-center gap-1.5"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Vider l'espace de travail</span>
-            </button>
-          </div>
+              <div className="md:col-span-2 p-3.5 bg-red-50 border border-red-300 rounded-lg space-y-2 text-red-900">
+                <strong className="block font-bold text-red-950 flex items-center gap-1.5">
+                  <Trash2 className="w-4 h-4 text-red-700" />
+                  <span>Vider l'espace de travail</span>
+                </strong>
+                <p className="text-[11px] leading-relaxed">
+                  Supprime <strong>définitivement les données pédagogiques de ce compte</strong> (entreprise, salariés,
+                  contrats, présences, congés, bulletins, tentatives, procédures) — démonstration comme travail réel —
+                  en local et dans le cloud. <strong>Vos classes et stagiaires rattachés sont conservés</strong>, ainsi
+                  que le référentiel juridique. Cette action est irréversible.
+                </p>
+                <button
+                  onClick={onViderEspace}
+                  className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white font-semibold rounded text-xs transition-colors inline-flex items-center gap-1.5"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Vider l'espace de travail</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

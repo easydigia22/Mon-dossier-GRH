@@ -437,6 +437,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             fullAppState={fullAppState}
             onRestoreState={handleRestoreState}
             showNotification={showNotification}
+            peutGererDonnees={estFormateur}
           />
         )}
        </Suspense>
