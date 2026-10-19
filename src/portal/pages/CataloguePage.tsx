@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useSeo } from '../lib/seo';
-import { rechercher } from '../content/store';
+import { useContenus } from '../content/ContentContext';
 import { RUBRIQUES } from '../lib/rubriques';
 import { ContenuCard } from '../components/ContenuCard';
 import type { Niveau, Public, Rubrique, TypeContenu } from '../content/types';
@@ -33,6 +33,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ type, titre, descr
   const [rubrique, setRubrique] = useState<Rubrique | ''>((params.get('rubrique') as Rubrique) || '');
   const [pub, setPub] = useState<Public | ''>('');
   const [niveau, setNiveau] = useState<Niveau | ''>('');
+  const { rechercher } = useContenus();
 
   const resultats = useMemo(
     () =>
@@ -43,7 +44,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ type, titre, descr
         public: pub || undefined,
         niveau: niveau || undefined,
       }),
-    [q, type, rubrique, pub, niveau]
+    [rechercher, q, type, rubrique, pub, niveau]
   );
 
   const majRecherche = (valeur: string) => {

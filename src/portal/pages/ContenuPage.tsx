@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Eye, Download } from 'lucide-react';
 import { useSeo } from '../lib/seo';
-import { parSlug } from '../content/store';
+import { useContenus } from '../content/ContentContext';
 import { Markdown } from '../lib/Markdown';
 import { SourcesBox } from '../components/SourcesBox';
 import { NotFoundPage } from './NotFoundPage';
@@ -11,6 +11,7 @@ import type { TypeContenu } from '../content/types';
 /** Fiche de détail pour cours, articles, exercices et ressources. */
 export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAttendu }) => {
   const { slug } = useParams<{ slug: string }>();
+  const { parSlug } = useContenus();
   const contenu = slug ? parSlug(slug) : undefined;
   const [correctionVisible, setCorrectionVisible] = useState(false);
 

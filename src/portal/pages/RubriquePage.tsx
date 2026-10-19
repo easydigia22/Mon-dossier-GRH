@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSeo } from '../lib/seo';
 import { rubriqueMeta } from '../lib/rubriques';
-import { parRubrique } from '../content/store';
+import { useContenus } from '../content/ContentContext';
 import { ContenuCard } from '../components/ContenuCard';
 import type { Rubrique } from '../content/types';
 
 export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => {
   const meta = rubriqueMeta(rubrique)!;
   useSeo({ titre: meta.label, description: meta.description });
+  const { parRubrique } = useContenus();
   const contenus = parRubrique(rubrique);
   const Icone = meta.icon;
 

@@ -42,7 +42,7 @@ export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
   return (
     <Link
       to={lienContenu(contenu)}
-      className="card-soft p-5 flex flex-col gap-3 hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+      className="card-soft p-5 h-full flex flex-col gap-3 hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
     >
       <div className="flex items-center gap-2 text-xs">
         <span className="inline-flex items-center gap-1 text-teal font-semibold">

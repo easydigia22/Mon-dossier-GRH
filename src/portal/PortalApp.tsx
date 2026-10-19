@@ -9,6 +9,7 @@ import { ContenuPage } from './pages/ContenuPage';
 import { QcmPage } from './pages/QcmPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AProposPage, ContactPage, MentionsLegalesPage, ConfidentialitePage } from './pages/StaticPages';
+import { AdminContenusPage } from './admin/AdminContenusPage';
 
 // L'application existante (simulateur) est chargée à la demande : les visiteurs
 // du portail ne téléchargent pas son code tant qu'ils n'ouvrent pas /app.

@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, ArrowRight } from 'lucide-react';
 import { useSeo } from '../lib/seo';
 import { RUBRIQUES } from '../lib/rubriques';
-import { recents } from '../content/store';
+import { useContenus } from '../content/ContentContext';
 import { ContenuCard } from '../components/ContenuCard';
+import { HeroCarousel } from '../components/HeroCarousel';
+import { Reveal } from '../components/Reveal';
 
 export const HomePage: React.FC = () => {
   useSeo({
@@ -14,6 +16,7 @@ export const HomePage: React.FC = () => {
   });
   const [q, setQ] = useState('');
   const navigate = useNavigate();
+  const { recents } = useContenus();
   const derniers = recents(6);
 
   const lancerRecherche = (e: React.FormEvent) => {
@@ -23,8 +26,8 @@ export const HomePage: React.FC = () => {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-navy text-white bg-zellige">
+      {/* Hero — carrousel de photos RH */}
+      <HeroCarousel>
         <div className="max-w-6xl mx-auto px-4 py-16 sm:py-20">
           <p className="text-teal-soft/90 text-sm font-semibold uppercase tracking-wider mb-3">Maroc · GRH · Paie · Droit · Fiscalité</p>
           <h1 className="font-display text-3xl sm:text-5xl font-bold max-w-3xl leading-tight">
@@ -52,26 +55,28 @@ export const HomePage: React.FC = () => {
             </button>
           </form>
         </div>
-      </section>
+      </HeroCarousel>
 
       {/* Rubriques */}
       <section className="max-w-6xl mx-auto px-4 py-14">
         <h2 className="font-display text-2xl font-bold text-navy mb-2">Explorer par rubrique</h2>
         <p className="text-ink/60 mb-8">Chaque rubrique rassemble cours, cas pratiques et ressources.</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {RUBRIQUES.map((r) => {
+          {RUBRIQUES.map((r, i) => {
             const Icone = r.icon;
             return (
-              <Link key={r.cle} to={r.path} className="card-soft p-6 group hover:-translate-y-0.5 transition-transform">
-                <div className="w-11 h-11 rounded-xl bg-teal-soft text-teal flex items-center justify-center mb-4">
-                  <Icone className="w-6 h-6" />
-                </div>
-                <h3 className="font-display font-semibold text-navy text-lg mb-1.5 flex items-center gap-1">
-                  {r.label}
-                  <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                </h3>
-                <p className="text-[13.5px] text-ink/70 leading-relaxed">{r.description}</p>
-              </Link>
+              <Reveal key={r.cle} delay={i * 70} className="h-full">
+                <Link to={r.path} className="card-soft p-6 group hover:-translate-y-0.5 transition-transform h-full block">
+                  <div className="w-11 h-11 rounded-xl bg-teal-soft text-teal flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+                    <Icone className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-display font-semibold text-navy text-lg mb-1.5 flex items-center gap-1">
+                    {r.label}
+                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                  </h3>
+                  <p className="text-[13.5px] text-ink/70 leading-relaxed">{r.description}</p>
+                </Link>
+              </Reveal>
             );
           })}
         </div>
@@ -90,8 +95,10 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {derniers.map((c) => (
-              <ContenuCard key={c.id} contenu={c} />
+            {derniers.map((c, i) => (
+              <Reveal key={c.id} delay={i * 70} className="h-full">
+                <ContenuCard contenu={c} />
+              </Reveal>
             ))}
           </div>
         </div>

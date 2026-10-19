@@ -5,6 +5,7 @@ import { AppLogo } from '../../components/common/AppLogo';
 import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
+import { ContentProvider } from '../content/ContentContext';
 
 const LIENS_PRINCIPAUX = [
   { to: '/cours', label: 'Cours' },
@@ -90,7 +91,9 @@ export const PortalLayout: React.FC = () => {
       </header>
 
       <main className="flex-1">
-        <Outlet />
+        <ContentProvider>
+          <Outlet />
+        </ContentProvider>
       </main>
 
       <footer className="bg-navy-deep text-white/80 mt-16">

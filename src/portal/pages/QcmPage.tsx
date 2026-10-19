@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
 import { useSeo } from '../lib/seo';
-import { parSlug } from '../content/store';
+import { useContenus } from '../content/ContentContext';
 import { NotFoundPage } from './NotFoundPage';
 
 /** QCM interactif : une réponse par question, score et explications. */
 export const QcmPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { parSlug } = useContenus();
   const contenu = slug ? parSlug(slug) : undefined;
   const [reponses, setReponses] = useState<Record<number, number>>({});
   const [valide, setValide] = useState(false);
