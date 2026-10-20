@@ -35,7 +35,6 @@ export const RUBRIQUES: RubriqueMeta[] = [
     description: 'Cours, lecture du bulletin, cas pratiques, exercices corrigés et outils de simulation.',
     icon: Calculator,
     image: '/portal/rubriques/paie.jpg',
-    video: '/portal/rubriques/paie.mp4',
     sousThemes: ['Cours de paie', 'Lecture du bulletin', 'Cas pratiques', 'Exercices corrigés', 'Simulateurs'],
   },
   {
