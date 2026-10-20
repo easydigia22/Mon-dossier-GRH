@@ -36,17 +36,19 @@ export const PortalLayout: React.FC = () => {
     }`;
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream text-ink" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="min-h-screen flex flex-col portal-night" style={{ fontFamily: 'var(--font-sans)' }}>
       <TaglineBar />
 
       <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur border-b border-[#ECE3D6]">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16 gap-4">
           <Link to="/" className="flex items-center shrink-0" aria-label="SimulRH — accueil">
-            <img
-              src="/portal/brand/logo-simulrh.png"
-              alt="SimulRH — Simulateur RH & Paie"
-              className="h-9 sm:h-10 w-auto"
-            />
+            <span className="inline-flex items-center bg-white rounded-xl px-2.5 py-1.5 shadow-sm">
+              <img
+                src="/portal/brand/logo-simulrh.png"
+                alt="SimulRH — Simulateur RH & Paie"
+                className="h-8 sm:h-9 w-auto"
+              />
+            </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1" aria-label="Rubriques">

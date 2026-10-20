@@ -83,6 +83,62 @@ h1, h2 {
 }
 
 /* ---------------------------------------------------------------------------
+   Portail « Bleu nuit premium » : fond marine + CARTES BLANCHES.
+   Le texte posé SUR le fond passe en clair ; à l'intérieur des cartes blanches
+   (.card-soft) et des champs, il reste foncé pour rester lisible.
+   Scopé au portail (.portal-night) : l'application /app n'est pas affectée.
+--------------------------------------------------------------------------- */
+.portal-night {
+  background:
+    radial-gradient(1000px 420px at 50% -10%, rgba(20, 157, 146, 0.16), transparent 60%),
+    radial-gradient(760px 360px at 88% 2%, rgba(233, 162, 59, 0.08), transparent 60%),
+    linear-gradient(180deg, #1C2459 0%, #161C46 55%, #10153A 100%);
+  color: #E7E9F5;
+}
+/* Surfaces crème/sable posées sur le fond → sombres/translucides */
+.portal-night .bg-cream,
+.portal-night .bg-cream\/90 { background-color: rgba(16, 21, 58, 0.82) !important; }
+.portal-night .bg-sand { background-color: rgba(255, 255, 255, 0.06) !important; }
+/* Bordures chaudes → claires discrètes (hors cartes) */
+.portal-night .border-\[\#ECE3D6\],
+.portal-night .border-\[\#E3D8C8\],
+.portal-night .border-\[\#F0E9DD\] { border-color: rgba(255, 255, 255, 0.14); }
+/* Texte sur le fond : éclairci */
+.portal-night .text-navy,
+.portal-night .text-navy\/90 { color: #EDEBF6; }
+.portal-night .text-ink { color: #E7E9F5; }
+.portal-night .text-ink\/80 { color: rgba(231, 233, 245, 0.85); }
+.portal-night .text-ink\/70,
+.portal-night .text-ink\/65 { color: rgba(231, 233, 245, 0.72); }
+.portal-night .text-ink\/60,
+.portal-night .text-ink\/55,
+.portal-night .text-ink\/50 { color: rgba(231, 233, 245, 0.60); }
+.portal-night .text-ink\/45,
+.portal-night .text-ink\/40 { color: rgba(231, 233, 245, 0.46); }
+.portal-night .text-teal { color: #5BD0C4; }
+/* À L'INTÉRIEUR des cartes blanches : on rétablit le texte foncé (plus spécifique) */
+.portal-night .card-soft .text-navy,
+.portal-night .card-soft .text-navy\/90 { color: var(--color-navy); }
+.portal-night .card-soft .text-ink,
+.portal-night .card-soft .text-ink\/80,
+.portal-night .card-soft .text-ink\/70,
+.portal-night .card-soft .text-ink\/65,
+.portal-night .card-soft .text-ink\/60,
+.portal-night .card-soft .text-ink\/55,
+.portal-night .card-soft .text-ink\/50,
+.portal-night .card-soft .text-ink\/45,
+.portal-night .card-soft .text-ink\/40 { color: var(--color-ink); }
+.portal-night .card-soft .text-teal { color: var(--color-teal); }
+/* Champs de formulaire (fond blanc) : texte foncé */
+.portal-night input,
+.portal-night select,
+.portal-night textarea { color: var(--color-ink); }
+/* Surbrillances teal (lien de nav actif, puces) : fond translucide → texte clair lisible */
+.portal-night .bg-teal-soft { background-color: rgba(20, 157, 146, 0.20) !important; }
+.portal-night .hover\:bg-sand:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
+.portal-night .hover\:bg-teal-soft:hover { background-color: rgba(20, 157, 146, 0.20) !important; }
+
+/* ---------------------------------------------------------------------------
    Hero carrousel (portail) : zoom lent « Ken Burns », calque zellige réutilisable
    sans pseudo-élément, et apparition en fondu au scroll.
 --------------------------------------------------------------------------- */
