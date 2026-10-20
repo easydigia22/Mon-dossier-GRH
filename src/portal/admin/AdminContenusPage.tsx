@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X } from 'lucide-react';
+import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X, Check, Star, FileText, MessageSquareQuote } from 'lucide-react';
 import { supabase } from '../../services/supabase';
 import { fetchMonProfil } from '../../services/profile';
 import { useSeo } from '../lib/seo';
@@ -11,6 +11,13 @@ import {
   uploadFichier,
 } from '../content/supabaseContent';
 import { RUBRIQUES } from '../lib/rubriques';
+import {
+  fetchAvisAdmin,
+  changerStatutAvis,
+  supprimerAvis,
+  type AvisAdmin,
+  type StatutAvis,
+} from '../lib/avis';
 import type {
   Contenu, TypeContenu, Rubrique, Public, Niveau, StatutContenu, QuestionQcm, FichierTelechargeable,
 } from '../content/types';
@@ -175,6 +182,7 @@ const LoginForm: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 // CMS : liste + éditeur
 // ---------------------------------------------------------------------------
 const AdminCms: React.FC = () => {
+  const [vue, setVue] = useState<'contenus' | 'avis'>('contenus');
   const [contenus, setContenus] = useState<Contenu[]>([]);
   const [loading, setLoading] = useState(true);
   const [edite, setEdite] = useState<Contenu | null>(null);
@@ -236,18 +244,44 @@ const AdminCms: React.FC = () => {
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-navy mb-2">
             <ArrowLeft className="w-4 h-4" /> Retour au site
           </Link>
-          <h1 className="font-display text-2xl font-bold text-navy">Contenus du portail</h1>
+          <h1 className="font-display text-2xl font-bold text-navy">Administration du portail</h1>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => setEdite(contenuVide())} className="inline-flex items-center gap-2 bg-navy text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-navy-deep">
-            <Plus className="w-4 h-4" /> Nouveau contenu
-          </button>
+          {vue === 'contenus' && (
+            <button onClick={() => setEdite(contenuVide())} className="inline-flex items-center gap-2 bg-navy text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-navy-deep">
+              <Plus className="w-4 h-4" /> Nouveau contenu
+            </button>
+          )}
           <button onClick={() => supabase!.auth.signOut()} className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-danger">
             <LogOut className="w-4 h-4" /> Déconnexion
           </button>
         </div>
       </div>
 
+      {/* Onglets */}
+      <div className="flex gap-1 mb-6 border-b border-[#ECE3D6]">
+        <button
+          onClick={() => setVue('contenus')}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            vue === 'contenus' ? 'border-teal text-navy' : 'border-transparent text-ink/50 hover:text-ink/80'
+          }`}
+        >
+          <FileText className="w-4 h-4" /> Contenus
+        </button>
+        <button
+          onClick={() => setVue('avis')}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            vue === 'avis' ? 'border-teal text-navy' : 'border-transparent text-ink/50 hover:text-ink/80'
+          }`}
+        >
+          <MessageSquareQuote className="w-4 h-4" /> Avis
+        </button>
+      </div>
+
+      {vue === 'avis' ? (
+        <AdminAvisPanel />
+      ) : (
+      <>
       {erreur && <p className="mb-4 text-sm text-danger bg-red-50 border border-red-200 rounded-lg px-3 py-2">{erreur}</p>}
 
       {loading ? (
@@ -276,6 +310,123 @@ const AdminCms: React.FC = () => {
               <button onClick={() => supprimer(c)} title="Supprimer" className="p-2 rounded-lg hover:bg-red-50 text-danger">
                 <Trash2 className="w-4 h-4" />
               </button>
+            </div>
+          ))}
+        </div>
+      )}
+      </>
+      )}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Panneau de modération des avis
+// ---------------------------------------------------------------------------
+const STATUT_LABEL: Record<StatutAvis, { texte: string; classe: string }> = {
+  en_attente: { texte: 'En attente', classe: 'text-amber-600' },
+  publie: { texte: 'Publié', classe: 'text-success font-medium' },
+  rejete: { texte: 'Rejeté', classe: 'text-danger' },
+};
+
+const AdminAvisPanel: React.FC = () => {
+  const [avis, setAvis] = useState<AvisAdmin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erreur, setErreur] = useState<string | null>(null);
+
+  const charger = async () => {
+    setLoading(true);
+    setErreur(null);
+    try {
+      setAvis(await fetchAvisAdmin());
+    } catch (e: any) {
+      setErreur(e.message || 'Chargement impossible.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    charger();
+  }, []);
+
+  const changer = async (id: string, statut: StatutAvis) => {
+    try {
+      await changerStatutAvis(id, statut);
+      charger();
+    } catch (e: any) {
+      setErreur(e.message);
+    }
+  };
+
+  const supprimer = async (a: AvisAdmin) => {
+    if (!window.confirm(`Supprimer définitivement l'avis de « ${a.prenom} » ?`)) return;
+    try {
+      await supprimerAvis(a.id);
+      charger();
+    } catch (e: any) {
+      setErreur(e.message);
+    }
+  };
+
+  const enAttente = avis.filter((a) => a.statut === 'en_attente').length;
+
+  return (
+    <div>
+      {erreur && <p className="mb-4 text-sm text-danger bg-red-50 border border-red-200 rounded-lg px-3 py-2">{erreur}</p>}
+
+      <p className="text-sm text-ink/60 mb-4">
+        Avis soumis par les visiteurs. Seuls les avis <span className="font-medium text-success">publiés</span> apparaissent
+        sur le portail.{enAttente > 0 && <> {enAttente} avis en attente de votre validation.</>}
+      </p>
+
+      {loading ? (
+        <div className="py-20 text-center"><Loader2 className="w-6 h-6 animate-spin text-navy mx-auto" /></div>
+      ) : avis.length === 0 ? (
+        <div className="card-soft p-10 text-center text-ink/60">
+          Aucun avis pour le moment. Les avis envoyés via le formulaire d'accueil apparaîtront ici.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {avis.map((a) => (
+            <div key={a.id} className="card-soft p-4">
+              <div className="flex items-start gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[14.5px] text-ink/85 leading-relaxed">« {a.texte} »</p>
+                  <p className="mt-2 text-sm font-semibold text-navy">
+                    {a.prenom} <span className="font-normal text-ink/60">— {a.qualite}</span>
+                  </p>
+                  <p className="text-[12.5px] text-ink/50 mt-1 flex items-center gap-2 flex-wrap">
+                    <span className={STATUT_LABEL[a.statut].classe}>{STATUT_LABEL[a.statut].texte}</span>
+                    {a.note ? (
+                      <span className="inline-flex items-center gap-0.5 text-amber-500">
+                        {a.note}<Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      </span>
+                    ) : null}
+                    <span>· {new Date(a.createdAt).toLocaleDateString('fr-FR')}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  {a.statut !== 'publie' && (
+                    <button onClick={() => changer(a.id, 'publie')} title="Publier" className="p-2 rounded-lg hover:bg-green-50 text-success">
+                      <Check className="w-4 h-4" />
+                    </button>
+                  )}
+                  {a.statut === 'publie' && (
+                    <button onClick={() => changer(a.id, 'en_attente')} title="Dépublier (remettre en attente)" className="p-2 rounded-lg hover:bg-sand text-ink/70">
+                      <EyeOff className="w-4 h-4" />
+                    </button>
+                  )}
+                  {a.statut !== 'rejete' && (
+                    <button onClick={() => changer(a.id, 'rejete')} title="Rejeter" className="p-2 rounded-lg hover:bg-red-50 text-ink/60">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                  <button onClick={() => supprimer(a)} title="Supprimer" className="p-2 rounded-lg hover:bg-red-50 text-danger">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>

@@ -7,6 +7,7 @@ import { useContenus } from '../content/ContentContext';
 import { ContenuCard } from '../components/ContenuCard';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { Reveal } from '../components/Reveal';
+import { AvisSection } from '../components/AvisSection';
 
 export const HomePage: React.FC = () => {
   useSeo({
@@ -114,6 +115,9 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Avis / témoignages (vrais avis modérés, sinon exemples étiquetés) */}
+      <AvisSection />
 
       {/* Bandeau application */}
       <section className="max-w-6xl mx-auto px-4 py-16">
