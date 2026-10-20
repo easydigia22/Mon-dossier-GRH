@@ -1,6 +1,5 @@
 import React from 'react';
 import { CheckCircle2, Cloud, CloudOff, Download, HelpCircle, Menu, Moon, RotateCcw, Sun } from 'lucide-react';
-import { AppLogo } from './AppLogo';
 import { MonthPicker } from './MonthPicker';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import { useTheme } from '../../hooks/useTheme';
@@ -47,15 +46,13 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Menu className="w-5 h-5" />
           </button>
-          <AppLogo size={36} />
-          <div>
-            <div className="text-base font-bold text-[#1C2459] leading-tight flex flex-col items-start gap-1">
-              <span className="font-display tracking-tight">SIMULRH</span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 bg-[#F3ECE1] text-[#0F7D74] rounded-full">
-                Simulateur RH &amp; Paie
-              </span>
-            </div>
-          </div>
+          <img
+            src="/portal/brand/logo-simulrh.png"
+            alt="SIMULRH — Simulateur RH & Paie"
+            className="h-9 sm:h-10 w-auto shrink-0"
+            loading="eager"
+            decoding="async"
+          />
         </div>
 
         {/* Zone 2: Mois de simulation & Mode Pédagogique */}
