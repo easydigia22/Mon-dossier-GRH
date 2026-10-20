@@ -900,4 +900,105 @@ export const CONTENUS_DEMO: Contenu[] = [
       },
     ],
   },
+  {
+    // Article RÉEL, sourcé (actualité / entreprise). Optimisé SEO + GEO, avec liens.
+    id: 'actu-ia-rh-maroc-2026',
+    slug: 'ia-ressources-humaines-entreprises-maroc-2026',
+    type: 'article',
+    rubrique: 'actualites',
+    sousTheme: 'Entreprise',
+    titre: "IA et RH au Maroc : pourquoi les entreprises s'y mettent en 2026 ?",
+    resume:
+      "En 2025, 96 % des DRH marocains anticipent une accélération de la digitalisation et 87 % reconnaissent le rôle majeur de l'IA dans la transformation RH.",
+    publics: ['etudiant', 'stagiaire', 'professionnel', 'formateur'],
+    niveau: 'intermediaire',
+    statut: 'publie',
+    demo: false,
+    datePublication: '2026-10-20',
+    dateMiseAJour: '2026-10-20',
+    auteur: 'Rédaction SimulRH',
+    tags: ['ia', 'ressources humaines', 'rh', 'intelligence artificielle', 'maroc', 'recrutement', 'digitalisation', '2026'],
+    imageCouverture: '/portal/articles/ia-rh-maroc-2026.svg',
+    tarification: 'gratuit',
+    corps: [
+      "## L'essentiel",
+      [
+        "- En 2025, **96 % des DRH marocains** anticipent une accélération de la digitalisation et **87 %** reconnaissent le rôle majeur de l'IA dans la transformation RH (étude DRH.ma, mai 2025).",
+        "- Au niveau mondial, **43 %** des organisations utilisent déjà l'IA dans les RH, contre 26 % en 2024 (SHRM).",
+        "- Usages phares : rédaction d'offres, présélection de CV, analyse des compétences et expérience collaborateur.",
+        "- Le principal frein au Maroc reste la **qualité des données et des systèmes d'information**, avant la technologie elle-même.",
+      ].join('\n'),
+      "## Pourquoi l'IA s'impose-t-elle dans les RH au Maroc ?",
+      "En 2025, **96 % des directeurs RH marocains** anticipent une accélération de la digitalisation dans les cinq à dix prochaines années, et **87 %** reconnaissent un rôle significatif de l'IA dans la transformation de leur organisation ([étude DRH.ma relayée par Le Matin](https://lematin.ma/economie/le-futur-du-travail-au-maroc-vu-par-les-drh-etude/280985), mai 2025). L'IA n'est plus un sujet de prospective : c'est une priorité de direction.",
+      "Trois pressions se combinent : la **pénurie de compétences** (citée par 84 % des DRH), l'**automatisation des tâches** (55 %) et le développement du **travail hybride** (49 %). Face à ces défis, les outils d'IA promettent de faire plus, plus vite, avec des équipes RH souvent réduites.",
+      "## À quoi sert concrètement l'IA dans la fonction RH ?",
+      "Dans les organisations qui l'utilisent, l'IA sert d'abord au **recrutement** : **66 %** s'en servent pour rédiger des offres d'emploi et **44 %** pour présélectionner des CV (SHRM, 2025). Mais son champ dépasse largement l'embauche.",
+      [
+        "- **Recrutement** : tri des candidatures, rédaction d'annonces, premiers échanges automatisés — voir [les étapes du recrutement](/cours/les-etapes-du-recrutement).",
+        "- **Gestion des compétences** : cartographie des compétences et détection des écarts — voir [la gestion des compétences](/cours/gestion-des-competences-au-maroc).",
+        "- **Formation** : recommandation de parcours personnalisés — voir [la formation professionnelle](/cours/formation-professionnelle-au-maroc).",
+        "- **Expérience collaborateur** : chatbots RH, réponses aux questions courantes, analyse du climat social.",
+      ].join('\n'),
+      "## L'adoption progresse-t-elle vraiment ?",
+      "Oui, et vite. En 2025, **43 %** des organisations déclarent utiliser l'IA dans les RH, contre seulement **26 %** un an plus tôt (SHRM). Et **82 %** des responsables RH prévoient de déployer une forme d'**IA agentique** d'ici mai 2026 (Gartner).",
+      "La taille de l'entreprise reste déterminante : l'adoption dépasse 60 % dans les grands groupes, mais tombe sous 35 % dans les structures de moins de 100 salariés. Au Maroc, ce sont logiquement les grandes entreprises (250 salariés et plus) qui ouvrent la voie.",
+      "## Quels gains concrets pour les entreprises ?",
+      "Le bénéfice le plus cité est le **temps** : **89 %** des professionnels RH qui utilisent l'IA au recrutement affirment qu'elle leur fait gagner du temps ou améliore leur efficacité (SHRM). Moins de tâches répétitives, c'est plus de disponibilité pour l'humain.",
+      "Concrètement, l'IA réduit le délai de traitement des candidatures, standardise la présélection et libère les équipes pour l'accompagnement, l'entretien et la décision — là où la valeur RH se joue vraiment.",
+      "## Quels sont les freins au Maroc ?",
+      "Le premier obstacle n'est pas la technologie, mais la **donnée**. Beaucoup d'entreprises marocaines et maghrébines n'ont pas encore de systèmes d'information suffisamment fiables et fluides, et plusieurs directions confondent digitalisation, gestion électronique des documents et IA (étude DRH.ma, 2025).",
+      "S'ajoutent des enjeux de **compétences internes**, de **budget** et de **conformité** : le traitement de données personnelles de candidats et de salariés relève de la loi n° 09-08 et du contrôle de la CNDP. L'IA en RH suppose des règles claires sur ce qu'elle décide — et ce qu'elle ne décide pas.",
+      "## Comment une entreprise marocaine peut-elle se préparer ?",
+      "Avant d'acheter un outil, il faut **assainir ses données** et cibler un cas d'usage précis à fort retour, souvent le recrutement. Former les équipes RH à ces outils est tout aussi décisif que la technologie elle-même.",
+      "La feuille de route gagnante combine données propres, un cas d'usage pilote mesurable, la **montée en compétences** des équipes (voir [la formation professionnelle](/cours/formation-professionnelle-au-maroc)) et un cadre de gouvernance clair. L'IA amplifie une fonction RH bien organisée ; elle ne corrige pas le désordre.",
+    ].join('\n\n'),
+    faq: [
+      {
+        question: "L'IA va-t-elle remplacer les équipes RH au Maroc ?",
+        reponse:
+          "Non à court terme. L'IA automatise des tâches comme la rédaction d'offres ou le tri des CV, mais la décision reste humaine. 89 % des professionnels RH qui l'utilisent au recrutement disent qu'elle leur fait gagner du temps (SHRM), pas qu'elle les remplace.",
+      },
+      {
+        question: "Quelles tâches RH l'IA réalise-t-elle le mieux ?",
+        reponse:
+          "Le recrutement d'abord : 66 % des organisations utilisatrices rédigent des offres avec l'IA et 44 % présélectionnent des CV (SHRM, 2025). Elle appuie aussi la formation et la gestion des compétences, par recommandation et cartographie.",
+      },
+      {
+        question: "Les entreprises marocaines sont-elles prêtes pour l'IA en RH ?",
+        reponse:
+          "La prise de conscience est forte : 96 % des DRH anticipent une accélération de la digitalisation (étude DRH.ma, 2025). Mais la fiabilité des systèmes d'information reste un frein majeur à lever avant tout déploiement d'IA à grande échelle.",
+      },
+      {
+        question: "Par quoi commencer pour adopter l'IA dans sa fonction RH ?",
+        reponse:
+          "Par des données propres et un cas d'usage ciblé, souvent le recrutement, puis la formation des équipes. 82 % des responsables RH prévoient une IA agentique d'ici mai 2026 (Gartner) : mieux vaut s'y préparer tôt, étape par étape.",
+      },
+    ],
+    sources: [
+      {
+        intitule: 'Le futur du travail au Maroc vu par les DRH (étude DRH.ma, 232 DRH, entreprises 250+ salariés) — Le Matin',
+        url: 'https://lematin.ma/economie/le-futur-du-travail-au-maroc-vu-par-les-drh-etude/280985',
+        periodeApplication: 'Enquête menée en mai 2025',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: 'SHRM — adoption de l\'IA dans les RH et le recrutement (statistiques 2024-2025)',
+        url: 'https://www.shrm.org',
+        periodeApplication: 'Données 2024-2025',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: 'AI in Recruiting Statistics 2026 — synthèse SHRM & Gartner (Apollo Technical)',
+        url: 'https://www.apollotechnical.com/statistics-on-ai-in-recruiting/',
+        periodeApplication: 'Synthèse 2025-2026',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: 'Loi n° 09-08 relative à la protection des données personnelles — CNDP',
+        url: 'https://www.cndp.ma',
+        statutTexte: 'en_vigueur',
+        dateVerification: '2026-10-20',
+      },
+    ],
+  },
 ];

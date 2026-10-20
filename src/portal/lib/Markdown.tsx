@@ -2,15 +2,36 @@ import React from 'react';
 
 /**
  * Mini-rendu Markdown (sans dépendance) pour les corps de cours et d'articles.
- * Gère : titres `##`, listes `1.`/`-`, gras `**…**`, et paragraphes.
- * Suffisant pour le contenu éditorial du portail ; un contenu riche (tableaux,
- * images) relèvera d'un éditeur dédié en Phase 3.
+ * Gère : titres `##`, listes `1.`/`-`, gras `**…**`, liens `[texte](url)`,
+ * images `![alt](url)`, et paragraphes.
  */
 function inline(texte: string): React.ReactNode {
-  const parts = texte.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((p, i) =>
-    p.startsWith('**') && p.endsWith('**') ? <strong key={i}>{p.slice(2, -2)}</strong> : <React.Fragment key={i}>{p}</React.Fragment>
-  );
+  // Tokenise images, liens puis gras (l'ordre des alternatives compte).
+  const regex = /(!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*)/g;
+  return texte.split(regex).map((p, i) => {
+    if (!p) return null;
+    if (p.startsWith('**') && p.endsWith('**')) {
+      return <strong key={i}>{p.slice(2, -2)}</strong>;
+    }
+    const img = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(p);
+    if (img) {
+      return (
+        <img key={i} src={img[2]} alt={img[1]} loading="lazy"
+          className="my-4 rounded-xl border border-[#ECE3D6] max-w-full" />
+      );
+    }
+    const lien = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(p);
+    if (lien) {
+      const externe = /^https?:\/\//i.test(lien[2]);
+      return (
+        <a key={i} href={lien[2]} className="text-teal underline underline-offset-2 hover:text-[#108a80]"
+          {...(externe ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+          {lien[1]}
+        </a>
+      );
+    }
+    return <React.Fragment key={i}>{p}</React.Fragment>;
+  });
 }
 
 export const Markdown: React.FC<{ source: string }> = ({ source }) => {
