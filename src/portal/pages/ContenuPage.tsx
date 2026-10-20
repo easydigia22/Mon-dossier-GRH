@@ -66,47 +66,51 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
           </div>
         )}
 
-        {contenu.type === 'ressource' &&
-          (contenu.fichiers && contenu.fichiers.length > 0 ? (
-            <div className="space-y-3 mt-2">
-              <h2 className="font-display text-xl font-semibold text-navy">Téléchargements</h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {contenu.fichiers.map((f) => (
-                  <a
-                    key={f.url}
-                    href={f.url}
-                    download
-                    dir={f.langue === 'ar' ? 'rtl' : 'ltr'}
-                    className="card-soft p-4 flex items-center gap-3 hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
-                  >
-                    <span className="w-10 h-10 rounded-lg bg-teal-soft text-teal flex items-center justify-center shrink-0">
-                      <Download className="w-5 h-5" />
+        {/* Fichiers téléchargeables — affichés pour tout contenu qui en possède
+            (cours avec support PDF, ressource, etc.). */}
+        {contenu.fichiers && contenu.fichiers.length > 0 && (
+          <div className="space-y-3 mt-8">
+            <h2 className="font-display text-xl font-semibold text-navy">Téléchargements</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {contenu.fichiers.map((f) => (
+                <a
+                  key={f.url}
+                  href={f.url}
+                  download
+                  dir={f.langue === 'ar' ? 'rtl' : 'ltr'}
+                  className="card-soft p-4 flex items-center gap-3 hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+                >
+                  <span className="w-10 h-10 rounded-lg bg-teal-soft text-teal flex items-center justify-center shrink-0">
+                    <Download className="w-5 h-5" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-navy truncate">{f.label}</span>
+                    <span className="block text-[12.5px] text-ink/55">
+                      {f.langue === 'ar' ? 'العربية' : 'Français'}{f.taille ? ` · ${f.taille}` : ''}
                     </span>
-                    <span className="min-w-0">
-                      <span className="block font-semibold text-navy truncate">{f.label}</span>
-                      <span className="block text-[12.5px] text-ink/55">
-                        {f.langue === 'ar' ? 'العربية' : 'Français'}{f.taille ? ` · ${f.taille}` : ''}
-                      </span>
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="card-soft p-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="font-medium text-navy">Document téléchargeable</p>
-                <p className="text-[13px] text-ink/60">Gabarit à personnaliser.</p>
-              </div>
-              {contenu.fichierUrl ? (
-                <a href={contenu.fichierUrl} download className="inline-flex items-center gap-2 bg-teal text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-[#108a80]">
-                  <Download className="w-4 h-4" /> Télécharger
+                  </span>
                 </a>
-              ) : (
-                <span className="text-[13px] text-ink/50 italic">Fichier non disponible</span>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
+        )}
+
+        {/* Ressource sans fichier téléversé : repli sur l'ancien champ `fichierUrl`. */}
+        {contenu.type === 'ressource' && !(contenu.fichiers && contenu.fichiers.length > 0) && (
+          <div className="card-soft p-5 flex items-center justify-between gap-4 mt-8">
+            <div>
+              <p className="font-medium text-navy">Document téléchargeable</p>
+              <p className="text-[13px] text-ink/60">Gabarit à personnaliser.</p>
+            </div>
+            {contenu.fichierUrl ? (
+              <a href={contenu.fichierUrl} download className="inline-flex items-center gap-2 bg-teal text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-[#108a80]">
+                <Download className="w-4 h-4" /> Télécharger
+              </a>
+            ) : (
+              <span className="text-[13px] text-ink/50 italic">Fichier non disponible</span>
+            )}
+          </div>
+        )}
       </div>
 
       {contenu.sources && <SourcesBox sources={contenu.sources} />}

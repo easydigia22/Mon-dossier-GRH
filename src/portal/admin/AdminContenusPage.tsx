@@ -685,7 +685,16 @@ const EditeurContenu: React.FC<{ initial: Contenu; onAnnuler: () => void; onEnre
 
         {c.type === 'qcm' && <EditeurQcm questions={c.questions ?? []} onChange={(questions) => maj({ questions })} />}
 
-        {c.type === 'ressource' && <EditeurFichiers fichiers={c.fichiers ?? []} onChange={(fichiers) => maj({ fichiers })} onErreur={setErreur} />}
+        {/* Fichiers PDF téléchargeables — disponibles pour tout type de contenu
+            (ex. un cours accompagné de son support PDF, pas seulement les ressources). */}
+        <div className="pt-4 mt-2 border-t border-[#ECE3D6]">
+          {c.type !== 'ressource' && (
+            <p className="text-xs text-ink/55 mb-2">
+              Ajoutez un PDF à télécharger (support de cours, fiche…). Il apparaîtra en bas de la page pour les visiteurs.
+            </p>
+          )}
+          <EditeurFichiers fichiers={c.fichiers ?? []} onChange={(fichiers) => maj({ fichiers })} onErreur={setErreur} />
+        </div>
       </div>
 
       {erreur && <p className="mt-4 text-sm text-danger bg-red-50 border border-red-200 rounded-lg px-3 py-2">{erreur}</p>}
