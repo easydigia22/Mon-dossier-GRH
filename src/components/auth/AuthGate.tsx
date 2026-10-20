@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { Building2, Download, Loader2, LogIn, LogOut, Plus, UserPlus, Users } from 'lucide-react';
-import { AppLogo } from '../common/AppLogo';
 import { Copyright } from '../common/Copyright';
 import { LandingView } from '../landing/LandingView';
 import { supabase } from '../../services/supabase';
@@ -294,16 +293,18 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           ← Retour à l'accueil
         </button>
         <div className="flex items-center gap-3">
-          <AppLogo size={40} />
+          <img
+            src="/portal/brand/logo-simulrh.png"
+            alt="SIMULRH — Simulateur RH & Paie"
+            className="h-10 w-auto shrink-0"
+            loading="eager"
+            decoding="async"
+          />
           <img
             src="/logo-ofppt.jpg"
             alt="Office de la Formation Professionnelle et de la Promotion du Travail"
             className="w-10 h-10 rounded-full object-cover shrink-0 border border-[#ECE3D6]"
           />
-          <div>
-            <div className="text-sm font-bold text-[#1C2459] leading-tight">SIMULRH</div>
-            <div className="text-xs text-slate-500">Simulateur RH &amp; Paie — OFPPT</div>
-          </div>
         </div>
 
         {canInstall && (
@@ -669,7 +670,13 @@ const EcranBloquant: React.FC<{
   <div className="min-h-screen flex items-center justify-center bg-[#FBF7F0] px-4 relative">
     <div className="w-full max-w-sm bg-white border border-[#ECE3D6] rounded-2xl shadow-sm p-6 space-y-4 text-center">
       <div className="flex justify-center">
-        <AppLogo size={40} />
+        <img
+          src="/portal/brand/logo-simulrh.png"
+          alt="SIMULRH — Simulateur RH & Paie"
+          className="h-10 w-auto"
+          loading="eager"
+          decoding="async"
+        />
       </div>
       <h1 className="text-base font-bold text-[#1C2459]">{titre}</h1>
       <p className="text-xs text-slate-600 leading-relaxed">{message}</p>

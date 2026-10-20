@@ -64,13 +64,11 @@ export const LandingView: React.FC<{
       <header className="sticky top-0 z-30 backdrop-blur-md bg-[#FBF7F0]/80 border-b border-[#ECE3D6]">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <AppLogo size={34} />
-            <div className="leading-none">
-              <div className="font-extrabold tracking-tight text-[15px]" style={{ color: NAVY }}>
-                Simul<span style={{ color: TEAL }}>RH</span>
-              </div>
-              <div className="text-[10px] text-slate-500 mt-0.5">Simulateur RH &amp; Paie — OFPPT</div>
-            </div>
+            <img
+              src="/portal/brand/logo-simulrh.png"
+              alt="SIMULRH — Simulateur RH & Paie"
+              className="h-9 w-auto shrink-0"
+            />
           </div>
           <div className="flex items-center gap-2">
             <a href="#modules" className="hidden sm:inline text-sm font-medium text-slate-600 hover:text-[#1C2459] px-3 py-2">Modules</a>
@@ -272,10 +270,11 @@ export const LandingView: React.FC<{
       <footer className="border-t border-[#ECE3D6]">
         <div className="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <AppLogo size={28} />
-            <span className="font-extrabold tracking-tight" style={{ color: NAVY }}>
-              Simul<span style={{ color: TEAL }}>RH</span>
-            </span>
+            <img
+              src="/portal/brand/logo-simulrh.png"
+              alt="SIMULRH — Simulateur RH & Paie"
+              className="h-8 w-auto shrink-0"
+            />
           </div>
           <p className="text-[11px] text-slate-500 text-center">{MENTION_COPYRIGHT}</p>
           <button onClick={onEntrer} className="text-sm font-semibold hover:underline" style={{ color: NAVY }}>
