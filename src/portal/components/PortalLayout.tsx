@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn, Download } from 'lucide-react';
+import { Menu, X, LogIn, Download, ShieldCheck } from 'lucide-react';
 import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
@@ -58,6 +58,18 @@ export const PortalLayout: React.FC = () => {
             {LIENS_PRINCIPAUX.map((l) => (
               <NavLink key={l.to} to={l.to} className={lienClasse}>{l.label}</NavLink>
             ))}
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `p-2 rounded-lg transition-colors ${
+                  isActive ? 'bg-teal-soft text-navy' : 'text-ink/50 hover:text-navy hover:bg-sand'
+                }`
+              }
+              aria-label="Espace administration"
+              title="Administration"
+            >
+              <ShieldCheck className="w-[18px] h-[18px]" />
+            </NavLink>
             <a
               href="/app"
               className="ml-2 inline-flex items-center gap-1.5 bg-navy text-white text-sm font-semibold rounded-lg px-3.5 py-2 hover:bg-navy-deep transition-colors"
@@ -164,6 +176,7 @@ export const PortalLayout: React.FC = () => {
               <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
               <li><Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link></li>
               <li><Link to="/confidentialite" className="hover:text-white">Confidentialité</Link></li>
+              <li><Link to="/admin" className="inline-flex items-center gap-1.5 hover:text-white"><ShieldCheck className="w-3.5 h-3.5" /> Administration</Link></li>
             </ul>
           </div>
         </div>
