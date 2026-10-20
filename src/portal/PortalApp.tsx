@@ -41,6 +41,9 @@ export const PortalApp: React.FC = () => (
       {/* Application existante, servie telle quelle sous /app (auth inchangée). */}
       <Route path="/app/*" element={<Suspense fallback={<Chargement />}><LegacyApp /></Suspense>} />
 
+      {/* Espace d'administration (accès réservé : connexion + rôle admin, via RLS). */}
+      <Route path="/admin" element={<AdminContenusPage />} />
+
       {/* Portail public */}
       <Route element={<PortalLayout />}>
         <Route index element={<HomePage />} />
