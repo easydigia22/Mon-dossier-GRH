@@ -1,6 +1,7 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useSeo } from '../lib/seo';
-import { rubriqueMeta } from '../lib/rubriques';
+import { rubriqueMeta, themeSlug } from '../lib/rubriques';
 import { useContenus } from '../content/ContentContext';
 import { ContenuCard } from '../components/ContenuCard';
 import type { Rubrique } from '../content/types';
@@ -11,6 +12,14 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
   const { parRubrique } = useContenus();
   const contenus = parRubrique(rubrique);
   const Icone = meta.icon;
+
+  // Sous-thème actif lu depuis l'URL (?theme=slug) ; filtre la liste sur place.
+  const [params, setParams] = useSearchParams();
+  const themeParam = params.get('theme');
+  const themeActif = meta.sousThemes.find((s) => themeSlug(s) === themeParam);
+  const liste = themeActif ? contenus.filter((c) => c.sousTheme === themeActif) : contenus;
+  const compteTheme = (s: string) => contenus.filter((c) => c.sousTheme === s).length;
+  const choisirTheme = (s: string | null) => setParams(s ? { theme: themeSlug(s) } : {});
 
   return (
     <>
@@ -53,9 +62,33 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
 
       <section className="max-w-6xl mx-auto px-4 py-10">
         <div className="flex flex-wrap gap-2 mb-10">
-          {meta.sousThemes.map((s) => (
-            <span key={s} className="text-sm bg-sand text-navy/90 rounded-full px-3 py-1.5 border border-[#ECE3D6]">{s}</span>
-          ))}
+          <button
+            type="button"
+            onClick={() => choisirTheme(null)}
+            className={`text-sm rounded-full px-3 py-1.5 border transition-colors ${
+              !themeActif ? 'bg-navy text-white border-navy' : 'bg-sand text-navy/90 border-[#ECE3D6] hover:border-teal'
+            }`}
+          >
+            Tout
+          </button>
+          {meta.sousThemes.map((s) => {
+            const actif = themeActif === s;
+            const n = compteTheme(s);
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => choisirTheme(actif ? null : s)}
+                aria-pressed={actif}
+                className={`text-sm rounded-full px-3 py-1.5 border transition-colors ${
+                  actif ? 'bg-teal text-white border-teal' : 'bg-sand text-navy/90 border-[#ECE3D6] hover:border-teal'
+                }`}
+              >
+                {s}
+                <span className={actif ? 'text-white/80' : 'text-ink/45'}> · {n}</span>
+              </button>
+            );
+          })}
         </div>
 
         {meta.video && (
@@ -81,14 +114,18 @@ export const RubriquePage: React.FC<{ rubrique: Rubrique }> = ({ rubrique }) => 
           </div>
         )}
 
-        <h2 className="font-display text-xl font-bold text-navy mb-5">Contenus de la rubrique</h2>
-        {contenus.length === 0 ? (
+        <h2 className="font-display text-xl font-bold text-navy mb-5">
+          {themeActif ? themeActif : 'Contenus de la rubrique'}
+        </h2>
+        {liste.length === 0 ? (
           <div className="card-soft p-10 text-center text-ink/60">
-            Aucun contenu publié pour le moment dans cette rubrique.
+            {themeActif
+              ? <>Aucun contenu dans « {themeActif} » pour le moment. <button type="button" onClick={() => choisirTheme(null)} className="text-teal font-semibold hover:underline">Voir tout</button></>
+              : 'Aucun contenu publié pour le moment dans cette rubrique.'}
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {contenus.map((c) => (
+            {liste.map((c) => (
               <ContenuCard key={c.id} contenu={c} />
             ))}
           </div>

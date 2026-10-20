@@ -105,6 +105,12 @@ export interface Contenu {
   tarification?: Tarification;
   /** Prix en dirhams (MAD) quand `tarification === 'payant'`. */
   prix?: number;
+  /**
+   * Sous-catégorie éditoriale au sein de la rubrique (ex. « Recrutement » pour GRH).
+   * Doit correspondre à l'un des `sousThemes` de la rubrique (voir lib/rubriques).
+   * Absent = contenu non classé, visible uniquement sous « Tout ».
+   */
+  sousTheme?: string;
   /** Corps du cours / de l'article en Markdown léger (sections). */
   corps?: string;
   /** Pour un exercice : énoncé puis correction affichable à la demande. */

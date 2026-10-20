@@ -40,6 +40,7 @@ function versContenu(row: any): Contenu {
     imageCouverture: row.image_couverture ?? undefined,
     tarification: row.tarification ?? 'gratuit',
     prix: row.prix ?? undefined,
+    sousTheme: row.sous_theme ?? undefined,
   };
 }
 
@@ -68,6 +69,7 @@ function versRow(c: Contenu): Record<string, unknown> {
     tarification: c.tarification ?? 'gratuit',
     // Prix seulement pertinent si payant ; sinon on stocke null.
     prix: c.tarification === 'payant' && typeof c.prix === 'number' ? c.prix : null,
+    sous_theme: c.sousTheme || null,
   };
 }
 

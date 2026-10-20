@@ -26,7 +26,7 @@ export const RUBRIQUES: RubriqueMeta[] = [
     description: 'Recrutement, compétences, formation, évaluation et administration du personnel.',
     icon: Users,
     image: '/portal/rubriques/grh.jpg',
-    sousThemes: ['Recrutement', 'Gestion des compétences', 'Formation', 'Évaluation', 'Administration du personnel'],
+    sousThemes: ['Recrutement', 'Gestion des compétences', 'Gestion de carrière', 'Formation', 'Évaluation', 'Administration du personnel'],
   },
   {
     cle: 'paie',
@@ -87,4 +87,14 @@ export const RUBRIQUES: RubriqueMeta[] = [
 
 export function rubriqueMeta(cle: Rubrique): RubriqueMeta | undefined {
   return RUBRIQUES.find((r) => r.cle === cle);
+}
+
+/** Slug URL stable d'un sous-thème (ex. « Gestion de carrière » → « gestion-de-carriere »). */
+export function themeSlug(sousTheme: string): string {
+  return sousTheme
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }

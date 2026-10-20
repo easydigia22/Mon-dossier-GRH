@@ -12,7 +12,7 @@ import {
   uploadImageCouverture,
 } from '../content/supabaseContent';
 import { formatPrix } from '../lib/contact';
-import { RUBRIQUES } from '../lib/rubriques';
+import { RUBRIQUES, rubriqueMeta } from '../lib/rubriques';
 import {
   fetchAvisAdmin,
   changerStatutAvis,
@@ -642,6 +642,21 @@ const EditeurContenu: React.FC<{ initial: Contenu; onAnnuler: () => void; onEnre
             </select>
           </Label>
         </div>
+
+        <Label texte="Sous-catégorie (puce de filtrage sur la page de rubrique)">
+          <select
+            className={champ}
+            value={c.sousTheme ?? ''}
+            onChange={(e) => maj({ sousTheme: e.target.value || undefined })}
+          >
+            <option value="">— Aucune (non classé) —</option>
+            {Array.from(
+              new Set([...(rubriqueMeta(c.rubrique)?.sousThemes ?? []), ...(c.sousTheme ? [c.sousTheme] : [])])
+            ).map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </Label>
 
         <Label texte="Résumé">
           <textarea className={champ} rows={2} value={c.resume} onChange={(e) => maj({ resume: e.target.value })} />
