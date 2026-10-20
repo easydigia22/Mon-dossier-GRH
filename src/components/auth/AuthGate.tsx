@@ -23,6 +23,32 @@ interface AuthGateProps {
 }
 
 /**
+ * Traduit les erreurs techniques d'authentification en messages clairs pour l'utilisateur.
+ * En particulier, une panne réseau (fetch échoué) remonte « Load failed » (Safari) ou
+ * « Failed to fetch » (Chrome) : on la présente comme un problème de connexion à réessayer.
+ */
+function messageErreurAuth(brut?: string): string {
+  const m = (brut || '').toLowerCase();
+  if (
+    m.includes('load failed') ||
+    m.includes('failed to fetch') ||
+    m.includes('networkerror') ||
+    m.includes('network request failed') ||
+    m.includes('fetch')
+  ) {
+    return "Connexion au serveur impossible. Vérifiez votre connexion internet puis réessayez dans un instant.";
+  }
+  if (m.includes('invalid login credentials')) return 'E-mail ou mot de passe incorrect.';
+  if (m.includes('already registered') || m.includes('already been registered'))
+    return 'Un compte existe déjà avec cette adresse e-mail. Connectez-vous plutôt.';
+  if (m.includes('rate limit')) return 'Trop de tentatives. Patientez quelques minutes avant de réessayer.';
+  if (m.includes('password should be at least')) return 'Le mot de passe doit contenir au moins 6 caractères.';
+  if (m.includes('unable to validate email') || m.includes('invalid email')) return 'Adresse e-mail invalide.';
+  if (m.includes('email not confirmed')) return 'Adresse e-mail non confirmée. Vérifiez votre boîte de réception.';
+  return brut || 'Une erreur est survenue. Veuillez réessayer.';
+}
+
+/**
  * Exige une connexion Supabase avant d'afficher l'application.
  * Sans configuration Supabase (variables absentes), l'application fonctionne en mode local.
  */
@@ -226,7 +252,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     try {
       if (mode === 'login') {
         const { error: err } = await supabase!.auth.signInWithPassword({ email, password });
-        if (err) setError(err.message === 'Invalid login credentials' ? 'E-mail ou mot de passe incorrect.' : err.message);
+        if (err) setError(messageErreurAuth(err.message));
       } else {
         // Le rôle est transmis en métadonnée ; il est copié côté serveur (trigger) et ne peut
         // plus être modifié par le client ensuite — voir migration profiles_roles.sql.
@@ -235,9 +261,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           password,
           options: { data: { role: compteRole } }
         });
-        if (err) setError(err.message);
+        if (err) setError(messageErreurAuth(err.message));
         else if (!data.session) setInfo('Compte créé. Vérifiez votre boîte e-mail pour confirmer votre adresse, puis connectez-vous.');
       }
+    } catch (err: any) {
+      // Erreur réseau non gérée (fetch rejeté) : on affiche un message clair plutôt que « Load failed ».
+      setError(messageErreurAuth(err?.message));
     } finally {
       setBusy(false);
     }
