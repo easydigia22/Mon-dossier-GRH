@@ -8,7 +8,42 @@ import { SourcesBox } from '../components/SourcesBox';
 import { NotFoundPage } from './NotFoundPage';
 import { formatDate, BadgeTarif } from '../components/ContenuCard';
 import { lienWhatsAppCommande, formatPrix } from '../lib/contact';
-import type { TypeContenu } from '../content/types';
+import type { TypeContenu, Contenu } from '../content/types';
+
+/** Construit les données structurées schema.org (Article + FAQPage) d'un contenu. */
+function construireJsonLd(c: Contenu, origin: string, chemin: string): object[] {
+  const abs = (p?: string) => (p ? (/^https?:\/\//i.test(p) ? p : origin + p) : origin + '/portal/brand/logo-simulrh.png');
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': c.type === 'article' ? 'Article' : 'CreativeWork',
+    headline: c.titre,
+    description: c.resume,
+    datePublished: c.datePublication,
+    dateModified: c.dateMiseAJour || c.datePublication,
+    inLanguage: 'fr-MA',
+    author: { '@type': 'Organization', name: c.auteur || 'SimulRH' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SimulRH',
+      logo: { '@type': 'ImageObject', url: origin + '/portal/brand/logo-simulrh.png' },
+    },
+    image: [abs(c.imageCouverture)],
+    mainEntityOfPage: { '@type': 'WebPage', '@id': origin + chemin },
+  };
+  const blocs: object[] = [article];
+  if (c.faq && c.faq.length > 0) {
+    blocs.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: c.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.reponse },
+      })),
+    });
+  }
+  return blocs;
+}
 
 /** Fiche de détail pour cours, articles, exercices et ressources. */
 export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAttendu }) => {
@@ -17,10 +52,17 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
   const contenu = slug ? parSlug(slug) : undefined;
   const [correctionVisible, setCorrectionVisible] = useState(false);
 
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const chemin = typeof window !== 'undefined' ? window.location.pathname : '';
+  const jsonLd = contenu ? construireJsonLd(contenu, origin, chemin) : undefined;
+
   // Hooks appelés inconditionnellement : on fournit un repli si le contenu manque.
   useSeo({
     titre: contenu?.titre || 'Contenu introuvable',
     description: contenu?.resume || "Ce contenu n'existe pas ou n'est plus disponible.",
+    image: contenu?.imageCouverture,
+    type: contenu?.type === 'article' ? 'article' : 'website',
+    jsonLd,
   });
 
   if (!contenu || (typeAttendu && contenu.type !== typeAttendu)) return <NotFoundPage />;
@@ -145,6 +187,22 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
           </div>
         )}
       </div>
+
+      {contenu.faq && contenu.faq.length > 0 && (
+        <section className="mt-10">
+          <h2 className="font-display text-xl font-semibold text-navy mb-3">Questions fréquentes</h2>
+          <div className="space-y-2.5">
+            {contenu.faq.map((f, i) => (
+              <details key={i} className="card-soft p-4">
+                <summary className="font-semibold text-navy cursor-pointer list-none flex items-start gap-2">
+                  <span>{f.question}</span>
+                </summary>
+                <p className="mt-2 text-[15px] text-ink/80 leading-relaxed">{f.reponse}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
 
       {contenu.sources && <SourcesBox sources={contenu.sources} />}
     </article>

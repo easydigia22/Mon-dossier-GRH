@@ -122,4 +122,6 @@ export interface Contenu {
   fichierUrl?: string;
   /** Pour une ressource à plusieurs fichiers / langues (ex. Code du travail FR + AR). */
   fichiers?: FichierTelechargeable[];
+  /** Questions/réponses affichées en bas de l'article et exposées en schema FAQPage (SEO/GEO). */
+  faq?: { question: string; reponse: string }[];
 }

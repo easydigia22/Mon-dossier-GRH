@@ -41,6 +41,7 @@ function versContenu(row: any): Contenu {
     tarification: row.tarification ?? 'gratuit',
     prix: row.prix ?? undefined,
     sousTheme: row.sous_theme ?? undefined,
+    faq: row.faq ?? undefined,
   };
 }
 

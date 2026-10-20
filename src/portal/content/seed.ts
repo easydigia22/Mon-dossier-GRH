@@ -799,4 +799,105 @@ export const CONTENUS_DEMO: Contenu[] = [
       },
     ],
   },
+  {
+    // Article RÉEL, sourcé (actualité protection sociale). Optimisé SEO + GEO.
+    id: 'actu-generalisation-amo-2026',
+    slug: 'generalisation-amo-maroc-2026',
+    type: 'article',
+    rubrique: 'actualites',
+    sousTheme: 'Social',
+    titre: "Généralisation de l'AMO au Maroc : où en est le chantier en 2026 ?",
+    resume:
+      "En 2025, l'AMO couvre plus de 32 millions de personnes au Maroc, soit 88 % de la population contre 42 % avant la réforme. État des lieux, régimes et enjeux pour 2026.",
+    publics: ['etudiant', 'stagiaire', 'professionnel', 'formateur'],
+    niveau: 'intermediaire',
+    statut: 'publie',
+    demo: false,
+    datePublication: '2026-10-20',
+    dateMiseAJour: '2026-10-20',
+    auteur: 'Rédaction SimulRH',
+    tags: ['amo', 'protection sociale', 'cnss', 'assurance maladie', 'loi 09-21', 'maroc', 'actualités'],
+    imageCouverture: '/portal/articles/amo-2026.svg',
+    tarification: 'gratuit',
+    corps: [
+      "## L'essentiel",
+      [
+        "- En 2025, l'AMO couvre **plus de 32 millions de personnes** au Maroc, soit **88 % de la population** contre 42 % avant la réforme (portail officiel maroc.ma, octobre 2025).",
+        "- Deux régimes portent l'extension : **AMO-Tadamon** (populations démunies, ex-RAMED) et **AMO-TNS** (travailleurs non salariés).",
+        "- Pour un salarié, l'AMO représente **6,37 % du salaire brut, sans plafond** (2,26 % à sa charge, 4,11 % à celle de l'employeur).",
+        "- Le principal défi de 2026 est **financier** : le régime des indépendants affiche un ratio prestations/cotisations de **157 %** en 2025.",
+      ].join('\n'),
+      "## Qu'est-ce que la généralisation de l'AMO ?",
+      "La généralisation de l'Assurance Maladie Obligatoire (AMO) est le chantier qui vise à offrir une couverture santé à toute la population active et à ses ayants droit. Son socle est la **loi-cadre n° 09-21** relative à la protection sociale, adoptée en 2021, qui organise aussi la retraite, les allocations familiales et l'indemnité pour perte d'emploi.",
+      "Concrètement, l'AMO prend en charge une partie des frais de soins, de médicaments et d'hospitalisation. Avant la réforme, elle ne concernait guère que les salariés déclarés et les fonctionnaires ; l'objectif est désormais d'y intégrer les indépendants et les ménages les plus modestes.",
+      "## Combien de Marocains sont aujourd'hui couverts ?",
+      "En 2025, l'AMO couvre **plus de 32 millions de bénéficiaires**, soit environ **88 % de la population**, contre seulement 42 % avant la généralisation (maroc.ma, « Généralisation de l'AMO : plus de 32 millions de bénéficiaires en 2025 », 21 octobre 2025). C'est l'un des bonds les plus rapides jamais enregistrés en matière de couverture santé au Maroc.",
+      "Dans le détail, l'**AMO-Tadamon** rassemble près de **11 millions** de bénéficiaires et l'**AMO-TNS** environ **4 millions**, tandis que le régime AMO-Achamil compte environ **313 000** personnes immatriculées. De son côté, la CNSS — qui gère l'AMO des salariés et ces nouveaux régimes — recense **25,08 millions** de bénéficiaires en 2025, en hausse de 3 %, pour **22,65 milliards de dirhams** de prestations servies (données CNSS relayées par H24Info, septembre 2026).",
+      "## Comment fonctionnent les régimes AMO-Tadamon et AMO-TNS ?",
+      "Ces deux régimes sont le cœur de l'extension. L'**AMO-Tadamon** a remplacé le RAMED fin 2022 : il couvre les personnes en situation de précarité, dont les cotisations sont prises en charge par l'État. L'**AMO-TNS** vise les **travailleurs non salariés** (commerçants, artisans, professions libérales, agriculteurs), qui cotisent selon leur catégorie.",
+      [
+        "- **AMO-Tadamon** : financé par l'État, pour les ménages sans revenu suffisant (ex-bénéficiaires du RAMED).",
+        "- **AMO-TNS** : pour les indépendants, avec une cotisation forfaitaire ou proportionnelle selon l'activité.",
+        "- **AMO des salariés** : prélevée directement sur le bulletin de paie, via la CNSS.",
+      ].join('\n'),
+      "## Quel est le coût de l'AMO pour un salarié ?",
+      "Pour un salarié du secteur privé, l'AMO représente **6,37 % du salaire brut, sans plafond** : **2,26 %** retenus sur la paie du salarié et **4,11 %** à la charge de l'employeur (barèmes CNSS 2026 publiés par les cabinets spécialisés). Contrairement aux prestations sociales plafonnées à 6 000 DH, l'AMO s'applique sur **la totalité** du salaire brut.",
+      "Autrement dit, plus le salaire est élevé, plus la cotisation AMO augmente en valeur absolue, puisqu'aucun plafond ne vient la limiter. C'est un point que tout gestionnaire de paie doit intégrer au moment de calculer le bulletin.",
+      "## Quels sont les défis de l'AMO en 2026 ?",
+      "Le premier défi est **financier**. En 2025, le régime des indépendants (AMO-TNS) affiche un **ratio prestations/cotisations de 157 %**, en hausse de 25 points sur un an : il verse nettement plus qu'il ne collecte (données CNSS, H24Info, 2026). Cet écart interroge la soutenabilité du régime à moyen terme.",
+      "Les autres chantiers portent sur la **qualité et l'accès aux soins** (densité médicale, délais, reste à charge), sur l'**immatriculation effective** des indépendants encore hors du système, et sur la **gouvernance** des différents régimes. La réussite de la réforme se jouera autant sur ces aspects que sur les chiffres de couverture.",
+      "## Ce que cela change pour les employeurs et les RH",
+      "Pour les entreprises, l'AMO reste une **obligation déclarative** : chaque salarié doit être immatriculé à la CNSS et ses salaires télédéclarés chaque mois (portail Damancom). La cotisation AMO, calculée sur le brut sans plafond, figure sur le bulletin de paie et alimente le financement de la couverture santé.",
+      "Pour les professionnels RH en formation, comprendre l'architecture de l'AMO — régimes, assiettes, taux — est devenu incontournable ; c'est désormais une composante centrale de la paie marocaine, à relier au cours « L'administration du personnel au Maroc ».",
+    ].join('\n\n'),
+    faq: [
+      {
+        question: "L'AMO est-elle obligatoire pour tous les salariés au Maroc ?",
+        reponse:
+          "Oui. Tout salarié déclaré est couvert par l'AMO via la CNSS. La cotisation, de 6,37 % du salaire brut sans plafond (2,26 % salarié, 4,11 % employeur), est prélevée automatiquement sur le bulletin de paie chaque mois.",
+      },
+      {
+        question: "Quelle est la différence entre AMO-Tadamon et AMO-TNS ?",
+        reponse:
+          "L'AMO-Tadamon (près de 11 millions de bénéficiaires) couvre les ménages démunis, en remplacement du RAMED, aux frais de l'État. L'AMO-TNS (environ 4 millions) concerne les travailleurs non salariés — commerçants, artisans, professions libérales — qui cotisent selon leur activité.",
+      },
+      {
+        question: "L'AMO est-elle plafonnée comme les autres cotisations CNSS ?",
+        reponse:
+          "Non. Contrairement aux prestations sociales plafonnées à 6 000 DH, l'AMO s'applique sur la totalité du salaire brut, sans plafond. La cotisation augmente donc proportionnellement au salaire, ce qui la distingue des autres lignes du bulletin de paie.",
+      },
+      {
+        question: "Combien de personnes sont couvertes par l'AMO en 2025 ?",
+        reponse:
+          "Plus de 32 millions de personnes, soit environ 88 % de la population marocaine, contre seulement 42 % avant la généralisation, selon le portail officiel maroc.ma (octobre 2025). La CNSS recense de son côté 25,08 millions de bénéficiaires en 2025.",
+      },
+    ],
+    sources: [
+      {
+        intitule: "Généralisation de l'AMO : plus de 32 millions de bénéficiaires en 2025 — Portail national maroc.ma",
+        url: 'https://www.maroc.ma/fr/actualites/generalisation-de-lamo-plus-de-32-millions-de-beneficiaires-en-2025',
+        statutTexte: 'en_vigueur',
+        periodeApplication: 'Chiffres 2025',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: "CNSS : plus de 25 millions de bénéficiaires de l'AMO en 2025 (+3 %) — H24Info",
+        url: 'https://h24info.ma/economie/cnss-beneficiaires-amo-hausse-1016802/',
+        periodeApplication: 'Exercice 2025 (publié en 2026)',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: 'Cotisations CNSS 2026 au Maroc — barèmes employeur et salarié (Upsilon Consulting)',
+        url: 'https://upsilon-consulting.com/cotisations-cnss-maroc-2026/',
+        periodeApplication: 'Barèmes 2026 — à confirmer sur le portail officiel de la CNSS',
+        dateVerification: '2026-10-20',
+      },
+      {
+        intitule: 'Loi-cadre n° 09-21 relative à la protection sociale',
+        statutTexte: 'en_vigueur',
+        periodeApplication: 'Adoptée en 2021',
+        dateVerification: '2026-10-20',
+      },
+    ],
+  },
 ];
