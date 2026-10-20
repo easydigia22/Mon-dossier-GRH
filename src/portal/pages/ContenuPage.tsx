@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Download } from 'lucide-react';
+import { ArrowLeft, Eye, Download, MessageCircle } from 'lucide-react';
 import { useSeo } from '../lib/seo';
 import { useContenus } from '../content/ContentContext';
 import { Markdown } from '../lib/Markdown';
 import { SourcesBox } from '../components/SourcesBox';
 import { NotFoundPage } from './NotFoundPage';
-import { formatDate } from '../components/ContenuCard';
+import { formatDate, BadgeTarif } from '../components/ContenuCard';
+import { lienWhatsAppCommande, formatPrix } from '../lib/contact';
 import type { TypeContenu } from '../content/types';
 
 /** Fiche de détail pour cours, articles, exercices et ressources. */
@@ -27,12 +28,23 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
   const retour =
     contenu.type === 'exercice' ? '/exercices' : contenu.type === 'article' ? '/actualites' : contenu.type === 'ressource' ? '/ressources' : '/cours';
 
+  const payant = contenu.tarification === 'payant';
+
   return (
     <article className="max-w-3xl mx-auto px-4 py-12">
       <Link to={retour} className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-navy mb-6">
         <ArrowLeft className="w-4 h-4" /> Retour
       </Link>
 
+      {contenu.imageCouverture && (
+        <img
+          src={contenu.imageCouverture}
+          alt=""
+          className="w-full aspect-[16/9] object-cover rounded-xl border border-[#ECE3D6] mb-6"
+        />
+      )}
+
+      <div className="mb-2"><BadgeTarif contenu={contenu} /></div>
       <h1 className="font-display text-3xl font-bold text-navy leading-tight">{contenu.titre}</h1>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-[13px] text-ink/55">
         {contenu.auteur && <span>Par {contenu.auteur}</span>}
@@ -67,9 +79,29 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
           </div>
         )}
 
-        {/* Fichiers téléchargeables — affichés pour tout contenu qui en possède
-            (cours avec support PDF, ressource, etc.). */}
-        {contenu.fichiers && contenu.fichiers.length > 0 && (
+        {/* Contenu payant : pas de téléchargement public. On propose la commande
+            par WhatsApp ; le document est envoyé après paiement. */}
+        {payant && (
+          <div className="card-soft p-6 mt-8 bg-amber-50/60 border border-amber-200">
+            <h2 className="font-display text-xl font-semibold text-navy">Document payant</h2>
+            <p className="text-[14.5px] text-ink/75 mt-1.5 leading-relaxed">
+              Ce document est payant{typeof contenu.prix === 'number' ? <> — <strong className="text-amber-800">{formatPrix(contenu.prix)}</strong></> : ''}.
+              Commandez-le via WhatsApp : vous recevrez le fichier après confirmation du paiement.
+            </p>
+            <a
+              href={lienWhatsAppCommande(contenu.titre, contenu.prix)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-4 bg-[#25D366] text-white font-semibold rounded-lg px-5 py-2.5 hover:bg-[#1ebe5a] transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" /> Commander sur WhatsApp
+            </a>
+          </div>
+        )}
+
+        {/* Fichiers téléchargeables — affichés pour tout contenu GRATUIT qui en
+            possède (cours avec support PDF, ressource, etc.). Masqués si payant. */}
+        {!payant && contenu.fichiers && contenu.fichiers.length > 0 && (
           <div className="space-y-3 mt-8">
             <h2 className="font-display text-xl font-semibold text-navy">Téléchargements</h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -97,7 +129,7 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
         )}
 
         {/* Ressource sans fichier téléversé : repli sur l'ancien champ `fichierUrl`. */}
-        {contenu.type === 'ressource' && !(contenu.fichiers && contenu.fichiers.length > 0) && (
+        {!payant && contenu.type === 'ressource' && !(contenu.fichiers && contenu.fichiers.length > 0) && (
           <div className="card-soft p-5 flex items-center justify-between gap-4 mt-8">
             <div>
               <p className="font-medium text-navy">Document téléchargeable</p>

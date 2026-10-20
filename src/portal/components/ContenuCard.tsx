@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, PencilLine, ListChecks, Newspaper, FileDown } from 'lucide-react';
 import type { Contenu, TypeContenu } from '../content/types';
+import { formatPrix } from '../lib/contact';
 
 const ICONE: Record<TypeContenu, React.ComponentType<{ className?: string }>> = {
   cours: BookOpen,
@@ -44,13 +45,37 @@ export function lienContenu(c: Contenu): string {
   return `${base[c.type]}/${c.slug}`;
 }
 
+/** Pastille Gratuit / Payant affichée sur les cartes et en tête de fiche. */
+export const BadgeTarif: React.FC<{ contenu: Contenu; className?: string }> = ({ contenu, className = '' }) => {
+  const payant = contenu.tarification === 'payant';
+  if (payant) {
+    return (
+      <span className={`inline-flex items-center rounded-full bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 text-[11px] ${className}`}>
+        Payant{typeof contenu.prix === 'number' ? ` · ${formatPrix(contenu.prix)}` : ''}
+      </span>
+    );
+  }
+  return (
+    <span className={`inline-flex items-center rounded-full bg-green-100 text-green-800 font-semibold px-2 py-0.5 text-[11px] ${className}`}>
+      Gratuit
+    </span>
+  );
+};
+
 export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
   const Icone = ICONE[contenu.type];
   return (
     <Link
       to={lienContenu(contenu)}
-      className="card-soft p-5 h-full flex flex-col gap-3 hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+      className="card-soft h-full flex flex-col overflow-hidden hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
     >
+      {contenu.imageCouverture && (
+        <div className="relative aspect-[16/9] bg-sand">
+          <img src={contenu.imageCouverture} alt="" loading="lazy" className="w-full h-full object-cover" />
+          <BadgeTarif contenu={contenu} className="absolute top-2 right-2 shadow-sm" />
+        </div>
+      )}
+      <div className="p-5 flex flex-col gap-3 flex-1">
       <div className="flex items-center gap-2 text-xs">
         <span className="inline-flex items-center gap-1 text-teal font-semibold">
           <Icone className="w-4 h-4" />
@@ -58,6 +83,7 @@ export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
         </span>
         <span className="text-ink/40">·</span>
         <span className="text-ink/60">{LIBELLE_NIVEAU[contenu.niveau]}</span>
+        {!contenu.imageCouverture && <BadgeTarif contenu={contenu} className="ml-auto" />}
       </div>
       <h3 className="font-display font-semibold text-navy text-[17px] leading-snug">{contenu.titre}</h3>
       <p className="text-[13.5px] text-ink/70 leading-relaxed line-clamp-3">{contenu.resume}</p>
@@ -72,6 +98,7 @@ export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
               : null}
         </p>
       )}
+      </div>
     </Link>
   );
 };

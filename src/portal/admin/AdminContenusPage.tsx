@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X, Check, Star, FileText, MessageSquareQuote, Users, Download } from 'lucide-react';
+import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X, Check, Star, FileText, MessageSquareQuote, Users, Download, Image as ImageIcon, Gift, Tag } from 'lucide-react';
 import { supabase } from '../../services/supabase';
 import { fetchMonProfil } from '../../services/profile';
 import { useSeo } from '../lib/seo';
@@ -9,7 +9,9 @@ import {
   enregistrerContenu,
   supprimerContenu,
   uploadFichier,
+  uploadImageCouverture,
 } from '../content/supabaseContent';
+import { formatPrix } from '../lib/contact';
 import { RUBRIQUES } from '../lib/rubriques';
 import {
   fetchAvisAdmin,
@@ -26,7 +28,7 @@ import {
   type SourceLead,
 } from '../lib/leads';
 import type {
-  Contenu, TypeContenu, Rubrique, Public, Niveau, StatutContenu, QuestionQcm, FichierTelechargeable,
+  Contenu, TypeContenu, Rubrique, Public, Niveau, StatutContenu, QuestionQcm, FichierTelechargeable, Tarification,
 } from '../content/types';
 
 const TYPES: { v: TypeContenu; label: string }[] = [
@@ -65,6 +67,7 @@ function contenuVide(): Contenu {
     statut: 'brouillon',
     demo: false,
     tags: [],
+    tarification: 'gratuit',
   };
 }
 
@@ -679,6 +682,20 @@ const EditeurContenu: React.FC<{ initial: Contenu; onAnnuler: () => void; onEnre
           </Label>
         </div>
 
+        {/* Couverture + tarification */}
+        <div className="pt-4 mt-2 border-t border-[#ECE3D6] grid sm:grid-cols-2 gap-5">
+          <EditeurCouverture
+            url={c.imageCouverture}
+            onChange={(imageCouverture) => maj({ imageCouverture })}
+            onErreur={setErreur}
+          />
+          <EditeurTarification
+            tarification={c.tarification ?? 'gratuit'}
+            prix={c.prix}
+            onChange={(patch) => maj(patch)}
+          />
+        </div>
+
         {(c.type === 'cours' || c.type === 'article') && (
           <Label texte="Corps (Markdown léger : ## titres, - listes, **gras**)">
             <textarea className={champ} rows={10} value={c.corps ?? ''} onChange={(e) => maj({ corps: e.target.value })} />
@@ -700,6 +717,13 @@ const EditeurContenu: React.FC<{ initial: Contenu; onAnnuler: () => void; onEnre
           {c.type !== 'ressource' && (
             <p className="text-xs text-ink/55 mb-2">
               Ajoutez un PDF à télécharger (support de cours, fiche…). Il apparaîtra en bas de la page pour les visiteurs.
+            </p>
+          )}
+          {c.tarification === 'payant' && (
+            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2">
+              Contenu <strong>payant</strong> : n'attachez PAS ici le PDF à vendre. Les fichiers de cette zone
+              sont publics (accessibles par lien direct) et, de toute façon, ne sont pas affichés sur une page
+              payante. Gardez le document de votre côté et envoyez-le après paiement, via la commande WhatsApp.
             </p>
           )}
           <EditeurFichiers fichiers={c.fichiers ?? []} onChange={(fichiers) => maj({ fichiers })} onErreur={setErreur} />
@@ -804,6 +828,110 @@ const EditeurFichiers: React.FC<{
           <input type="file" className="hidden" disabled={uploadEnCours} onChange={(e) => gererFichier(e.target.files?.[0])} />
         </label>
       </div>
+    </div>
+  );
+};
+
+// --- Éditeur de l'image de couverture -------------------------------------
+const EditeurCouverture: React.FC<{
+  url?: string;
+  onChange: (url: string | undefined) => void;
+  onErreur: (e: string | null) => void;
+}> = ({ url, onChange, onErreur }) => {
+  const [uploadEnCours, setUploadEnCours] = useState(false);
+
+  const gererImage = async (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      onErreur('Veuillez choisir un fichier image (JPG, PNG, WebP…).');
+      return;
+    }
+    onErreur(null);
+    setUploadEnCours(true);
+    try {
+      onChange(await uploadImageCouverture(file));
+    } catch (e: any) {
+      onErreur(e.message || 'Upload de l’image impossible.');
+    } finally {
+      setUploadEnCours(false);
+    }
+  };
+
+  return (
+    <div>
+      <span className="block text-xs font-medium text-ink/70 mb-1">Image de couverture</span>
+      {url ? (
+        <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden border border-[#E3D8C8] bg-sand">
+          <img src={url} alt="Couverture" className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={() => onChange(undefined)}
+            title="Retirer l’image"
+            className="absolute top-2 right-2 p-1.5 rounded-lg bg-white/90 text-danger hover:bg-white shadow-sm"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ) : (
+        <label className="w-full aspect-[16/9] rounded-lg border-2 border-dashed border-[#E3D8C8] flex flex-col items-center justify-center gap-2 text-ink/50 text-sm cursor-pointer hover:border-teal hover:text-teal transition-colors">
+          {uploadEnCours ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImageIcon className="w-6 h-6" />}
+          <span>{uploadEnCours ? 'Téléversement…' : 'Téléverser une couverture'}</span>
+          <input type="file" accept="image/*" className="hidden" disabled={uploadEnCours} onChange={(e) => gererImage(e.target.files?.[0])} />
+        </label>
+      )}
+    </div>
+  );
+};
+
+// --- Éditeur de la tarification (gratuit / payant + prix) ------------------
+const EditeurTarification: React.FC<{
+  tarification: Tarification;
+  prix?: number;
+  onChange: (patch: Partial<Contenu>) => void;
+}> = ({ tarification, prix, onChange }) => {
+  return (
+    <div>
+      <span className="block text-xs font-medium text-ink/70 mb-1">Tarification</span>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => onChange({ tarification: 'gratuit', prix: undefined })}
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold border transition-colors ${
+            tarification === 'gratuit' ? 'bg-teal-soft border-teal text-navy' : 'border-[#E3D8C8] text-ink/60 hover:text-ink'
+          }`}
+        >
+          <Gift className="w-4 h-4" /> Gratuit
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ tarification: 'payant' })}
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold border transition-colors ${
+            tarification === 'payant' ? 'bg-amber-50 border-amber-300 text-amber-800' : 'border-[#E3D8C8] text-ink/60 hover:text-ink'
+          }`}
+        >
+          <Tag className="w-4 h-4" /> Payant
+        </button>
+      </div>
+      {tarification === 'payant' && (
+        <div className="mt-3">
+          <span className="block text-xs font-medium text-ink/70 mb-1">Prix</span>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={typeof prix === 'number' ? prix : ''}
+              onChange={(e) => onChange({ prix: e.target.value === '' ? undefined : Number(e.target.value) })}
+              placeholder="Ex. 49"
+              className={champ + ' w-32'}
+            />
+            <span className="text-sm text-ink/60">MAD</span>
+          </div>
+          <p className="text-[11.5px] text-ink/50 mt-1.5">
+            Le visiteur verra le prix {formatPrix(prix) && `(${formatPrix(prix)}) `}et un bouton « Commander sur WhatsApp ».
+          </p>
+        </div>
+      )}
     </div>
   );
 };

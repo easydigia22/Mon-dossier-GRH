@@ -37,6 +37,9 @@ function versContenu(row: any): Contenu {
     questions: row.questions ?? undefined,
     fichierUrl: undefined,
     fichiers: row.fichiers ?? undefined,
+    imageCouverture: row.image_couverture ?? undefined,
+    tarification: row.tarification ?? 'gratuit',
+    prix: row.prix ?? undefined,
   };
 }
 
@@ -61,6 +64,10 @@ function versRow(c: Contenu): Record<string, unknown> {
     questions: c.questions ?? null,
     fichiers: c.fichiers ?? null,
     sources: c.sources ?? null,
+    image_couverture: c.imageCouverture || null,
+    tarification: c.tarification ?? 'gratuit',
+    // Prix seulement pertinent si payant ; sinon on stocke null.
+    prix: c.tarification === 'payant' && typeof c.prix === 'number' ? c.prix : null,
   };
 }
 
@@ -127,4 +134,22 @@ export async function uploadFichier(
   const { data } = supabase.storage.from('documents').getPublicUrl(chemin);
   const taille = `${(file.size / (1024 * 1024)).toFixed(1).replace('.', ',')} Mo`;
   return { langue, url: data.publicUrl, label, taille };
+}
+
+/**
+ * Upload d'une image de couverture dans le bucket « documents » et renvoi de son
+ * URL publique. Même bucket que les PDF : la couverture est, elle, publique par
+ * nature (c'est une vignette), y compris pour un contenu payant.
+ */
+export async function uploadImageCouverture(file: File): Promise<string> {
+  if (!supabase) throw new Error('Supabase non configuré.');
+  const nomSafe = file.name.replace(/[^A-Za-z0-9._-]/g, '_');
+  const chemin = `couvertures/${Date.now()}-${nomSafe}`;
+  const { error } = await supabase.storage.from('documents').upload(chemin, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from('documents').getPublicUrl(chemin);
+  return data.publicUrl;
 }

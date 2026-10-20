@@ -31,6 +31,14 @@ export type Niveau = 'debutant' | 'intermediaire' | 'avance';
 export type StatutContenu = 'brouillon' | 'publie' | 'depublie';
 
 /**
+ * Modèle économique d'un contenu.
+ * - `gratuit` : téléchargement / consultation libre (comportement historique).
+ * - `payant`  : le PDF n'est PAS exposé publiquement ; le visiteur commande via
+ *   WhatsApp et reçoit le document après paiement (voir `lienWhatsAppCommande`).
+ */
+export type Tarification = 'gratuit' | 'payant';
+
+/**
  * Référence vérifiable attachée à un contenu juridique / social / fiscal.
  * Le gabarit éditorial impose ces champs pour toute affirmation réglementaire
  * (exigence du cahier des charges : source + lien + date + période d'application).
@@ -91,6 +99,12 @@ export interface Contenu {
   auteur?: string;
   tags?: string[];
   sources?: Source[];
+  /** URL publique d'une image de couverture (vignette affichée sur les cartes). */
+  imageCouverture?: string;
+  /** Gratuit par défaut si absent. Un contenu `payant` se commande par WhatsApp. */
+  tarification?: Tarification;
+  /** Prix en dirhams (MAD) quand `tarification === 'payant'`. */
+  prix?: number;
   /** Corps du cours / de l'article en Markdown léger (sections). */
   corps?: string;
   /** Pour un exercice : énoncé puis correction affichable à la demande. */
