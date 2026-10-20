@@ -69,6 +69,8 @@ order by table_metier, nb desc;
 --    fonction et les 6 policies de LECTURE (SELECT). Aucun droit d'écriture.
 -- -----------------------------------------------------------------------------
 
+-- is_formateur() OR is_admin() : un compte 'admin' propriétaire de la classe
+-- (cas ezzouhir20) doit aussi pouvoir lire. Cf. migration 20261020000000.
 create or replace function public.est_mon_stagiaire(p_user_id uuid)
 returns boolean
 language sql
@@ -76,7 +78,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select public.is_formateur()
+  select (public.is_formateur() or public.is_admin())
      and exists (
        select 1 from public.classe_stagiaires cs
        where cs.stagiaire_user_id = p_user_id
