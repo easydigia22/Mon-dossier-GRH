@@ -12,7 +12,8 @@ import {
   Eye,
   Edit,
   Check,
-  X
+  X,
+  Printer
 } from 'lucide-react';
 import { PieceDossier, Salarie, SituationFamiliale, StatutSalarie } from '../../types';
 import { formatMAD, formatDateJJMMAAAA } from '../../services/exportService';
@@ -111,6 +112,170 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
     }
   };
 
+  // Échappe le texte pour une insertion sûre dans le HTML d'impression
+  const esc = (v: unknown): string =>
+    String(v ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+
+  // Styles communs aux documents imprimés (reprend la charte de l'app)
+  const stylesImpression = `
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; color: #1f2937; margin: 24px; font-size: 12px; }
+    .doc-entete { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1C2459; padding-bottom: 12px; margin-bottom: 18px; }
+    .doc-entete h1 { color: #1C2459; font-size: 18px; margin: 0; }
+    .doc-entete .sous-titre { color: #64748b; font-size: 11px; margin-top: 4px; }
+    .doc-entete .meta { text-align: right; font-size: 11px; color: #64748b; }
+    h2 { color: #1C2459; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid #ECE3D6; padding-bottom: 4px; margin: 20px 0 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th { background: #FBF7F0; color: #475569; text-align: left; font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #ECE3D6; }
+    td { padding: 7px 8px; border-bottom: 1px solid #f1f5f9; font-size: 11px; }
+    .grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #FBF7F0; border: 1px solid #ECE3D6; border-radius: 8px; padding: 12px; }
+    .champ .lbl { display: block; color: #64748b; font-size: 10px; }
+    .champ .val { font-weight: 600; color: #1f2937; }
+    .piece { display: flex; justify-content: space-between; padding: 7px 10px; border: 1px solid #ECE3D6; border-radius: 6px; margin-bottom: 6px; }
+    .piece.fournie { background: #ecfdf5; border-color: #a7f3d0; }
+    .badge { font-weight: 700; }
+    .badge.ok { color: #047857; }
+    .badge.ko { color: #b45309; }
+    .histo { border-left: 2px solid #ECE3D6; padding-left: 12px; }
+    .histo div { margin-bottom: 4px; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pied { margin-top: 28px; padding-top: 10px; border-top: 1px solid #ECE3D6; font-size: 10px; color: #94a3b8; text-align: center; }
+    @media print { body { margin: 12mm; } .doc-entete { page-break-after: avoid; } tr { page-break-inside: avoid; } }
+  `;
+
+  // Ouvre une fenêtre dédiée, écrit le document puis lance l'impression
+  const lancerImpression = (titre: string, corps: string) => {
+    const fenetre = window.open('', '_blank', 'width=900,height=1000');
+    if (!fenetre) {
+      showNotification(
+        "Impossible d'ouvrir la fenêtre d'impression. Autorisez les pop-ups pour ce site.",
+        'error'
+      );
+      return;
+    }
+    const dateEdition = formatDateJJMMAAAA(new Date().toISOString().split('T')[0]);
+    fenetre.document.write(`<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8" /><title>${esc(titre)}</title>
+<style>${stylesImpression}</style></head>
+<body>
+${corps}
+<div class="pied">Document généré le ${esc(dateEdition)} · Dossiers Administratifs du Personnel</div>
+</body></html>`);
+    fenetre.document.close();
+    fenetre.focus();
+    // Laisse le contenu se rendre avant d'appeler l'impression
+    setTimeout(() => fenetre.print(), 300);
+  };
+
+  // Impression du dossier individuel complet d'un salarié
+  const imprimerDossierIndividuel = (sal: Salarie) => {
+    const annees = calculerAncienneteAnnees(sal.dateEmbauche, periodeActive);
+    const { libelle: libelleAnc } = getTauxAnciennete(annees);
+    const piecesFournies = sal.checklistDossier.filter((p) => p.estFournie).length;
+
+    const corps = `
+      <div class="doc-entete">
+        <div>
+          <h1>Dossier Individuel du Salarié</h1>
+          <div class="sous-titre">${esc(sal.nom)} ${esc(sal.prenom)} · ${esc(sal.poste)} (${esc(sal.departement)})</div>
+        </div>
+        <div class="meta">Matricule : <strong>${esc(sal.matricule)}</strong><br/>Statut : ${esc(sal.statut)}</div>
+      </div>
+
+      <h2>État civil &amp; identification</h2>
+      <div class="grille">
+        <div class="champ"><span class="lbl">CIN Fictive</span><span class="val">${esc(sal.cinFictif)}</span></div>
+        <div class="champ"><span class="lbl">N° CNSS Fictif</span><span class="val">${esc(sal.cnssFictif)}</span></div>
+        <div class="champ"><span class="lbl">Date de naissance</span><span class="val">${esc(formatDateJJMMAAAA(sal.dateNaissance))}</span></div>
+        <div class="champ"><span class="lbl">Situation familiale</span><span class="val">${esc(sal.situationFamiliale)} · ${esc(sal.nombreEnfants)} enfant(s)</span></div>
+        <div class="champ"><span class="lbl">Personnes à charge (IR)</span><span class="val">${esc(sal.nombrePersonnesACharge)}</span></div>
+        <div class="champ"><span class="lbl">Téléphone</span><span class="val">${esc(sal.telephoneFictif)}</span></div>
+      </div>
+
+      <h2>Situation professionnelle</h2>
+      <div class="grille">
+        <div class="champ"><span class="lbl">Date d'embauche</span><span class="val">${esc(formatDateJJMMAAAA(sal.dateEmbauche))}</span></div>
+        <div class="champ"><span class="lbl">Ancienneté</span><span class="val">${esc(annees)} an(s) · ${esc(libelleAnc)}</span></div>
+        <div class="champ"><span class="lbl">Qualification</span><span class="val">${esc(sal.qualification)}</span></div>
+        <div class="champ"><span class="lbl">Salaire de base</span><span class="val">${esc(formatMAD(sal.salaireBaseMensuel))}</span></div>
+        <div class="champ"><span class="lbl">Mode de paiement</span><span class="val">${esc(sal.modePaiement)}</span></div>
+        <div class="champ"><span class="lbl">Banque &amp; RIB Fictif</span><span class="val">${esc(sal.banqueFictive)} · ${esc(sal.ribFictif)}</span></div>
+      </div>
+
+      <h2>Checklist des pièces (${esc(piecesFournies)}/${esc(sal.checklistDossier.length)} fournies)</h2>
+      ${sal.checklistDossier
+        .map(
+          (p) => `<div class="piece ${p.estFournie ? 'fournie' : ''}">
+            <span>${esc(p.nom)} <em style="color:#94a3b8">· ${esc(p.categorie)}${p.estObligatoire ? ' · requise' : ''}</em></span>
+            <span class="badge ${p.estFournie ? 'ok' : 'ko'}">${p.estFournie ? 'Fournie' : 'Manquante'}${
+            p.dateReception ? ' (' + esc(formatDateJJMMAAAA(p.dateReception)) + ')' : ''
+          }</span>
+          </div>`
+        )
+        .join('')}
+
+      <h2>Historique administratif</h2>
+      <div class="histo">
+        ${sal.historiqueEvenements
+          .map(
+            (h) =>
+              `<div><strong>${esc(formatDateJJMMAAAA(h.date))}</strong> : ${esc(h.description)} <span style="color:#94a3b8">(${esc(h.auteur)})</span></div>`
+          )
+          .join('')}
+      </div>
+    `;
+    lancerImpression(`Dossier ${sal.matricule} - ${sal.nom} ${sal.prenom}`, corps);
+  };
+
+  // Impression de la liste du personnel (selon le filtre/recherche en cours)
+  const imprimerListe = () => {
+    if (salariesFiltres.length === 0) {
+      showNotification('Aucun salarié à imprimer avec les filtres actuels.', 'warning');
+      return;
+    }
+    const libelleFiltre =
+      filtreStatut === 'tous' ? 'Tous les statuts' : filtreStatut === 'actif' ? 'Actifs' : 'Sortis';
+    const lignes = salariesFiltres
+      .map((sal) => {
+        const annees = calculerAncienneteAnnees(sal.dateEmbauche, periodeActive);
+        const piecesFournies = sal.checklistDossier.filter((p) => p.estFournie).length;
+        return `<tr>
+          <td>${esc(sal.matricule)}</td>
+          <td>${esc(sal.nom)} ${esc(sal.prenom)}<br/><span style="color:#94a3b8">${esc(sal.cinFictif)}</span></td>
+          <td>${esc(sal.poste)}<br/><span style="color:#94a3b8">${esc(sal.departement)}</span></td>
+          <td>${esc(formatDateJJMMAAAA(sal.dateEmbauche))}</td>
+          <td>${esc(annees)} an(s)</td>
+          <td class="num">${esc(formatMAD(sal.salaireBaseMensuel))}</td>
+          <td>${esc(piecesFournies)}/${esc(sal.checklistDossier.length)}</td>
+        </tr>`;
+      })
+      .join('');
+
+    const corps = `
+      <div class="doc-entete">
+        <div>
+          <h1>Liste du Personnel</h1>
+          <div class="sous-titre">${esc(salariesFiltres.length)} salarié(s) · Filtre : ${esc(libelleFiltre)}${
+      recherche ? ' · Recherche : "' + esc(recherche) + '"' : ''
+    }</div>
+        </div>
+        <div class="meta">Période active : ${esc(periodeActive)}</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>Matricule</th><th>Salarié</th><th>Poste &amp; Service</th>
+          <th>Date Embauche</th><th>Ancienneté</th><th class="num">Salaire Base</th><th>Dossier</th>
+        </tr></thead>
+        <tbody>${lignes}</tbody>
+      </table>
+    `;
+    lancerImpression('Liste du Personnel', corps);
+  };
+
   return (
     <div className="space-y-6">
       {/* En-tête du module */}
@@ -122,13 +287,23 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
               Gestion des collaborateurs, fiches individuelles, pièces réglementaires et ancienneté (Art. 350)
             </p>
           </div>
-          <button
-            onClick={handleOuvrirNouveau}
-            className="px-3.5 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Créer un salarié</span>
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={imprimerListe}
+              className="px-3.5 py-2 bg-white border border-[#ECE3D6] hover:bg-slate-50 text-[#1C2459] text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Imprimer la liste du personnel (selon les filtres en cours)"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Imprimer la liste</span>
+            </button>
+            <button
+              onClick={handleOuvrirNouveau}
+              className="px-3.5 py-2 bg-[#149D92] hover:bg-[#11857c] text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Créer un salarié</span>
+            </button>
+          </div>
         </div>
 
         {/* Barre de recherche et filtres */}
@@ -383,7 +558,15 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-end">
+            <div className="p-4 border-t border-[#ECE3D6] bg-slate-50 flex justify-between gap-2 sticky bottom-0">
+              <button
+                onClick={() => imprimerDossierIndividuel(salarieSelectionne)}
+                className="px-4 py-2 text-xs font-semibold bg-white border border-[#ECE3D6] text-[#1C2459] rounded-lg hover:bg-slate-100 flex items-center gap-1.5"
+                title="Imprimer ce dossier individuel"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Imprimer le dossier</span>
+              </button>
               <button
                 onClick={() => setSalarieSelectionne(null)}
                 className="px-4 py-2 text-xs font-semibold bg-[#1C2459] text-white rounded-lg hover:bg-[#11273e]"
