@@ -75,6 +75,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'code-general-des-impots-maroc-2026',
     type: 'ressource',
     rubrique: 'fiscalite',
+    sousTheme: 'Lois de finances par année',
     titre: 'Code Général des Impôts 2026 (CGI) — FR & AR',
     resume:
       "Texte fiscal de référence au Maroc (IS, IR, TVA, procédures). Version 2026 intégrant la loi de finances n° 50-25, à télécharger en français et en arabe.",
@@ -121,6 +122,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'cnss-maroc-textes-legislatifs',
     type: 'ressource',
     rubrique: 'paie',
+    sousTheme: 'Cours de paie',
     titre: 'CNSS — Textes législatifs (régime de sécurité sociale)',
     resume:
       "Recueil des textes régissant le régime de sécurité sociale géré par la CNSS (base : Dahir portant loi n° 1-72-184 du 27 juillet 1972).",
@@ -164,6 +166,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'amo-code-couverture-medicale-loi-65-00',
     type: 'ressource',
     rubrique: 'paie',
+    sousTheme: 'Cours de paie',
     titre: 'AMO — Loi n° 65-00 (couverture médicale de base)',
     resume:
       "Texte fondateur de l'Assurance Maladie Obligatoire (AMO) au Maroc : le code de la couverture médicale de base, à télécharger.",
@@ -203,6 +206,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'bareme-impot-sur-le-revenu-maroc-2026',
     type: 'cours',
     rubrique: 'fiscalite',
+    sousTheme: 'Impôt sur le revenu',
     titre: "Barème de l'impôt sur le revenu (IR) — 2026",
     resume:
       "Le barème progressif de l'IR applicable en 2026 (article 73 du CGI), avec les taux par tranche et les sommes à déduire.",
@@ -247,6 +251,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'cimr-retraite-complementaire-maroc',
     type: 'cours',
     rubrique: 'paie',
+    sousTheme: 'Cours de paie',
     titre: 'CIMR — la retraite complémentaire',
     resume:
       "Comprendre la CIMR, régime de retraite complémentaire par points du secteur privé — une institution privée, distincte du régime de base de la CNSS.",
@@ -281,6 +286,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'lire-un-bulletin-de-paie-marocain',
     type: 'cours',
     rubrique: 'paie',
+    sousTheme: 'Lecture du bulletin',
     titre: 'Lire un bulletin de paie marocain',
     resume:
       'Décomposer un bulletin ligne par ligne : brut, cotisations sociales, impôt sur le revenu et net à payer.',
@@ -317,6 +323,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'exercice-calcul-du-net-a-partir-du-brut',
     type: 'exercice',
     rubrique: 'paie',
+    sousTheme: 'Exercices corrigés',
     titre: 'Exercice — Du salaire brut au net',
     resume: "Calculez le net à payer d'un salarié à partir de son brut, étape par étape.",
     publics: ['stagiaire', 'etudiant'],
@@ -336,6 +343,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'qcm-notions-de-cotisations-sociales',
     type: 'qcm',
     rubrique: 'paie',
+    sousTheme: 'Cas pratiques',
     titre: 'QCM — Notions de cotisations sociales',
     resume: 'Vérifiez vos bases sur les cotisations sociales au Maroc.',
     publics: ['stagiaire', 'etudiant'],
@@ -373,6 +381,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'les-types-de-contrats-de-travail',
     type: 'cours',
     rubrique: 'droit-du-travail',
+    sousTheme: 'Contrats',
     titre: 'Les types de contrats de travail',
     resume: 'CDI, CDD et autres formes : à quoi servent-ils et quelles sont leurs conditions.',
     publics: ['etudiant', 'stagiaire', 'professionnel'],
@@ -422,6 +431,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'modele-attestation-de-travail',
     type: 'ressource',
     rubrique: 'ressources',
+    sousTheme: 'Modèles de documents',
     titre: "Modèle — Attestation de travail (gabarit démo)",
     resume: 'Gabarit de document à personnaliser. Exemple non contractuel.',
     publics: ['professionnel', 'formateur'],
@@ -438,6 +448,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'les-etapes-du-recrutement',
     type: 'cours',
     rubrique: 'grh',
+    sousTheme: 'Recrutement',
     titre: 'Recruter au Maroc : les étapes du recrutement',
     resume:
       'Du besoin au choix du candidat : comprendre le processus de recrutement et son cadre légal marocain (non-discrimination, période d\'essai, dispositifs ANAPEC).',
@@ -481,6 +492,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'administration-du-personnel-au-maroc',
     type: 'cours',
     rubrique: 'grh',
+    sousTheme: 'Administration du personnel',
     titre: "L'administration du personnel au Maroc",
     resume:
       "Gérer le dossier du salarié, les contrats, les registres obligatoires et les déclarations sociales (CNSS, AMO) au quotidien.",
@@ -534,6 +546,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'gestion-des-competences-au-maroc',
     type: 'cours',
     rubrique: 'grh',
+    sousTheme: 'Gestion des compétences',
     titre: 'La gestion des compétences',
     resume:
       "Identifier, développer et suivre les compétences : référentiels, GPEC, entretien professionnel et mobilité interne.",
@@ -574,6 +587,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'formation-professionnelle-au-maroc',
     type: 'cours',
     rubrique: 'grh',
+    sousTheme: 'Formation',
     titre: 'La formation professionnelle au Maroc',
     resume:
       "Construire un plan de formation et comprendre son financement : taxe de formation professionnelle, OFPPT et contrats spéciaux de formation (CSF).",
@@ -619,6 +633,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'evaluation-du-personnel',
     type: 'cours',
     rubrique: 'grh',
+    sousTheme: 'Évaluation',
     titre: "L'évaluation du personnel",
     resume:
       "Mener l'entretien annuel, fixer des objectifs et utiliser une grille d'évaluation reliée à la formation et à l'évolution.",
@@ -707,6 +722,7 @@ export const CONTENUS_DEMO: Contenu[] = [
     slug: 'comprendre-la-loi-de-finances',
     type: 'cours',
     rubrique: 'fiscalite',
+    sousTheme: 'Explications pédagogiques',
     titre: "Comprendre une loi de finances",
     resume: "À quoi sert une loi de finances et comment lire les mesures qui concernent la paie.",
     publics: ['professionnel', 'formateur', 'etudiant'],
