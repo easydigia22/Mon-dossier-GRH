@@ -6,6 +6,7 @@ import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
 import { ContentProvider } from '../content/ContentContext';
 import { SocialToasts } from './SocialToasts';
+import { NewsletterBlock } from './NewsletterBlock';
 import { InstallApp, INSTALL_HELP_EVENT } from './InstallApp';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 
@@ -136,7 +137,9 @@ export const PortalLayout: React.FC = () => {
         <InstallApp />
       </main>
 
-      <footer className="bg-navy-deep text-white/80 mt-16">
+      <NewsletterBlock />
+
+      <footer className="bg-navy-deep text-white/80">
         <div className="max-w-6xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-sm">
           <div>
             <div className="mb-3">

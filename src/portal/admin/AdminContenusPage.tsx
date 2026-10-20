@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X, Check, Star, FileText, MessageSquareQuote } from 'lucide-react';
+import { Loader2, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, ArrowLeft, Upload, Save, X, Check, Star, FileText, MessageSquareQuote, Users, Download } from 'lucide-react';
 import { supabase } from '../../services/supabase';
 import { fetchMonProfil } from '../../services/profile';
 import { useSeo } from '../lib/seo';
@@ -18,6 +18,13 @@ import {
   type AvisAdmin,
   type StatutAvis,
 } from '../lib/avis';
+import {
+  fetchLeadsAdmin,
+  supprimerLead,
+  leadsVersCsv,
+  type Lead,
+  type SourceLead,
+} from '../lib/leads';
 import type {
   Contenu, TypeContenu, Rubrique, Public, Niveau, StatutContenu, QuestionQcm, FichierTelechargeable,
 } from '../content/types';
@@ -182,7 +189,7 @@ const LoginForm: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 // CMS : liste + éditeur
 // ---------------------------------------------------------------------------
 const AdminCms: React.FC = () => {
-  const [vue, setVue] = useState<'contenus' | 'avis'>('contenus');
+  const [vue, setVue] = useState<'contenus' | 'avis' | 'leads'>('contenus');
   const [contenus, setContenus] = useState<Contenu[]>([]);
   const [loading, setLoading] = useState(true);
   const [edite, setEdite] = useState<Contenu | null>(null);
@@ -276,9 +283,19 @@ const AdminCms: React.FC = () => {
         >
           <MessageSquareQuote className="w-4 h-4" /> Avis
         </button>
+        <button
+          onClick={() => setVue('leads')}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            vue === 'leads' ? 'border-teal text-navy' : 'border-transparent text-ink/50 hover:text-ink/80'
+          }`}
+        >
+          <Users className="w-4 h-4" /> Leads
+        </button>
       </div>
 
-      {vue === 'avis' ? (
+      {vue === 'leads' ? (
+        <AdminLeadsPanel />
+      ) : vue === 'avis' ? (
         <AdminAvisPanel />
       ) : (
       <>
@@ -429,6 +446,122 @@ const AdminAvisPanel: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Panneau des leads (newsletter + guide) + export CSV
+// ---------------------------------------------------------------------------
+const SOURCE_LABEL: Record<SourceLead, string> = {
+  newsletter: 'Newsletter',
+  'guide-paie': 'Guide paie',
+  autre: 'Autre',
+};
+
+const AdminLeadsPanel: React.FC = () => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erreur, setErreur] = useState<string | null>(null);
+
+  const charger = async () => {
+    setLoading(true);
+    setErreur(null);
+    try {
+      setLeads(await fetchLeadsAdmin());
+    } catch (e: any) {
+      setErreur(e.message || 'Chargement impossible.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    charger();
+  }, []);
+
+  const supprimer = async (l: Lead) => {
+    if (!window.confirm(`Supprimer définitivement le lead « ${l.email} » ?`)) return;
+    try {
+      await supprimerLead(l.id);
+      charger();
+    } catch (e: any) {
+      setErreur(e.message);
+    }
+  };
+
+  const exporterCsv = () => {
+    const csv = leadsVersCsv(leads);
+    // BOM UTF-8 pour qu'Excel lise correctement les accents.
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `leads-simulrh-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div>
+      {erreur && <p className="mb-4 text-sm text-danger bg-red-50 border border-red-200 rounded-lg px-3 py-2">{erreur}</p>}
+
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+        <p className="text-sm text-ink/60">
+          {leads.length} contact{leads.length > 1 ? 's' : ''} opt-in. Données personnelles —
+          lecture réservée à l'administration.
+        </p>
+        <button
+          onClick={exporterCsv}
+          disabled={leads.length === 0}
+          className="inline-flex items-center gap-2 bg-navy text-white font-semibold rounded-lg px-4 py-2 text-sm hover:bg-navy-deep disabled:opacity-50"
+        >
+          <Download className="w-4 h-4" /> Exporter en CSV
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="py-20 text-center"><Loader2 className="w-6 h-6 animate-spin text-navy mx-auto" /></div>
+      ) : leads.length === 0 ? (
+        <div className="card-soft p-10 text-center text-ink/60">
+          Aucun lead pour le moment. Les inscriptions (newsletter, guide) apparaîtront ici.
+        </div>
+      ) : (
+        <div className="card-soft overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-ink/55 border-b border-[#ECE3D6]">
+                <th className="px-4 py-3 font-medium">E-mail</th>
+                <th className="px-4 py-3 font-medium">Prénom</th>
+                <th className="px-4 py-3 font-medium">Source</th>
+                <th className="px-4 py-3 font-medium">Date</th>
+                <th className="px-4 py-3 font-medium text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leads.map((l) => (
+                <tr key={l.id} className="border-b border-[#F2EADF] last:border-0">
+                  <td className="px-4 py-3 text-navy font-medium">
+                    <a href={`mailto:${l.email}`} className="hover:underline">{l.email}</a>
+                  </td>
+                  <td className="px-4 py-3 text-ink/70">{l.prenom || '—'}</td>
+                  <td className="px-4 py-3">
+                    <span className="text-[12px] px-2 py-0.5 rounded-full bg-teal-soft text-navy">{SOURCE_LABEL[l.source]}</span>
+                  </td>
+                  <td className="px-4 py-3 text-ink/55">{new Date(l.createdAt).toLocaleDateString('fr-FR')}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={() => supprimer(l)} title="Supprimer" className="p-1.5 rounded-lg hover:bg-red-50 text-danger">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

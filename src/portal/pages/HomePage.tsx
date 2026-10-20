@@ -8,6 +8,7 @@ import { ContenuCard } from '../components/ContenuCard';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { Reveal } from '../components/Reveal';
 import { AvisSection } from '../components/AvisSection';
+import { LeadMagnet } from '../components/LeadMagnet';
 
 export const HomePage: React.FC = () => {
   useSeo({
@@ -115,6 +116,9 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Lead magnet — guide PDF contre e-mail (opt-in) */}
+      <LeadMagnet />
 
       {/* Avis / témoignages (vrais avis modérés, sinon exemples étiquetés) */}
       <AvisSection />
