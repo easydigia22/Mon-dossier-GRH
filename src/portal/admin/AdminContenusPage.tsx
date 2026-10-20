@@ -662,11 +662,20 @@ const EditeurContenu: React.FC<{ initial: Contenu; onAnnuler: () => void; onEnre
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <Label texte="Auteur (optionnel)">
-            <input className={champ} value={c.auteur ?? ''} onChange={(e) => maj({ auteur: e.target.value })} />
+          <Label texte="Auteur — nom et prénom">
+            <input className={champ} placeholder="Ex. Youssef El Amrani" value={c.auteur ?? ''} onChange={(e) => maj({ auteur: e.target.value })} />
           </Label>
           <Label texte="Tags (séparés par des virgules)">
             <input className={champ} value={(c.tags ?? []).join(', ')} onChange={(e) => maj({ tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean) })} />
+          </Label>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Label texte="Date de publication">
+            <input type="date" className={champ} value={c.datePublication ?? ''} onChange={(e) => maj({ datePublication: e.target.value })} />
+          </Label>
+          <Label texte="Date de mise à jour (optionnel)">
+            <input type="date" className={champ} value={c.dateMiseAJour ?? ''} onChange={(e) => maj({ dateMiseAJour: e.target.value })} />
           </Label>
         </div>
 

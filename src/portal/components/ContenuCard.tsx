@@ -25,6 +25,13 @@ const LIBELLE_NIVEAU: Record<Contenu['niveau'], string> = {
   avance: 'Avancé',
 };
 
+/** Formate une date ISO (AAAA-MM-JJ) en JJ/MM/AAAA ; renvoie la valeur telle quelle sinon. */
+export function formatDate(d?: string): string | undefined {
+  if (!d) return undefined;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : d;
+}
+
 /** URL de détail selon le type de contenu. */
 export function lienContenu(c: Contenu): string {
   const base: Record<TypeContenu, string> = {
@@ -54,8 +61,16 @@ export const ContenuCard: React.FC<{ contenu: Contenu }> = ({ contenu }) => {
       </div>
       <h3 className="font-display font-semibold text-navy text-[17px] leading-snug">{contenu.titre}</h3>
       <p className="text-[13.5px] text-ink/70 leading-relaxed line-clamp-3">{contenu.resume}</p>
-      {contenu.dateMiseAJour && (
-        <p className="text-[11.5px] text-ink/45 mt-auto">Mis à jour le {contenu.dateMiseAJour}</p>
+      {(contenu.auteur || contenu.datePublication || contenu.dateMiseAJour) && (
+        <p className="text-[11.5px] text-ink/50 mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+          {contenu.auteur && <span className="font-medium text-ink/65">{contenu.auteur}</span>}
+          {contenu.auteur && (contenu.datePublication || contenu.dateMiseAJour) && <span className="text-ink/30">·</span>}
+          {contenu.dateMiseAJour
+            ? <span>Mis à jour le {formatDate(contenu.dateMiseAJour)}</span>
+            : contenu.datePublication
+              ? <span>Publié le {formatDate(contenu.datePublication)}</span>
+              : null}
+        </p>
       )}
     </Link>
   );

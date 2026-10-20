@@ -6,6 +6,7 @@ import { useContenus } from '../content/ContentContext';
 import { Markdown } from '../lib/Markdown';
 import { SourcesBox } from '../components/SourcesBox';
 import { NotFoundPage } from './NotFoundPage';
+import { formatDate } from '../components/ContenuCard';
 import type { TypeContenu } from '../content/types';
 
 /** Fiche de détail pour cours, articles, exercices et ressources. */
@@ -35,8 +36,8 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
       <h1 className="font-display text-3xl font-bold text-navy leading-tight">{contenu.titre}</h1>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-[13px] text-ink/55">
         {contenu.auteur && <span>Par {contenu.auteur}</span>}
-        {contenu.datePublication && <span>Publié le {contenu.datePublication}</span>}
-        {contenu.dateMiseAJour && <span>Mis à jour le {contenu.dateMiseAJour}</span>}
+        {contenu.datePublication && <span>Publié le {formatDate(contenu.datePublication)}</span>}
+        {contenu.dateMiseAJour && <span>Mis à jour le {formatDate(contenu.dateMiseAJour)}</span>}
       </div>
 
       <p className="mt-6 text-lg text-ink/80 leading-relaxed">{contenu.resume}</p>
