@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn, Download, ShieldCheck } from 'lucide-react';
+import { Menu, X, LogIn, Download, ShieldCheck, ChevronDown } from 'lucide-react';
 import { RUBRIQUES } from '../lib/rubriques';
 import { TaglineBar } from './TaglineBar';
 import { MENTION_COPYRIGHT } from '../../services/branding';
@@ -15,6 +15,66 @@ const LIENS_PRINCIPAUX = [
   { to: '/exercices', label: 'Exercices' },
   { to: '/qcm', label: 'QCM' },
 ];
+
+// Rubriques thématiques regroupées sous le menu déroulant « Rubriques ».
+// Actualités reste un lien à part (mis en avant), aux côtés de Cours/Exercices/QCM.
+const RUBRIQUES_MENU = RUBRIQUES.filter((r) => r.cle !== 'actualites');
+
+/** Menu déroulant « Rubriques » (desktop) : regroupe les 6 rubriques thématiques. */
+const RubriquesMenu: React.FC = () => {
+  const [ouvert, setOuvert] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setOuvert(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOuvert(false);
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+
+  const actif = RUBRIQUES_MENU.some((r) => pathname === r.path || pathname.startsWith(`${r.path}/`));
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOuvert((v) => !v)}
+        aria-expanded={ouvert}
+        aria-haspopup="true"
+        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1 ${
+          actif ? 'bg-teal-soft text-navy' : 'text-ink/80 hover:text-navy hover:bg-sand'
+        }`}
+      >
+        Rubriques
+        <ChevronDown className={`w-4 h-4 transition-transform ${ouvert ? 'rotate-180' : ''}`} />
+      </button>
+      {ouvert && (
+        <div className="card-soft absolute left-0 top-full mt-1.5 w-64 py-1.5 z-50 overflow-hidden">
+          {RUBRIQUES_MENU.map((r) => (
+            <NavLink
+              key={r.cle}
+              to={r.path}
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-4 py-2 text-sm transition-colors ${
+                  isActive ? 'text-teal font-semibold' : 'text-ink/80 hover:bg-[#F6F3EC]'
+                }`
+              }
+            >
+              <r.icon className="w-4 h-4 text-teal shrink-0" />
+              {r.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 /** Enveloppe commune à toutes les pages publiques du portail. */
 export const PortalLayout: React.FC = () => {
@@ -51,10 +111,9 @@ export const PortalLayout: React.FC = () => {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Rubriques">
-            {RUBRIQUES.slice(0, 5).map((r) => (
-              <NavLink key={r.cle} to={r.path} className={lienClasse}>{r.label}</NavLink>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Rubriques et actualités">
+            <RubriquesMenu />
+            <NavLink to="/actualites" className={lienClasse}>Actualités</NavLink>
           </nav>
 
           <div className="hidden lg:flex items-center gap-1">
