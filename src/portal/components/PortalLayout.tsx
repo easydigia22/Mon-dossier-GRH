@@ -17,8 +17,8 @@ const LIENS_PRINCIPAUX = [
 ];
 
 // Rubriques thématiques regroupées sous le menu déroulant « Rubriques ».
-// Actualités reste un lien à part (mis en avant), aux côtés de Cours/Exercices/QCM.
-const RUBRIQUES_MENU = RUBRIQUES.filter((r) => r.cle !== 'actualites');
+// Actualités et Espace OFPPT restent des liens à part (mis en avant) dans la barre.
+const RUBRIQUES_MENU = RUBRIQUES.filter((r) => r.cle !== 'actualites' && r.cle !== 'ofppt');
 
 /** Menu déroulant « Rubriques » (desktop) : regroupe les 6 rubriques thématiques. */
 const RubriquesMenu: React.FC = () => {
@@ -111,9 +111,12 @@ export const PortalLayout: React.FC = () => {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Rubriques et actualités">
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
+            <NavLink to="/" end className={lienClasse}>Accueil</NavLink>
             <RubriquesMenu />
             <NavLink to="/actualites" className={lienClasse}>Actualités</NavLink>
+            <NavLink to="/ofppt" className={lienClasse}>Espace OFPPT</NavLink>
+            <NavLink to="/a-propos" className={lienClasse}>À propos</NavLink>
           </nav>
 
           <div className="hidden lg:flex items-center gap-1">
@@ -166,7 +169,8 @@ export const PortalLayout: React.FC = () => {
         </div>
 
         {menuOuvert && (
-          <nav className="lg:hidden border-t border-[#ECE3D6] bg-cream px-4 py-3 space-y-1" aria-label="Menu mobile">
+          <nav className="lg:hidden border-t border-[#ECE3D6] bg-cream px-4 py-3 flex flex-col gap-1" aria-label="Menu mobile">
+            <NavLink to="/" end className={lienClasse}>Accueil</NavLink>
             {RUBRIQUES.map((r) => (
               <NavLink key={r.cle} to={r.path} className={lienClasse}>{r.label}</NavLink>
             ))}
@@ -174,6 +178,7 @@ export const PortalLayout: React.FC = () => {
             {LIENS_PRINCIPAUX.map((l) => (
               <NavLink key={l.to} to={l.to} className={lienClasse}>{l.label}</NavLink>
             ))}
+            <NavLink to="/a-propos" className={lienClasse}>À propos</NavLink>
             <a href="/app" className="mt-2 flex items-center gap-1.5 bg-navy text-white text-sm font-semibold rounded-lg px-3.5 py-2.5">
               <LogIn className="w-4 h-4" /> Ouvrir l'application
             </a>
