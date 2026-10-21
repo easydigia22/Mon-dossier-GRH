@@ -8,6 +8,7 @@ import { ContentProvider } from '../content/ContentContext';
 import { SocialToasts } from './SocialToasts';
 import { NewsletterBlock } from './NewsletterBlock';
 import { InstallApp, INSTALL_HELP_EVENT } from './InstallApp';
+import { CookieBanner } from './CookieBanner';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 
 const LIENS_PRINCIPAUX = [
@@ -253,6 +254,8 @@ export const PortalLayout: React.FC = () => {
           <p className="max-w-6xl mx-auto px-4 py-4 text-[11.5px] text-white/50">{MENTION_COPYRIGHT}</p>
         </div>
       </footer>
+
+      <CookieBanner />
     </div>
   );
 };

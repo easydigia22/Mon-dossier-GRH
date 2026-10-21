@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Mail, Phone, MapPin, Info, Scale, ShieldCheck, ArrowRight, Clock,
-  GraduationCap, Server, Lock, FileText, ChevronRight, BookOpen, Users,
+  GraduationCap, Server, Lock, FileText, ChevronRight, BookOpen, Users, Cookie,
 } from 'lucide-react';
 import { useSeo } from '../lib/seo';
+import { COOKIE_MANAGE_EVENT } from '../lib/consent';
 import { Reveal } from '../components/Reveal';
 
 /* --------------------------------------------------------------------------
@@ -319,10 +320,28 @@ export const ConfidentialitePage: React.FC = () => {
             aucun serveur.
           </p>
           <p className="text-[13.5px] text-ink/70">
-            Le portail n'utilise pas de cookies publicitaires ni de traceurs de profilage. Un cache
+            Le portail n'utilise pas de cookies publicitaires ni de profilage commercial. Un cache
             local (technologie PWA) peut être enregistré par votre navigateur pour accélérer
             l'affichage et permettre une consultation hors ligne ; il reste sur votre appareil.
+            Un outil de <strong>mesure d'audience</strong> (Google Analytics) n'est activé qu'avec
+            votre consentement — voir ci-dessous.
           </p>
+        </Bloc>
+
+        <Bloc icon={Cookie} titre="Cookies et mesure d'audience">
+          <p>
+            Pour comprendre l'usage du portail et l'améliorer, nous utilisons <strong>Google
+            Analytics</strong> (mesure d'audience). Ce cookie n'est déposé <strong>qu'après votre
+            accord</strong> via le bandeau de consentement ; si vous refusez, aucune mesure n'est
+            effectuée. Aucune donnée n'est utilisée à des fins publicitaires.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(COOKIE_MANAGE_EVENT))}
+            className="inline-flex items-center gap-2 mt-1 px-4 py-2 rounded-lg text-sm font-semibold bg-navy text-white hover:bg-navy-deep"
+          >
+            <Cookie className="w-4 h-4" /> Gérer mes cookies
+          </button>
         </Bloc>
 
         <Bloc icon={Server} titre="Données techniques">
