@@ -10,7 +10,7 @@ import { supabase } from '../../services/supabase';
 
 const TABLE = 'portail_leads';
 
-export type SourceLead = 'newsletter' | 'guide-paie' | 'autre';
+export type SourceLead = 'newsletter' | 'guide-paie' | 'autre' | 'stagiaire';
 
 export interface Lead {
   id: string;

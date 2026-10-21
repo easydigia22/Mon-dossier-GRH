@@ -462,6 +462,7 @@ const SOURCE_LABEL: Record<SourceLead, string> = {
   newsletter: 'Newsletter',
   'guide-paie': 'Guide paie',
   autre: 'Autre',
+  stagiaire: 'Stagiaire',
 };
 
 const AdminLeadsPanel: React.FC = () => {
