@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Download, MessageCircle } from 'lucide-react';
+import { Eye, Download, MessageCircle } from 'lucide-react';
 import { useSeo } from '../lib/seo';
+import { rubriqueMeta } from '../lib/rubriques';
 import { useContenus } from '../content/ContentContext';
 import { Markdown } from '../lib/Markdown';
 import { SourcesBox } from '../components/SourcesBox';
@@ -10,8 +11,9 @@ import { formatDate, BadgeTarif } from '../components/ContenuCard';
 import { lienWhatsAppCommande, formatPrix } from '../lib/contact';
 import type { TypeContenu, Contenu } from '../content/types';
 
-/** Construit les données structurées schema.org (Article + FAQPage) d'un contenu. */
+/** Construit les données structurées schema.org (Article + FAQPage + fil d'Ariane) d'un contenu. */
 function construireJsonLd(c: Contenu, origin: string, chemin: string): object[] {
+  const rub = rubriqueMeta(c.rubrique);
   const abs = (p?: string) => (p ? (/^https?:\/\//i.test(p) ? p : origin + p) : origin + '/portal/brand/logo-simulrh.png');
   const article = {
     '@context': 'https://schema.org',
@@ -42,6 +44,16 @@ function construireJsonLd(c: Contenu, origin: string, chemin: string): object[] 
       })),
     });
   }
+  // Fil d'Ariane : Accueil › Rubrique › Titre
+  blocs.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${origin}/` },
+      ...(rub ? [{ '@type': 'ListItem', position: 2, name: rub.label, item: origin + rub.path }] : []),
+      { '@type': 'ListItem', position: rub ? 3 : 2, name: c.titre, item: origin + chemin },
+    ],
+  });
   return blocs;
 }
 
@@ -67,16 +79,22 @@ export const ContenuPage: React.FC<{ typeAttendu?: TypeContenu }> = ({ typeAtten
 
   if (!contenu || (typeAttendu && contenu.type !== typeAttendu)) return <NotFoundPage />;
 
-  const retour =
-    contenu.type === 'exercice' ? '/exercices' : contenu.type === 'article' ? '/actualites' : contenu.type === 'ressource' ? '/ressources' : '/cours';
-
+  const rub = rubriqueMeta(contenu.rubrique);
   const payant = contenu.tarification === 'payant';
 
   return (
     <article className="max-w-3xl mx-auto px-4 py-12">
-      <Link to={retour} className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-navy mb-6">
-        <ArrowLeft className="w-4 h-4" /> Retour
-      </Link>
+      <nav className="flex flex-wrap items-center gap-1.5 text-sm text-ink/60 mb-6" aria-label="Fil d'Ariane">
+        <Link to="/" className="hover:text-navy">Accueil</Link>
+        <span aria-hidden="true" className="text-ink/30">›</span>
+        {rub && (
+          <>
+            <Link to={rub.path} className="hover:text-navy">{rub.label}</Link>
+            <span aria-hidden="true" className="text-ink/30">›</span>
+          </>
+        )}
+        <span className="text-ink/80 font-medium">{contenu.titre}</span>
+      </nav>
 
       {contenu.imageCouverture && (
         <img
