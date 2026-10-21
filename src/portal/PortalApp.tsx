@@ -24,6 +24,15 @@ const ScrollToTop: React.FC = () => {
   // function » et page blanche. On ne retourne donc rien.
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Google Analytics (GA4) : envoi d'une vue de page à chaque navigation SPA.
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_view', {
+        page_path: pathname + window.location.search,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }
   }, [pathname]);
   return null;
 };

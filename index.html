@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Analytics (GA4). SPA : la vue de page est envoyée à chaque changement
+         d'URL depuis le code (send_page_view:false) pour éviter le double comptage. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0J8W18NTMF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0J8W18NTMF', { send_page_view: false });
+    </script>
     <!-- Thème clair/sombre appliqué avant le premier rendu (évite le flash blanc) -->
     <script>
       (function () {
