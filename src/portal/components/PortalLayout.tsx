@@ -113,10 +113,10 @@ export const PortalLayout: React.FC = () => {
 
           <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
             <NavLink to="/" end className={lienClasse}>Accueil</NavLink>
+            <NavLink to="/a-propos" className={lienClasse}>À propos</NavLink>
             <RubriquesMenu />
             <NavLink to="/actualites" className={lienClasse}>Actualités</NavLink>
             <NavLink to="/ofppt" className={lienClasse}>Espace OFPPT</NavLink>
-            <NavLink to="/a-propos" className={lienClasse}>À propos</NavLink>
           </nav>
 
           <div className="hidden lg:flex items-center gap-1">
