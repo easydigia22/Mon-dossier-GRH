@@ -109,7 +109,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
   const [ongletActif, setOngletActifBrut] = useState<OngletNavigation>('dashboard');
   const setOngletActif = (onglet: OngletNavigation) => {
     // Un stagiaire ne doit jamais atterrir sur les espaces réservés au formateur
-    const ongletsFormateur: OngletNavigation[] = ['formateur', 'discipline'];
+    const ongletsFormateur: OngletNavigation[] = ['formateur'];
     if (onglet === 'administration' && !estAdmin) return setOngletActifBrut('dashboard');
     if (onglet === 'etablissements' && !estSuperAdmin) return setOngletActifBrut('dashboard');
     setOngletActifBrut(ongletsFormateur.includes(onglet) && !estFormateur ? 'dashboard' : onglet);
@@ -321,7 +321,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
           />
         )}
 
-        {ongletActif === 'discipline' && estFormateur && (
+        {ongletActif === 'discipline' && (
           <DisciplineView
             salaries={salaries}
             demandesConges={demandesConges}
