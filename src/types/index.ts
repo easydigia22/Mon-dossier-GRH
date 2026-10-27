@@ -370,6 +370,16 @@ export interface RegleParametreJuridique {
   descriptionDetaillee: string;
 }
 
+export type UniteResultat = 'MAD' | 'heures' | 'jours' | '%' | 'nombre';
+
+export interface ChampResultat {
+  cle: string; // doit correspondre à une clé de reponseAttendue.resultatsNumeriquesAttendus
+  label: string;
+  unite: UniteResultat;
+  placeholder?: string;
+  miseEnAvant?: boolean; // affiche le champ comme « résultat final » (vert, gras)
+}
+
 export interface MissionExercice {
   id: string;
   numero: number;
@@ -381,6 +391,8 @@ export interface MissionExercice {
   donneesFournies: string[];
   taches: string[];
   livrablesAttendus: string[];
+  /** Champs de saisie numérique propres à la mission. Absent/vide => mission documentaire (pas de bloc chiffré). */
+  champsResultats?: ChampResultat[];
   bareme: {
     dossierEtPieces: number; // Sur 4 pts
     justificationRegles: number; // Sur 4 pts

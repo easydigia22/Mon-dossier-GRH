@@ -415,53 +415,43 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               />
             </div>
 
-            {/* 3. Valeurs numériques et calculs */}
-            <div>
-              <label className="block font-bold text-slate-800 mb-1">
-                2. Montants et résultats des calculs déterministes (en MAD ou en heures) :
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#FBF7F0] p-3.5 rounded-lg border border-[#ECE3D6]">
-                <div>
-                  <span className="text-slate-600 block mb-1 text-[11px]">Montant Brut / Base calculée (MAD)</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Ex: 8184.26"
-                    value={valeursCalculees['montantBrut'] || ''}
-                    onChange={(e) =>
-                      setValeursCalculees({ ...valeursCalculees, montantBrut: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-white font-mono text-xs font-bold"
-                  />
-                </div>
-                <div>
-                  <span className="text-slate-600 block mb-1 text-[11px]">Cotisations ou Retenues (MAD)</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Ex: 453.76"
-                    value={valeursCalculees['retenues'] || ''}
-                    onChange={(e) =>
-                      setValeursCalculees({ ...valeursCalculees, retenues: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-white font-mono text-xs font-bold"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-slate-600 block mb-1 text-[11px]">Résultat final (Net à payer ou solde)</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Ex: 7120.50"
-                    value={valeursCalculees['resultatFinal'] || ''}
-                    onChange={(e) =>
-                      setValeursCalculees({ ...valeursCalculees, resultatFinal: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-white font-mono text-xs font-black text-[#149D92]"
-                  />
+            {/* 3. Valeurs numériques et calculs — adaptatif selon la mission */}
+            {mission.champsResultats && mission.champsResultats.length > 0 ? (
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">
+                  2. Montants et résultats des calculs déterministes :
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#FBF7F0] p-3.5 rounded-lg border border-[#ECE3D6]">
+                  {mission.champsResultats.map((champ) => (
+                    <div key={champ.cle} className={champ.miseEnAvant ? 'sm:col-span-2' : ''}>
+                      <span className="text-slate-600 block mb-1 text-[11px]">
+                        {champ.label} ({champ.unite})
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder={champ.placeholder}
+                        value={valeursCalculees[champ.cle] ?? ''}
+                        onChange={(e) => {
+                          const next = { ...valeursCalculees };
+                          if (e.target.value === '') delete next[champ.cle];
+                          else next[champ.cle] = Number(e.target.value);
+                          setValeursCalculees(next);
+                        }}
+                        className={`w-full px-3 py-1.5 border border-[#ECE3D6] rounded bg-white font-mono text-xs ${
+                          champ.miseEnAvant ? 'font-black text-[#149D92]' : 'font-bold'
+                        }`}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-[#FBF7F0] p-3 rounded-lg border border-[#ECE3D6] text-[11px] text-slate-500 italic leading-relaxed">
+                2. Cette mission ne comporte pas de saisie chiffrée : concentrez-vous sur la
+                justification juridique, les livrables attendus et les contrôles de cohérence ci-dessous.
+              </div>
+            )}
 
             {/* 4. Contrôles de cohérence cochés */}
             <div>

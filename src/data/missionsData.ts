@@ -177,6 +177,11 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
       'Calendrier de présence de janvier 2025 à jour',
       'Récapitulatif des heures supplémentaires et des heures d\'absence à déduire'
     ],
+    champsResultats: [
+      { cle: 'heuresSupM003', label: 'Heures supplémentaires décomptées', unite: 'heures', placeholder: 'Ex: 8' },
+      { cle: 'tauxMajorationM003', label: 'Taux de majoration applicable', unite: '%', placeholder: 'Ex: 25' },
+      { cle: 'heuresAbsenceM007', label: 'Heures d\'absence à déduire', unite: 'heures', placeholder: 'Ex: 8', miseEnAvant: true }
+    ],
     bareme: {
       dossierEtPieces: 4,
       justificationRegles: 4,
@@ -225,6 +230,10 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
     livrablesAttendus: [
       'Décision d\'octroi de congé signée',
       'Fiche de suivi du solde de congés actualisée'
+    ],
+    champsResultats: [
+      { cle: 'joursPris', label: 'Jours ouvrables de congé pris', unite: 'jours', placeholder: 'Ex: 6' },
+      { cle: 'soldeFinal', label: 'Solde de congé restant après la prise', unite: 'jours', placeholder: 'Ex: 12', miseEnAvant: true }
     ],
     bareme: {
       dossierEtPieces: 4,
@@ -275,6 +284,10 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
       'Calcul explicatif de la retenue employeur',
       'Note d\'information CNSS pour le salarié'
     ],
+    champsResultats: [
+      { cle: 'retenueMaladie', label: 'Retenue employeur pour absence maladie', unite: 'MAD', placeholder: 'Ex: 1068.06', miseEnAvant: true },
+      { cle: 'delaiCarence', label: 'Délai de carence CNSS', unite: 'jours', placeholder: 'Ex: 3' }
+    ],
     bareme: {
       dossierEtPieces: 4,
       justificationRegles: 4,
@@ -289,7 +302,11 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
       formulesEtJustifications: [
         'Retenue absence maladie = 24h × (8 500 / 191) = 1 068,06 MAD.',
         'La CNSS n\'indemnise qu\'à partir du 4ème jour, les 3 premiers jours constituant le délai de carence.'
-      ]
+      ],
+      resultatsNumeriquesAttendus: {
+        retenueMaladie: 1068.06,
+        delaiCarence: 3
+      }
     },
     explicationComplete: 'L\'arrêt maladie suspend le contrat de travail. Au Maroc, en l\'absence de maintien de salaire contractuel, l\'employeur opère une retenue exacte sur le salaire mensuel, et la CNSS indemnise le salarié après un délai de carence de 3 jours.',
     erreursFrequentes: [
@@ -323,6 +340,9 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
       'Tableau de bord des variables de paie de janvier 2025',
       'Fiche de contrôle avant calcul du brut'
     ],
+    champsResultats: [
+      { cle: 'tauxAnciennete', label: 'Taux de prime d\'ancienneté (salarié > 6 ans de service)', unite: '%', placeholder: 'Ex: 10', miseEnAvant: true }
+    ],
     bareme: {
       dossierEtPieces: 4,
       justificationRegles: 4,
@@ -336,7 +356,10 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
     reponseAttendue: {
       formulesEtJustifications: [
         'Prime d\'ancienneté Art. 350 : 2 à 5 ans = 5%, 5 à 12 ans = 10%, 12 à 20 ans = 15%.'
-      ]
+      ],
+      resultatsNumeriquesAttendus: {
+        tauxAnciennete: 10
+      }
     },
     explicationComplete: 'Les variables de paie doivent faire l\'objet d\'un pointage systématique avant le lancement du calcul automatique pour éviter les régularisations a posteriori.',
     erreursFrequentes: [
@@ -373,6 +396,11 @@ export const MISSIONS_PEDAGOGIQUES: MissionExercice[] = [
     livrablesAttendus: [
       'Bulletin de paie de Mehdi Alami généré et validé',
       'Fiche explicative du calcul de l\'IR et du Net à payer'
+    ],
+    champsResultats: [
+      { cle: 'salaireBrutGlobal', label: 'Salaire Brut Global', unite: 'MAD', placeholder: 'Ex: 8184.26' },
+      { cle: 'cnssSalariale', label: 'Cotisation CNSS salariale (assiette plafonnée 6 000)', unite: 'MAD', placeholder: 'Ex: 268.80' },
+      { cle: 'amoSalariale', label: 'Cotisation AMO salariale', unite: 'MAD', placeholder: 'Ex: 184.96', miseEnAvant: true }
     ],
     bareme: {
       dossierEtPieces: 4,
