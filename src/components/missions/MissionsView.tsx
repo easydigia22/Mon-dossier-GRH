@@ -36,7 +36,6 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   missions,
   tentatives,
   modePedagogique,
-  niveau,
   nomStagiaireActif,
   onSoumettreTentative,
   showNotification
@@ -54,9 +53,9 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
   // quand toutes les missions sont corrigées avec une moyenne ≥ 10/20.
   const statutParcours = evaluerParcours(missions, tentatives);
 
-  // Le niveau avancé donne accès à tout le catalogue ; le niveau essentiel ne
-  // retient que les missions de base, celles sur lesquelles le module se valide.
-  const missionsVisibles = niveau === 'avance' ? missions : missions.filter((m) => m.niveau === 'essentiel');
+  // Toutes les missions du catalogue sont visibles par le stagiaire, quel que
+  // soit le niveau (les 10 situations professionnelles).
+  const missionsVisibles = missions;
 
   const mission = missionsVisibles.find((m) => m.id === missionActiveId) || missionsVisibles[0];
   const tentativeExistante = mission ? tentatives.find((t) => t.missionId === mission.id) : undefined;
@@ -102,8 +101,8 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
     return (
       <div className="bg-white border border-[#ECE3D6] rounded-2xl p-8 shadow-sm text-center space-y-2">
         <GraduationCap className="w-8 h-8 text-slate-300 mx-auto" />
-        <p className="text-sm font-bold text-[#1C2459]">Aucune mission pour ce niveau</p>
-        <p className="text-xs text-slate-500">Basculez le niveau sur « avancé » dans l'en-tête pour afficher tout le catalogue.</p>
+        <p className="text-sm font-bold text-[#1C2459]">Aucune mission disponible</p>
+        <p className="text-xs text-slate-500">Le catalogue des missions est momentanément vide.</p>
       </div>
     );
   }
@@ -184,9 +183,6 @@ export const MissionsView: React.FC<MissionsViewProps> = ({
               <h1 className="text-lg font-bold text-[#1C2459]">Missions &amp; Exercices Pédagogiques</h1>
               <p className="text-xs text-slate-500">
                 {missionsVisibles.length} situations professionnelles réelles pour valider le module « Gestion administrative du personnel »
-                {niveau === 'essentiel' && missions.length > missionsVisibles.length && (
-                  <span className="text-slate-400"> · {missions.length - missionsVisibles.length} mission(s) avancée(s) masquée(s)</span>
-                )}
               </p>
             </div>
           </div>
