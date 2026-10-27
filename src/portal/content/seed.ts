@@ -980,4 +980,37 @@ export const CONTENUS_DEMO: Contenu[] = [
       },
     ],
   },
+  {
+    // Ressource téléchargeable : les guides d'utilisation de l'application.
+    id: 'ressource-guides-simulrh',
+    slug: 'guides-utilisation-simulrh',
+    type: 'ressource',
+    rubrique: 'ressources',
+    sousTheme: 'Fiches pratiques',
+    titre: "Guides d'utilisation de SimulRH (stagiaire & formateur)",
+    resume:
+      "Deux guides PDF illustrés, pas à pas, pour prendre en main l'application SimulRH : un pour les stagiaires, un pour les formateurs.",
+    publics: ['etudiant', 'stagiaire', 'formateur', 'professionnel'],
+    niveau: 'debutant',
+    statut: 'publie',
+    demo: false,
+    datePublication: '2026-10-27',
+    dateMiseAJour: '2026-10-27',
+    auteur: 'EZZOUHIR Elmustapha — OFPPT / ISGI Marrakech',
+    tags: ['guide', "mode d'emploi", 'stagiaire', 'formateur', 'simulrh', 'pdf'],
+    tarification: 'gratuit',
+    corps: [
+      '## Deux guides pour bien démarrer',
+      "Ces guides accompagnent la prise en main de l'application SimulRH, de la connexion jusqu'à la réalisation des missions. Ils sont illustrés de captures d'écran et organisés étape par étape.",
+      [
+        "- **Guide du stagiaire** : accéder à l'application, rejoindre sa classe, découvrir le tableau de bord, utiliser les modules RH & paie et réaliser les 10 missions.",
+        "- **Guide du formateur** : créer et partager une classe, suivre les stagiaires, consulter leur dossier de travail, corriger les missions et piloter le tableau de bord.",
+      ].join('\n'),
+      'Téléchargez le guide qui vous concerne ci-dessous.',
+    ].join('\n\n'),
+    fichiers: [
+      { langue: 'fr', url: '/guides/Guide-Stagiaire-SimulRH.pdf', label: 'Guide du stagiaire (PDF)', taille: '1,1 Mo' },
+      { langue: 'fr', url: '/guides/Guide-Formateur-SimulRH.pdf', label: 'Guide du formateur (PDF)', taille: '1,0 Mo' },
+    ],
+  },
 ];
