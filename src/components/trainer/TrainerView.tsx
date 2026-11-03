@@ -4,7 +4,7 @@ import { ClassePedagogique, MissionExercice, TentativeExercice } from '../../typ
 import { exporterJSON } from '../../services/exportService';
 import { cloudEnabled } from '../../services/cloudSync';
 import { fetchAllTentativesLive, saveCorrectionLive, TentativeLive } from '../../services/trainerLive';
-import { detacherTousDeLaClasse, fetchEffectifLive, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
+import { detacherTousDeLaClasse, fetchEffectifLive, fetchTousMesStagiaires, genererCodeInvitation, retirerDuEffectif } from '../../services/classeJoin';
 import { listerEtablissementsPublics, proposerEtablissement, EtablissementPublic } from '../../services/etablissements';
 import { DossierStagiaireView } from './DossierStagiaireView';
 import type { MembreClasseLive } from '../../types';
@@ -201,11 +201,26 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
   const [editionOuverte, setEditionOuverte] = useState<TentativeLive | null>(null);
   const [brouillonCorrection, setBrouillonCorrection] = useState<NonNullable<TentativeExercice['correction']> | null>(null);
 
+  // Roster complet du formateur (tous groupes) pour résoudre le vrai nom d'un stagiaire
+  // à partir de son user_id : la remise ne porte qu'un nom par défaut (« Stagiaire OFPPT »).
+  const [rosterGlobal, setRosterGlobal] = useState<MembreClasseLive[]>([]);
+
+  const nomStagiaire = (item: TentativeLive): string => {
+    const membre = rosterGlobal.find((m) => m.stagiaireUserId === item.userId);
+    if (membre) {
+      const identite = [membre.nom, membre.prenom].filter(Boolean).join(' ').trim();
+      if (identite) return membre.matricule ? `${identite} · ${membre.matricule}` : identite;
+    }
+    return item.tentative.stagiaireNom || 'Stagiaire';
+  };
+
   const chargerTentativesLive = async () => {
     setChargementLive(true);
     setErreurLive(null);
     try {
-      setTentativesLive(await fetchAllTentativesLive());
+      const [tentatives, roster] = await Promise.all([fetchAllTentativesLive(), fetchTousMesStagiaires()]);
+      setTentativesLive(tentatives);
+      setRosterGlobal(roster);
     } catch (e: any) {
       setErreurLive(e.message || 'Chargement impossible.');
     } finally {
@@ -671,7 +686,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
                     const mission = missions.find((m) => m.id === item.tentative.missionId);
                     return (
                       <tr key={`${item.userId}-${item.tentative.id}`} className="border-b border-slate-50 hover:bg-slate-50">
-                        <td className="py-2 pr-2 font-semibold text-slate-800">{item.tentative.stagiaireNom}</td>
+                        <td className="py-2 pr-2 font-semibold text-slate-800">{nomStagiaire(item)}</td>
                         <td className="py-2 pr-2 text-slate-600">
                           {mission ? `Mission ${mission.numero} — ${mission.titre}` : item.tentative.missionId}
                         </td>
@@ -796,7 +811,7 @@ export const TrainerView: React.FC<TrainerViewProps> = ({
           >
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-bold text-sm text-[#1C2459]">
-                Corriger — {editionOuverte.tentative.stagiaireNom}
+                Corriger — {nomStagiaire(editionOuverte)}
               </h3>
               <button type="button" onClick={() => setEditionOuverte(null)} className="text-slate-400 hover:text-slate-600 font-bold">
                 ✕

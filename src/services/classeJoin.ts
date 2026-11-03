@@ -56,6 +56,28 @@ export async function fetchEffectifLive(classeId: string): Promise<MembreClasseL
 }
 
 /**
+ * Pour le formateur : tout son effectif, à travers l'ensemble de ses groupes (pas
+ * seulement le groupe actif). La policy RLS `formateur_read_roster`
+ * (classe_user_id = auth.uid()) restreint déjà le résultat aux classes qu'il possède,
+ * donc un select non filtré ne renvoie que SES stagiaires. Sert à résoudre le vrai
+ * nom d'un stagiaire (nom/prénom/matricule saisis à l'inscription) à partir du seul
+ * user_id exposé par le suivi en direct des remises.
+ */
+export async function fetchTousMesStagiaires(): Promise<MembreClasseLive[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase.from('classe_stagiaires').select('*').order('joined_at');
+  if (error) throw error;
+  return (data ?? []).map((d) => ({
+    stagiaireUserId: d.stagiaire_user_id,
+    classeId: d.classe_id,
+    matricule: d.matricule,
+    nom: d.nom,
+    prenom: d.prenom,
+    joinedAt: d.joined_at
+  }));
+}
+
+/**
  * Détache tous les stagiaires rattachés à une classe et renvoie leur nombre.
  * Appelé avant de supprimer une classe archivée : `classe_stagiaires` n'a aucune
  * clé étrangère vers `classes`, donc rien ne détacherait ces stagiaires tout seuls,
