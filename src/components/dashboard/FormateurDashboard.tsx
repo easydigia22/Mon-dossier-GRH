@@ -199,7 +199,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           taux: Math.round((soumis / base) * 100)
         };
       })
-      .sort((a, b) => a.taux - b.taux || a.numero - b.numero); // les plus bloquantes d'abord
+      .sort((a, b) => a.numero - b.numero); // ordre croissant des missions (1 → 10)
   }, [tentativesScope, missions, nbStagiaires]);
 
   const fmtDate = (iso: string | null) =>
@@ -382,7 +382,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
         <SectionTitle
           icon={<ListChecks className="w-4 h-4" />}
           title="Avancement par mission"
-          subtitle="Part des stagiaires ayant soumis chaque mission — les plus bloquantes en premier"
+          subtitle="Part des stagiaires ayant soumis chaque mission — dans l'ordre des missions"
         />
 
         {nbStagiaires === 0 ? (
