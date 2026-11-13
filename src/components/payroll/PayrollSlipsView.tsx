@@ -9,7 +9,8 @@ import {
   ChevronRight,
   User,
   HelpCircle,
-  FileCheck
+  FileCheck,
+  Trash2
 } from 'lucide-react';
 import { BulletinPaie, Entreprise, Salarie } from '../../types';
 import { formatMAD, formatDateJJMMAAAA, genererBulletinPDF } from '../../services/exportService';
@@ -21,6 +22,7 @@ interface PayrollSlipsViewProps {
   periodeActive: string;
   selectedSalarieId?: string;
   onSelectSalarie: (id: string) => void;
+  onDeleteBulletin?: (id: string) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
 }
 
@@ -31,11 +33,13 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
   periodeActive,
   selectedSalarieId,
   onSelectSalarie,
+  onDeleteBulletin,
   showNotification
 }) => {
   const [ongletDetail, setOngletDetail] = useState<'bulletin' | 'explications'>('bulletin');
 
-  const salarieActifId = selectedSalarieId || salaries[0]?.id;
+  // Si le salarié mémorisé a été supprimé entre-temps, on retombe sur le premier existant.
+  const salarieActifId = salaries.some((s) => s.id === selectedSalarieId) ? selectedSalarieId : salaries[0]?.id;
   const salarieActif = salaries.find((s) => s.id === salarieActifId);
 
   const bulletinActif = bulletins.find(
@@ -50,6 +54,23 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
     if (!bulletinActif) return;
     genererBulletinPDF(bulletinActif, entreprise.raisonSociale);
     showNotification('Téléchargement du bulletin de paie PDF démarré.', 'success');
+  };
+
+  const handleSupprimer = () => {
+    if (!bulletinActif || !onDeleteBulletin) return;
+    const identite = salarieActif ? `${salarieActif.nom} ${salarieActif.prenom}` : 'ce salarié';
+    const avertissementScelle = bulletinActif.estSnapshotScelle
+      ? '\n\n⚠ Ce bulletin est CLÔTURÉ (scellé) : sa suppression retire une période validée.'
+      : '';
+    if (
+      confirm(
+        `Supprimer le bulletin de ${identite} pour la période ${bulletinActif.periodeMois} ?` +
+          avertissementScelle +
+          '\n\nVous pourrez le régénérer en relançant le calcul de la période.'
+      )
+    ) {
+      onDeleteBulletin(bulletinActif.id);
+    }
   };
 
   return (
@@ -87,6 +108,17 @@ export const PayrollSlipsView: React.FC<PayrollSlipsViewProps> = ({
               <Download className="w-3.5 h-3.5" />
               <span>Télécharger PDF</span>
             </button>
+            {onDeleteBulletin && (
+              <button
+                onClick={handleSupprimer}
+                disabled={!bulletinActif}
+                className="px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                title="Supprimer ce bulletin de paie"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Supprimer</span>
+              </button>
+            )}
           </div>
         </div>
 

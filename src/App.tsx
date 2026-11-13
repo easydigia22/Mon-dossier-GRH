@@ -90,6 +90,9 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
     reinitialiserDonneesDemo,
     viderEspaceDeTravail,
     upsertSalarie,
+    deleteSalarie,
+    deleteBulletin,
+    deleteDemandeConge,
     upsertContrat,
     deleteContrat,
     procedures,
@@ -286,6 +289,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             salaries={salaries}
             periodeActive={periodeActive}
             onSaveSalarie={upsertSalarie}
+            onDeleteSalarie={deleteSalarie}
             showNotification={showNotification}
           />
         )}
@@ -317,6 +321,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             demandes={demandesConges}
             salaries={salaries}
             onSaveDemande={upsertDemandeConge}
+            onDeleteDemande={deleteDemandeConge}
             showNotification={showNotification}
           />
         )}
@@ -358,6 +363,7 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
             periodeActive={periodeActive}
             selectedSalarieId={selectedSalarieIdPourBulletin}
             onSelectSalarie={setSelectedSalarieIdPourBulletin}
+            onDeleteBulletin={deleteBulletin}
             showNotification={showNotification}
           />
         )}

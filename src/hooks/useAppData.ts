@@ -317,6 +317,46 @@ export function useAppData() {
   };
 
   /**
+   * Supprimer un salarié ET tout ce qui lui est rattaché (contrats, présences, congés,
+   * bulletins, rubriques saisies, procédures disciplinaires) : sans cette cascade,
+   * des enregistrements orphelins resteraient dans le livre de paie, la CNSS, etc.
+   * La sauvegarde automatique propage les suppressions en local et dans le cloud.
+   */
+  const deleteSalarie = (salarieId: string) => {
+    const sal = salaries.find((s) => s.id === salarieId);
+    setSalaries((prev) => prev.filter((s) => s.id !== salarieId));
+    setContrats((prev) => prev.filter((c) => c.salarieId !== salarieId));
+    setEvenementsPresence((prev) => prev.filter((e) => e.salarieId !== salarieId));
+    setDemandesConges((prev) => prev.filter((d) => d.salarieId !== salarieId));
+    setBulletins((prev) => prev.filter((b) => b.salarieId !== salarieId));
+    setRubriquesSaisies((prev) => prev.filter((r) => r.salarieId !== salarieId));
+    setProcedures((prev) => prev.filter((p) => p.salarieId !== salarieId));
+    showNotification(
+      sal
+        ? `Salarié ${sal.nom} ${sal.prenom} (${sal.matricule}) supprimé avec ses données rattachées.`
+        : 'Salarié supprimé.',
+      'info'
+    );
+  };
+
+  /**
+   * Supprimer un bulletin de paie (y compris scellé : l'utilisateur confirme côté écran).
+   * Un bulletin supprimé peut être régénéré via « Préparation paie » > Calculer.
+   */
+  const deleteBulletin = (bulletinId: string) => {
+    setBulletins((prev) => prev.filter((b) => b.id !== bulletinId));
+    showNotification('Bulletin de paie supprimé. Relancez le calcul de la période pour le régénérer.', 'info');
+  };
+
+  /**
+   * Supprimer une demande de congé
+   */
+  const deleteDemandeConge = (demandeId: string) => {
+    setDemandesConges((prev) => prev.filter((d) => d.id !== demandeId));
+    showNotification('Demande de congé supprimée.', 'info');
+  };
+
+  /**
    * Ajouter ou modifier un contrat et synchroniser le profil salarié
    */
   const upsertContrat = (contrat: Contrat) => {
@@ -511,6 +551,9 @@ export function useAppData() {
     reinitialiserDonneesDemo,
     viderEspaceDeTravail,
     upsertSalarie,
+    deleteSalarie,
+    deleteBulletin,
+    deleteDemandeConge,
     upsertContrat,
     deleteContrat,
     procedures,

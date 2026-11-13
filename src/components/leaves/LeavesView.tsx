@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarDays, Plus, CheckCircle2, XCircle, Info, HeartHandshake, ShieldCheck } from 'lucide-react';
+import { CalendarDays, Plus, CheckCircle2, XCircle, Info, HeartHandshake, ShieldCheck, Trash2 } from 'lucide-react';
 import { DemandeConge, Salarie, StatutWorkflow } from '../../types';
 import { formatDateJJMMAAAA } from '../../services/exportService';
 
@@ -7,6 +7,7 @@ interface LeavesViewProps {
   demandes: DemandeConge[];
   salaries: Salarie[];
   onSaveDemande: (d: DemandeConge) => void;
+  onDeleteDemande?: (id: string) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
 }
 
@@ -14,6 +15,7 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
   demandes,
   salaries,
   onSaveDemande,
+  onDeleteDemande,
   showNotification
 }) => {
   const [modalOuverte, setModalOuverte] = useState(false);
@@ -173,6 +175,20 @@ export const LeavesView: React.FC<LeavesViewProps> = ({
                     {d.statut === 'Approuvee' ? <CheckCircle2 className="w-3.5 h-3.5" /> : null}
                     {d.statut}
                   </span>
+
+                  {onDeleteDemande && (
+                    <button
+                      onClick={() => {
+                        if (confirm('Supprimer cette demande de congé ? Cette action est irréversible.')) {
+                          onDeleteDemande(d.id);
+                        }
+                      }}
+                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                      title="Supprimer la demande"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             );

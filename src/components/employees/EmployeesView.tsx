@@ -13,7 +13,8 @@ import {
   Edit,
   Check,
   X,
-  Printer
+  Printer,
+  Trash2
 } from 'lucide-react';
 import { PieceDossier, Salarie, SituationFamiliale, StatutSalarie } from '../../types';
 import { formatMAD, formatDateJJMMAAAA } from '../../services/exportService';
@@ -23,6 +24,7 @@ interface EmployeesViewProps {
   salaries: Salarie[];
   periodeActive: string;
   onSaveSalarie: (sal: Salarie) => void;
+  onDeleteSalarie?: (id: string) => void;
   showNotification: (msg: string, type: 'success' | 'info' | 'warning' | 'error') => void;
 }
 
@@ -30,6 +32,7 @@ export const EmployeesView: React.FC<EmployeesViewProps> = ({
   salaries,
   periodeActive,
   onSaveSalarie,
+  onDeleteSalarie,
   showNotification
 }) => {
   const [recherche, setRecherche] = useState('');
@@ -429,6 +432,26 @@ ${corps}
                         >
                           <Edit className="w-4 h-4" />
                         </button>
+                        {onDeleteSalarie && (
+                          <button
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  `Supprimer définitivement ${sal.nom} ${sal.prenom} (${sal.matricule}) ?\n\n` +
+                                    'Seront aussi supprimés : ses contrats, présences, congés, bulletins de paie et procédures disciplinaires.\n' +
+                                    'Cette action est irréversible.'
+                                )
+                              ) {
+                                if (salarieSelectionne?.id === sal.id) setSalarieSelectionne(null);
+                                onDeleteSalarie(sal.id);
+                              }
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Supprimer le salarié"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
