@@ -30,6 +30,7 @@ import {
   MetaSuiviExport
 } from '../../services/exportService';
 import { estParcoursReussi, referenceCertificat } from '../../services/certificat';
+import { chargerParametresRelance, enregistrerParametresRelance, ParametresRelance } from '../../services/reminders';
 import { OngletNavigation } from '../common/NavigationTabs';
 import { Card, Kpi, Badge, SectionTitle, ZelligeHeader, Button } from '../ui/kit';
 
@@ -70,6 +71,13 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   const [chargement, setChargement] = useState(false);
   const [classeFiltre, setClasseFiltre] = useState<string>('toutes');
   const [seuilInactivite, setSeuilInactivite] = useState<number>(7);
+  const [parametresRelance, setParametresRelance] = useState<ParametresRelance>({
+    active: false,
+    delaiInactiviteJours: 7,
+    delaiEntreRelancesJours: 7
+  });
+  const [relancesDisponibles, setRelancesDisponibles] = useState(cloudEnabled);
+  const [sauvegardeRelance, setSauvegardeRelance] = useState(false);
 
   const classesActives = useMemo(() => classes.filter((c) => !c.archiveeLe), [classes]);
   const missionsTotal = Math.max(missions.length, 1);
@@ -96,6 +104,27 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
     charger();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classesActives.map((c) => c.id).join(',')]);
+
+  useEffect(() => {
+    if (!cloudEnabled || previewData) return;
+    chargerParametresRelance()
+      .then(setParametresRelance)
+      .catch(() => setRelancesDisponibles(false));
+  }, [previewData]);
+
+  const sauverRelances = async (prochains: ParametresRelance) => {
+    setParametresRelance(prochains);
+    setSauvegardeRelance(true);
+    try {
+      await enregistrerParametresRelance(prochains);
+      showNotification(prochains.active ? 'Relances e-mail automatiques activées.' : 'Relances e-mail automatiques désactivées.', 'success');
+    } catch (e: any) {
+      setParametresRelance(parametresRelance);
+      showNotification(`Paramètres de relance non enregistrés : ${e.message}`, 'error');
+    } finally {
+      setSauvegardeRelance(false);
+    }
+  };
 
   // Consolidation par stagiaire (jointure remises <-> effectif réel via userId).
   const suiviComplet: SuiviStagiaire[] = useMemo(() => {
@@ -479,6 +508,45 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           </div>
         )}
       </Card>
+
+      {relancesDisponibles && (
+        <Card className="p-5" aria-labelledby="relances-auto-title">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div>
+              <h2 id="relances-auto-title" className="font-display text-lg font-semibold text-[#1C2459]">Relances e-mail automatiques</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Un e-mail pédagogique est envoyé aux stagiaires inactifs, sans exposer leurs adresses dans l’interface.</p>
+            </div>
+            <label className="inline-flex items-center gap-2 cursor-pointer shrink-0">
+              <span className="text-xs font-semibold text-[#1C2459]">{parametresRelance.active ? 'Activées' : 'Désactivées'}</span>
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={parametresRelance.active}
+                disabled={sauvegardeRelance}
+                onChange={(e) => sauverRelances({ ...parametresRelance, active: e.target.checked })}
+              />
+              <span className="w-10 h-6 bg-slate-200 rounded-full relative transition-colors peer-checked:bg-[#149D92] after:content-[''] after:absolute after:w-4 after:h-4 after:bg-white after:rounded-full after:top-1 after:left-1 after:transition-transform peer-checked:after:translate-x-4" />
+            </label>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <label className="text-xs text-slate-600">
+              Relancer après
+              <span className="flex items-center gap-2 mt-1">
+                <input type="number" min={1} max={90} value={parametresRelance.delaiInactiviteJours} disabled={sauvegardeRelance} onChange={(e) => setParametresRelance({ ...parametresRelance, delaiInactiviteJours: Math.max(1, Math.min(90, Number(e.target.value) || 1)) })} className="w-20 px-2 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459]" /> jours d’inactivité
+              </span>
+            </label>
+            <label className="text-xs text-slate-600">
+              Attendre au moins
+              <span className="flex items-center gap-2 mt-1">
+                <input type="number" min={1} max={90} value={parametresRelance.delaiEntreRelancesJours} disabled={sauvegardeRelance} onChange={(e) => setParametresRelance({ ...parametresRelance, delaiEntreRelancesJours: Math.max(1, Math.min(90, Number(e.target.value) || 1)) })} className="w-20 px-2 py-1.5 border border-[#ECE3D6] rounded-lg font-bold text-[#1C2459]" /> jours entre deux e-mails
+              </span>
+            </label>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <Button variant="secondary" onClick={() => sauverRelances(parametresRelance)} disabled={sauvegardeRelance} icon={sauvegardeRelance ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}>Enregistrer les réglages</Button>
+          </div>
+        </Card>
+      )}
 
       {/* Avancement par mission */}
       <Card className="p-6">
