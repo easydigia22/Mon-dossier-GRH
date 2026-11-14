@@ -14,7 +14,9 @@ import {
   FileSpreadsheet,
   FileText,
   ListChecks,
-  UserX
+  UserX,
+  ClipboardCheck,
+  Circle
 } from 'lucide-react';
 import { ClassePedagogique, MissionExercice, MembreClasseLive } from '../../types';
 import { cloudEnabled } from '../../services/cloudSync';
@@ -171,6 +173,27 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   const estInactif = (s: SuiviStagiaire) => s.inactifJours === null || s.inactifJours >= seuilInactivite;
   const nbInactifs = suivi.filter(estInactif).length;
+  const actionsPrioritaires: { titre: string; detail: string; terminee: boolean; onglet: OngletNavigation }[] = [
+    {
+      titre: 'Créer ou vérifier vos classes',
+      detail: classesActives.length ? `${classesActives.length} classe(s) active(s).` : 'Aucune classe active pour le moment.',
+      terminee: classesActives.length > 0,
+      onglet: 'formateur'
+    },
+    {
+      titre: 'Inviter vos stagiaires',
+      detail: nbStagiaires ? `${nbStagiaires} stagiaire(s) rattaché(s).` : 'Communiquez le code d’invitation de votre classe.',
+      terminee: nbStagiaires > 0,
+      onglet: 'formateur'
+    },
+    {
+      titre: 'Corriger les travaux remis',
+      detail: aCorriger ? `${aCorriger} remise(s) attend(ent) votre correction.` : 'Aucune remise en attente de correction.',
+      terminee: nbStagiaires > 0 && aCorriger === 0,
+      onglet: 'formateur'
+    }
+  ];
+  const prochaineAction = actionsPrioritaires.find((action) => !action.terminee) ?? actionsPrioritaires[2];
 
   // Avancement par mission (sur le périmètre filtré)
   const avancementMissions = useMemo(() => {
@@ -325,6 +348,41 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           )}
         </div>
       </ZelligeHeader>
+
+      {/* Bloc d'orientation : rend les prochaines actions formateur immédiatement visibles. */}
+      <Card className="p-5" aria-labelledby="pilotage-rapide-title">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+          <div className="flex gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#E4F3F1] text-[#149D92] flex items-center justify-center shrink-0">
+              <ClipboardCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 id="pilotage-rapide-title" className="font-display text-lg font-semibold text-[#1C2459]">Pilotage rapide de votre classe</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Les actions prioritaires pour faire avancer vos stagiaires.</p>
+            </div>
+          </div>
+          <Button variant="primary" onClick={() => onNavigate(prochaineAction.onglet)} icon={<ArrowRight className="w-4 h-4" />}>
+            {prochaineAction.titre}
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {actionsPrioritaires.map((action, index) => (
+            <button
+              key={action.titre}
+              type="button"
+              onClick={() => onNavigate(action.onglet)}
+              className={`text-left rounded-xl border p-3 transition-colors ${action.terminee ? 'border-[#BFE1D9] bg-[#F2FAF8]' : 'border-[#ECE3D6] hover:border-[#149D92] hover:bg-[#FBF7F0]'}`}
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                {action.terminee ? <CheckCircle2 className="w-4 h-4 text-[#149D92]" /> : <Circle className="w-4 h-4 text-slate-400" />}
+                <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Étape {index + 1}</span>
+              </div>
+              <p className="text-xs font-semibold text-[#1C2459]">{action.titre}</p>
+              <p className="text-[11px] leading-snug text-slate-500 mt-1">{action.detail}</p>
+            </button>
+          ))}
+        </div>
+      </Card>
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
