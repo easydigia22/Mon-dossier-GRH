@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { ClassePedagogique, MissionExercice, MembreClasseLive } from '../../types';
 import { cloudEnabled } from '../../services/cloudSync';
+import { supabase } from '../../services/supabase';
 import { fetchAllTentativesLive, TentativeLive } from '../../services/trainerLive';
 import { fetchEffectifLive } from '../../services/classeJoin';
 import {
@@ -78,6 +79,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   });
   const [relancesDisponibles, setRelancesDisponibles] = useState(cloudEnabled);
   const [sauvegardeRelance, setSauvegardeRelance] = useState(false);
+  const [envoiCollectif, setEnvoiCollectif] = useState(false);
 
   const classesActives = useMemo(() => classes.filter((c) => !c.archiveeLe), [classes]);
   const missionsTotal = Math.max(missions.length, 1);
@@ -123,6 +125,28 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       showNotification(`Paramètres de relance non enregistrés : ${e.message}`, 'error');
     } finally {
       setSauvegardeRelance(false);
+    }
+  };
+
+  const envoyerMessageCollectif = async () => {
+    if (!confirm('Envoyer ce message à tous les stagiaires rattachés à vos classes ?')) return;
+    if (!supabase) return showNotification('Une connexion cloud est nécessaire.', 'error');
+    setEnvoiCollectif(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) throw new Error('Session expirée.');
+      const response = await fetch('/api/send-class-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session.access_token}` },
+        body: JSON.stringify({ message: 'Bonjour,\nConnectez-vous à SIMULRH pour poursuivre vos missions et vérifier votre progression.\n— Votre formateur' })
+      });
+      const resultat = await response.json() as { ok: boolean; envoyes?: number; erreur?: string };
+      if (!response.ok || !resultat.ok) throw new Error(resultat.erreur ?? 'Envoi impossible.');
+      showNotification(`Message envoyé à ${resultat.envoyes ?? 0} stagiaire(s).`, 'success');
+    } catch (e: any) {
+      showNotification(`Envoi collectif impossible : ${e.message}`, 'error');
+    } finally {
+      setEnvoiCollectif(false);
     }
   };
 
@@ -507,6 +531,18 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             )}
           </div>
         )}
+      </Card>
+
+      <Card className="p-5" aria-labelledby="message-collectif-title">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 id="message-collectif-title" className="font-display text-lg font-semibold text-[#1C2459]">Message collectif aux stagiaires</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Envoie individuellement le message de reprise SIMULRH à tous les stagiaires de vos classes.</p>
+          </div>
+          <Button variant="primary" onClick={envoyerMessageCollectif} disabled={envoiCollectif || nbStagiaires === 0} icon={envoiCollectif ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}>
+            {envoiCollectif ? 'Envoi en cours…' : 'Envoyer maintenant'}
+          </Button>
+        </div>
       </Card>
 
       {relancesDisponibles && (
