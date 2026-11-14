@@ -242,6 +242,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   const estInactif = (s: SuiviStagiaire) => s.inactifJours === null || s.inactifJours >= seuilInactivite;
   const nbInactifs = suivi.filter(estInactif).length;
+  const suiviParStagiaire = useMemo(() => new Map(suiviComplet.map((stagiaire) => [stagiaire.userId, stagiaire])), [suiviComplet]);
   const stagiairesARelancer = suivi.filter(estInactif).slice(0, 4);
   const actionsPrioritaires: { titre: string; detail: string; terminee: boolean; onglet: OngletNavigation }[] = [
     {
@@ -581,7 +582,13 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             <div className="max-h-40 overflow-y-auto rounded-xl border border-[#ECE3D6] divide-y divide-[#F3ECE1]">
               {destinatairesMessage.map((membre) => {
                 const selectionne = stagiairesSelectionnes.includes(membre.stagiaireUserId);
-                return <label key={membre.stagiaireUserId} className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#1C2459] hover:bg-[#FBF7F0] cursor-pointer"><input type="checkbox" checked={selectionne} onChange={() => setStagiairesSelectionnes((selection) => selectionne ? selection.filter((id) => id !== membre.stagiaireUserId) : [...selection, membre.stagiaireUserId])} className="accent-[#149D92]" /><span className="font-medium">{membre.prenom} {membre.nom}</span><span className="ml-auto text-[10px] text-slate-400">{classesActives.find((classe) => classe.id === membre.classeId)?.nom ?? ''}</span></label>;
+                const suiviStagiaire = suiviParStagiaire.get(membre.stagiaireUserId);
+                const statut = !suiviStagiaire || suiviStagiaire.inactifJours === null
+                  ? { libelle: 'Jamais actif', style: 'bg-[#FFF1EE] text-[#B4563B]' }
+                  : estInactif(suiviStagiaire)
+                    ? { libelle: `Inactif ${suiviStagiaire.inactifJours} j`, style: 'bg-[#FFF4E5] text-[#A86418]' }
+                    : { libelle: suiviStagiaire.inactifJours === 0 ? 'Actif aujourd’hui' : `Actif · ${suiviStagiaire.inactifJours} j`, style: 'bg-[#F2FAF8] text-[#277657]' };
+                return <label key={membre.stagiaireUserId} className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#1C2459] hover:bg-[#FBF7F0] cursor-pointer"><input type="checkbox" checked={selectionne} onChange={() => setStagiairesSelectionnes((selection) => selectionne ? selection.filter((id) => id !== membre.stagiaireUserId) : [...selection, membre.stagiaireUserId])} className="accent-[#149D92]" /><span className={`w-24 shrink-0 rounded-full px-2 py-0.5 text-center text-[10px] font-bold ${statut.style}`}>{statut.libelle}</span><span className="font-medium">{membre.prenom} {membre.nom}</span><span className="ml-auto text-[10px] text-slate-400">{classesActives.find((classe) => classe.id === membre.classeId)?.nom ?? ''}</span></label>;
               })}
             </div>
           )}
