@@ -8,7 +8,10 @@ import {
   TrendingUp,
   AlertCircle,
   FileText,
-  CalendarCheck
+  CalendarCheck,
+  CheckCircle2,
+  Circle,
+  ClipboardCheck
 } from 'lucide-react';
 import { BulletinPaie, Entreprise, MissionExercice, ModePedagogique, Salarie } from '../../types';
 import { formatMAD } from '../../services/exportService';
@@ -39,6 +42,44 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const totalCotisationsCNSS = bulletinsPeriode.reduce((sum, b) => sum + b.cnssSalariale + b.cnssPatronalePrestations + b.cnssPatronaleAllocationsFamiliales + b.taxeFormationProfessionnelle, 0);
   const totalCotisationsAMO = bulletinsPeriode.reduce((sum, b) => sum + b.amoSalariale + b.amoPatronale, 0);
   const totalNetAPayer = bulletinsPeriode.reduce((sum, b) => sum + b.salaireNetAPayer, 0);
+
+  const entrepriseComplete = Boolean(
+    entreprise.raisonSociale && entreprise.ice && entreprise.numeroCNSS && entreprise.ville
+  );
+  const etapesParcours: { titre: string; description: string; onglet: OngletNavigation; terminee: boolean }[] = [
+    {
+      titre: 'Configurer l’entreprise',
+      description: 'Renseignez les informations légales et le cadre de travail.',
+      onglet: 'entreprise',
+      terminee: entrepriseComplete
+    },
+    {
+      titre: 'Créer un dossier salarié',
+      description: 'Ajoutez au moins un salarié et ses pièces administratives.',
+      onglet: 'salaries',
+      terminee: salaries.length > 0
+    },
+    {
+      titre: 'Préparer la paie',
+      description: 'Contrôlez les éléments du mois avant le calcul.',
+      onglet: 'preparation_paie',
+      terminee: bulletinsPeriode.length > 0
+    },
+    {
+      titre: 'Vérifier les bulletins',
+      description: 'Consultez le résultat détaillé et les règles appliquées.',
+      onglet: 'bulletins',
+      terminee: bulletinsPeriode.length === salaries.length && salaries.length > 0
+    },
+    {
+      titre: 'Réaliser une mission',
+      description: 'Mettez vos connaissances en pratique avec une correction guidée.',
+      onglet: 'missions',
+      terminee: false
+    }
+  ];
+  const etapesTerminees = etapesParcours.filter((etape) => etape.terminee).length;
+  const prochaineEtape = etapesParcours.find((etape) => !etape.terminee) ?? etapesParcours.at(-1)!;
 
   const formatMois = (p: string) => {
     const moisNoms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -99,6 +140,54 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       </ZelligeHeader>
+
+      {/* Parcours guidé : les stagiaires savent immédiatement quoi faire ensuite. */}
+      <section className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm" aria-labelledby="parcours-guide-title">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
+          <div className="flex gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#E4F3F1] text-[#149D92] flex items-center justify-center shrink-0">
+              <ClipboardCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 id="parcours-guide-title" className="font-display text-lg font-semibold text-[#1C2459]">Votre parcours guidé</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Suivez les étapes dans l’ordre pour réaliser un cycle RH et paie complet.</p>
+            </div>
+          </div>
+          <div className="sm:text-right shrink-0">
+            <span className="text-sm font-bold text-[#1C2459]">{etapesTerminees}/{etapesParcours.length} étapes</span>
+            <div className="w-32 h-2 rounded-full bg-slate-100 mt-1.5 overflow-hidden sm:ml-auto">
+              <div className="h-full bg-[#149D92] rounded-full transition-all" style={{ width: `${(etapesTerminees / etapesParcours.length) * 100}%` }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+          {etapesParcours.map((etape, index) => (
+            <button
+              key={etape.titre}
+              type="button"
+              onClick={() => onNavigate(etape.onglet)}
+              className={`text-left rounded-xl border p-3 transition-colors ${etape.terminee ? 'border-[#BFE1D9] bg-[#F2FAF8]' : 'border-[#ECE3D6] hover:border-[#149D92] hover:bg-[#FBF7F0]'}`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {etape.terminee ? <CheckCircle2 className="w-4 h-4 text-[#149D92]" /> : <Circle className="w-4 h-4 text-slate-400" />}
+                <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Étape {index + 1}</span>
+              </div>
+              <p className="text-xs font-semibold text-[#1C2459] leading-snug">{etape.titre}</p>
+              <p className="text-[11px] text-slate-500 leading-snug mt-1">{etape.description}</p>
+            </button>
+          ))}
+        </div>
+
+        {etapesTerminees < etapesParcours.length && (
+          <div className="mt-4 pt-4 border-t border-[#F0E9DF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs text-slate-600"><strong>Prochaine action :</strong> {prochaineEtape.titre}</p>
+            <Button variant="primary" onClick={() => onNavigate(prochaineEtape.onglet)} icon={<ArrowRight className="w-4 h-4" />}>
+              Continuer le parcours
+            </Button>
+          </div>
+        )}
+      </section>
 
       {/* Cartes métriques / KPIs du mois */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
