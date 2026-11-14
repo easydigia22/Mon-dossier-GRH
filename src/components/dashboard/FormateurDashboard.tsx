@@ -173,6 +173,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   const estInactif = (s: SuiviStagiaire) => s.inactifJours === null || s.inactifJours >= seuilInactivite;
   const nbInactifs = suivi.filter(estInactif).length;
+  const stagiairesARelancer = suivi.filter(estInactif).slice(0, 4);
   const actionsPrioritaires: { titre: string; detail: string; terminee: boolean; onglet: OngletNavigation }[] = [
     {
       titre: 'Créer ou vérifier vos classes',
@@ -434,6 +435,50 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
           footer={`${notesCorrigees.length} copie(s) corrigée(s)`}
         />
       </div>
+
+      {/* Priorités concrètes : évite au formateur de parcourir tout le tableau pour agir. */}
+      <Card className="p-5" aria-labelledby="priorites-pedagogiques-title">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+          <div>
+            <h2 id="priorites-pedagogiques-title" className="font-display text-lg font-semibold text-[#1C2459]">Priorités pédagogiques</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Les actions qui demandent votre attention aujourd’hui.</p>
+          </div>
+          <Button variant="secondary" onClick={() => onNavigate('formateur')} icon={<ArrowRight className="w-4 h-4" />}>
+            Ouvrir l’espace formateur
+          </Button>
+        </div>
+
+        {aCorriger === 0 && nbInactifs === 0 ? (
+          <div className="rounded-xl bg-[#F2FAF8] px-4 py-3 text-xs text-[#277657] flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4" /> Aucune priorité bloquante : les corrections et l’activité sont à jour.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {aCorriger > 0 && (
+              <button type="button" onClick={() => onNavigate('formateur')} className="text-left rounded-xl border border-[#F4D8A7] bg-[#FFF9ED] hover:border-[#C98A2B] p-4 transition-colors">
+                <div className="flex items-start gap-2.5">
+                  <Clock className="w-5 h-5 text-[#C98A2B] shrink-0 mt-0.5" />
+                  <span>
+                    <span className="block text-sm font-semibold text-[#1C2459]">{aCorriger} copie(s) à corriger</span>
+                    <span className="block text-xs text-slate-600 mt-1">Ouvrez l’espace formateur pour consulter les remises et donner un retour aux stagiaires.</span>
+                  </span>
+                </div>
+              </button>
+            )}
+            {nbInactifs > 0 && (
+              <button type="button" onClick={() => onNavigate('formateur')} className="text-left rounded-xl border border-[#F3C9C1] bg-[#FFF7F5] hover:border-[#D64545] p-4 transition-colors">
+                <div className="flex items-start gap-2.5">
+                  <UserX className="w-5 h-5 text-[#B4563B] shrink-0 mt-0.5" />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-[#1C2459]">{nbInactifs} stagiaire(s) à relancer</span>
+                    <span className="block text-xs text-slate-600 mt-1 truncate">{stagiairesARelancer.map((s) => s.nom).join(' · ')}</span>
+                  </span>
+                </div>
+              </button>
+            )}
+          </div>
+        )}
+      </Card>
 
       {/* Avancement par mission */}
       <Card className="p-6">
