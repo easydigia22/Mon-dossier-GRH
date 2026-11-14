@@ -80,6 +80,9 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   const [relancesDisponibles, setRelancesDisponibles] = useState(cloudEnabled);
   const [sauvegardeRelance, setSauvegardeRelance] = useState(false);
   const [envoiCollectif, setEnvoiCollectif] = useState(false);
+  const [messageCollectif, setMessageCollectif] = useState(
+    'Bonjour,\nConnectez-vous à SIMULRH pour poursuivre vos missions et vérifier votre progression.\n— Votre formateur'
+  );
 
   const classesActives = useMemo(() => classes.filter((c) => !c.archiveeLe), [classes]);
   const missionsTotal = Math.max(missions.length, 1);
@@ -129,6 +132,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   };
 
   const envoyerMessageCollectif = async () => {
+    if (messageCollectif.trim().length < 10) return showNotification('Le message doit contenir au moins 10 caractères.', 'warning');
     if (!confirm('Envoyer ce message à tous les stagiaires rattachés à vos classes ?')) return;
     if (!supabase) return showNotification('Une connexion cloud est nécessaire.', 'error');
     setEnvoiCollectif(true);
@@ -138,7 +142,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       const response = await fetch('/api/send-class-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session.access_token}` },
-        body: JSON.stringify({ message: 'Bonjour,\nConnectez-vous à SIMULRH pour poursuivre vos missions et vérifier votre progression.\n— Votre formateur' })
+        body: JSON.stringify({ message: messageCollectif })
       });
       const resultat = await response.json() as { ok: boolean; envoyes?: number; erreur?: string };
       if (!response.ok || !resultat.ok) throw new Error(resultat.erreur ?? 'Envoi impossible.');
@@ -534,15 +538,27 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       </Card>
 
       <Card className="p-5" aria-labelledby="message-collectif-title">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <h2 id="message-collectif-title" className="font-display text-lg font-semibold text-[#1C2459]">Message collectif aux stagiaires</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Envoie individuellement le message de reprise SIMULRH à tous les stagiaires de vos classes.</p>
+            <p className="text-xs text-slate-500 mt-0.5">Chaque stagiaire reçoit un e-mail individuel ; les adresses ne sont jamais visibles dans l’interface.</p>
           </div>
           <Button variant="primary" onClick={envoyerMessageCollectif} disabled={envoiCollectif || nbStagiaires === 0} icon={envoiCollectif ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}>
             {envoiCollectif ? 'Envoi en cours…' : 'Envoyer maintenant'}
           </Button>
         </div>
+        <label className="block mt-4 text-xs font-semibold text-slate-600">
+          Votre message
+          <textarea
+            value={messageCollectif}
+            onChange={(e) => setMessageCollectif(e.target.value.slice(0, 2000))}
+            disabled={envoiCollectif}
+            maxLength={2000}
+            rows={4}
+            className="mt-1.5 w-full resize-y rounded-xl border border-[#ECE3D6] bg-[#FBF7F0] px-3 py-2 text-sm font-normal text-[#1C2459] focus:outline-none focus:ring-2 focus:ring-[#149D92]/30 focus:border-[#149D92]"
+          />
+          <span className="mt-1 block text-[11px] font-normal text-slate-400 text-right">{messageCollectif.length}/2000</span>
+        </label>
       </Card>
 
       {relancesDisponibles && (
