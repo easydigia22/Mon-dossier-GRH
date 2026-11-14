@@ -83,6 +83,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   const [messageCollectif, setMessageCollectif] = useState(
     'Bonjour,\nConnectez-vous à SIMULRH pour poursuivre vos missions et vérifier votre progression.\n— Votre formateur'
   );
+  const [classeMessageCible, setClasseMessageCible] = useState('toutes');
 
   const classesActives = useMemo(() => classes.filter((c) => !c.archiveeLe), [classes]);
   const missionsTotal = Math.max(missions.length, 1);
@@ -133,7 +134,8 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   const envoyerMessageCollectif = async () => {
     if (messageCollectif.trim().length < 10) return showNotification('Le message doit contenir au moins 10 caractères.', 'warning');
-    if (!confirm('Envoyer ce message à tous les stagiaires rattachés à vos classes ?')) return;
+    const cible = classeMessageCible === 'toutes' ? 'tous les stagiaires rattachés à vos classes' : `la classe ${classesActives.find((c) => c.id === classeMessageCible)?.nom ?? 'sélectionnée'}`;
+    if (!confirm(`Envoyer ce message à ${cible} ?`)) return;
     if (!supabase) return showNotification('Une connexion cloud est nécessaire.', 'error');
     setEnvoiCollectif(true);
     try {
@@ -142,7 +144,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       const response = await fetch('/api/send-class-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session.access_token}` },
-        body: JSON.stringify({ message: messageCollectif })
+        body: JSON.stringify({ message: messageCollectif, classeId: classeMessageCible === 'toutes' ? undefined : classeMessageCible })
       });
       const resultat = await response.json() as { ok: boolean; envoyes?: number; erreur?: string };
       if (!response.ok || !resultat.ok) throw new Error(resultat.erreur ?? 'Envoi impossible.');
@@ -547,6 +549,15 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             {envoiCollectif ? 'Envoi en cours…' : 'Envoyer maintenant'}
           </Button>
         </div>
+        <label className="block mt-4 text-xs font-semibold text-slate-600">
+          Destinataires
+          <select value={classeMessageCible} onChange={(e) => setClasseMessageCible(e.target.value)} disabled={envoiCollectif} className="mt-1.5 block w-full sm:w-80 rounded-xl border border-[#ECE3D6] bg-white px-3 py-2 text-sm font-normal text-[#1C2459]">
+            <option value="toutes">Toutes mes classes ({nbStagiaires} stagiaires)</option>
+            {classesActives.map((classe) => (
+              <option key={classe.id} value={classe.id}>{classe.nom} — {classe.stagiaires.length} stagiaire(s)</option>
+            ))}
+          </select>
+        </label>
         <label className="block mt-4 text-xs font-semibold text-slate-600">
           Votre message
           <textarea

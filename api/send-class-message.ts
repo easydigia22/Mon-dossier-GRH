@@ -20,12 +20,15 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
   const user = await authentifier(req);
   if (!user || !serviceKey() || !baseUrl()) return res.status(401).json({ ok: false });
-  const message = typeof req.body === 'object' && req.body && 'message' in req.body ? String((req.body as { message: unknown }).message).trim() : '';
+  const payload = typeof req.body === 'object' && req.body ? req.body as { message?: unknown; classeId?: unknown } : {};
+  const message = typeof payload.message === 'string' ? payload.message.trim() : '';
+  const classeId = typeof payload.classeId === 'string' && payload.classeId.trim() ? payload.classeId.trim() : null;
   if (message.length < 10 || message.length > 2000) return res.status(400).json({ ok: false, erreur: 'Message invalide.' });
 
   try {
     const headers = { apikey: serviceKey()!, Authorization: `Bearer ${serviceKey()!}`, 'Content-Type': 'application/json' };
-    const membresResponse = await fetch(`${baseUrl()}/rest/v1/classe_stagiaires?classe_user_id=eq.${user.id}&select=stagiaire_user_id,prenom`, { headers });
+    const filtreClasse = classeId ? `&classe_id=eq.${encodeURIComponent(classeId)}` : '';
+    const membresResponse = await fetch(`${baseUrl()}/rest/v1/classe_stagiaires?classe_user_id=eq.${user.id}${filtreClasse}&select=stagiaire_user_id,prenom`, { headers });
     if (!membresResponse.ok) throw new Error('Lecture des stagiaires impossible.');
     const membres = await membresResponse.json() as { stagiaire_user_id: string; prenom: string }[];
     const ids = membres.map((m) => m.stagiaire_user_id);
