@@ -84,8 +84,13 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
     'Bonjour,\nConnectez-vous à SIMULRH pour poursuivre vos missions et vérifier votre progression.\n— Votre formateur'
   );
   const [classeMessageCible, setClasseMessageCible] = useState('toutes');
+  const [stagiairesSelectionnes, setStagiairesSelectionnes] = useState<string[]>([]);
 
   const classesActives = useMemo(() => classes.filter((c) => !c.archiveeLe), [classes]);
+  const destinatairesMessage = useMemo(
+    () => effectif.filter((membre) => classeMessageCible === 'toutes' || membre.classeId === classeMessageCible),
+    [effectif, classeMessageCible]
+  );
   const missionsTotal = Math.max(missions.length, 1);
 
   const charger = async () => {
@@ -118,6 +123,10 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       .catch(() => setRelancesDisponibles(false));
   }, [previewData]);
 
+  useEffect(() => {
+    setStagiairesSelectionnes(destinatairesMessage.map((membre) => membre.stagiaireUserId));
+  }, [destinatairesMessage]);
+
   const sauverRelances = async (prochains: ParametresRelance) => {
     setParametresRelance(prochains);
     setSauvegardeRelance(true);
@@ -134,7 +143,8 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
 
   const envoyerMessageCollectif = async () => {
     if (messageCollectif.trim().length < 10) return showNotification('Le message doit contenir au moins 10 caractères.', 'warning');
-    const cible = classeMessageCible === 'toutes' ? 'tous les stagiaires rattachés à vos classes' : `la classe ${classesActives.find((c) => c.id === classeMessageCible)?.nom ?? 'sélectionnée'}`;
+    if (stagiairesSelectionnes.length === 0) return showNotification('Sélectionnez au moins un stagiaire.', 'warning');
+    const cible = `${stagiairesSelectionnes.length} stagiaire(s) sélectionné(s)`;
     if (!confirm(`Envoyer ce message à ${cible} ?`)) return;
     if (!supabase) return showNotification('Une connexion cloud est nécessaire.', 'error');
     setEnvoiCollectif(true);
@@ -144,7 +154,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
       const response = await fetch('/api/send-class-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session.access_token}` },
-        body: JSON.stringify({ message: messageCollectif, classeId: classeMessageCible === 'toutes' ? undefined : classeMessageCible })
+        body: JSON.stringify({ message: messageCollectif, classeId: classeMessageCible === 'toutes' ? undefined : classeMessageCible, stagiaireIds: stagiairesSelectionnes })
       });
       const resultat = await response.json() as { ok: boolean; envoyes?: number; erreur?: string };
       if (!response.ok || !resultat.ok) throw new Error(resultat.erreur ?? 'Envoi impossible.');
@@ -558,6 +568,24 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
             ))}
           </select>
         </label>
+        <div className="mt-4">
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <span className="text-xs font-semibold text-slate-600">Sélectionner les stagiaires ({stagiairesSelectionnes.length}/{destinatairesMessage.length})</span>
+            <button type="button" onClick={() => setStagiairesSelectionnes(stagiairesSelectionnes.length === destinatairesMessage.length ? [] : destinatairesMessage.map((membre) => membre.stagiaireUserId))} className="text-[11px] font-semibold text-[#149D92] hover:underline">
+              {stagiairesSelectionnes.length === destinatairesMessage.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+            </button>
+          </div>
+          {destinatairesMessage.length === 0 ? (
+            <p className="rounded-xl bg-[#FBF7F0] px-3 py-2 text-xs text-slate-500">Aucun effectif rattaché à cette cible.</p>
+          ) : (
+            <div className="max-h-40 overflow-y-auto rounded-xl border border-[#ECE3D6] divide-y divide-[#F3ECE1]">
+              {destinatairesMessage.map((membre) => {
+                const selectionne = stagiairesSelectionnes.includes(membre.stagiaireUserId);
+                return <label key={membre.stagiaireUserId} className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#1C2459] hover:bg-[#FBF7F0] cursor-pointer"><input type="checkbox" checked={selectionne} onChange={() => setStagiairesSelectionnes((selection) => selectionne ? selection.filter((id) => id !== membre.stagiaireUserId) : [...selection, membre.stagiaireUserId])} className="accent-[#149D92]" /><span className="font-medium">{membre.prenom} {membre.nom}</span><span className="ml-auto text-[10px] text-slate-400">{classesActives.find((classe) => classe.id === membre.classeId)?.nom ?? ''}</span></label>;
+              })}
+            </div>
+          )}
+        </div>
         <label className="block mt-4 text-xs font-semibold text-slate-600">
           Votre message
           <textarea

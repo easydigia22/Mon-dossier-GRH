@@ -20,9 +20,10 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
   const user = await authentifier(req);
   if (!user || !serviceKey() || !baseUrl()) return res.status(401).json({ ok: false });
-  const payload = typeof req.body === 'object' && req.body ? req.body as { message?: unknown; classeId?: unknown } : {};
+  const payload = typeof req.body === 'object' && req.body ? req.body as { message?: unknown; classeId?: unknown; stagiaireIds?: unknown } : {};
   const message = typeof payload.message === 'string' ? payload.message.trim() : '';
   const classeId = typeof payload.classeId === 'string' && payload.classeId.trim() ? payload.classeId.trim() : null;
+  const stagiaireIds = Array.isArray(payload.stagiaireIds) ? new Set(payload.stagiaireIds.filter((id): id is string => typeof id === 'string')) : null;
   if (message.length < 10 || message.length > 2000) return res.status(400).json({ ok: false, erreur: 'Message invalide.' });
 
   try {
@@ -30,7 +31,8 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
     const filtreClasse = classeId ? `&classe_id=eq.${encodeURIComponent(classeId)}` : '';
     const membresResponse = await fetch(`${baseUrl()}/rest/v1/classe_stagiaires?classe_user_id=eq.${user.id}${filtreClasse}&select=stagiaire_user_id,prenom`, { headers });
     if (!membresResponse.ok) throw new Error('Lecture des stagiaires impossible.');
-    const membres = await membresResponse.json() as { stagiaire_user_id: string; prenom: string }[];
+    let membres = await membresResponse.json() as { stagiaire_user_id: string; prenom: string }[];
+    if (stagiaireIds) membres = membres.filter((membre) => stagiaireIds.has(membre.stagiaire_user_id));
     const ids = membres.map((m) => m.stagiaire_user_id);
     if (!ids.length) return res.status(200).json({ ok: true, envoyes: 0 });
     const profilsResponse = await fetch(`${baseUrl()}/rest/v1/profiles?user_id=in.(${ids.join(',')})&select=user_id,email`, { headers });
