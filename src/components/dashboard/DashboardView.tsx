@@ -11,9 +11,11 @@ import {
   CalendarCheck,
   CheckCircle2,
   Circle,
-  ClipboardCheck
+  ClipboardCheck,
+  BellRing,
+  Clock3
 } from 'lucide-react';
-import { BulletinPaie, Entreprise, MissionExercice, ModePedagogique, Salarie } from '../../types';
+import { BulletinPaie, Contrat, DemandeConge, Entreprise, MissionExercice, ModePedagogique, Salarie } from '../../types';
 import { formatMAD } from '../../services/exportService';
 import { OngletNavigation } from '../common/NavigationTabs';
 import { Card, Kpi, SectionTitle, ZelligeHeader, Button } from '../ui/kit';
@@ -22,6 +24,8 @@ interface DashboardViewProps {
   entreprise: Entreprise;
   salaries: Salarie[];
   bulletins: BulletinPaie[];
+  contrats: Contrat[];
+  demandesConges: DemandeConge[];
   missions: MissionExercice[];
   periodeActive: string;
   modePedagogique: ModePedagogique;
@@ -32,6 +36,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   entreprise,
   salaries,
   bulletins,
+  contrats,
+  demandesConges,
   missions,
   periodeActive,
   modePedagogique,
@@ -81,11 +87,71 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const etapesTerminees = etapesParcours.filter((etape) => etape.terminee).length;
   const prochaineEtape = etapesParcours.find((etape) => !etape.terminee) ?? etapesParcours.at(-1)!;
 
-  const formatMois = (p: string) => {
+  const aujourdhui = new Date();
+  aujourdhui.setHours(0, 0, 0, 0);
+  const joursAvant = (date: string) => Math.ceil((new Date(`${date}T00:00:00`).getTime() - aujourdhui.getTime()) / 86_400_000);
+  const nomSalarie = (salarieId: string) => {
+    const salarie = salaries.find((item) => item.id === salarieId);
+    return salarie ? `${salarie.prenom} ${salarie.nom}` : 'Salarié concerné';
+  };
+  const alertesRH: { id: string; titre: string; detail: string; urgence: 'risque' | 'attention'; onglet: OngletNavigation }[] = [];
+
+  contrats
+    .filter((contrat) => contrat.statut === 'en_cours' && contrat.dateFinPrevue && joursAvant(contrat.dateFinPrevue) <= 30)
+    .forEach((contrat) => {
+      const jours = joursAvant(contrat.dateFinPrevue!);
+      alertesRH.push({
+        id: `contrat-${contrat.id}`,
+        titre: jours < 0 ? 'Contrat arrivé à échéance' : 'Fin de contrat à anticiper',
+        detail: `${nomSalarie(contrat.salarieId)} · ${contrat.type} · ${jours < 0 ? `échu depuis ${Math.abs(jours)} j` : `dans ${jours} j`}.`,
+        urgence: jours <= 7 ? 'risque' : 'attention',
+        onglet: 'contrats'
+      });
+    });
+
+  contrats
+    .filter((contrat) => contrat.statut === 'en_cours' && contrat.dureeEssaiMois > 0)
+    .forEach((contrat) => {
+      const finEssai = new Date(`${contrat.dateEffet}T00:00:00`);
+      finEssai.setMonth(finEssai.getMonth() + contrat.dureeEssaiMois);
+      const jours = Math.ceil((finEssai.getTime() - aujourdhui.getTime()) / 86_400_000);
+      if (jours >= 0 && jours <= 14) {
+        alertesRH.push({
+          id: `essai-${contrat.id}`,
+          titre: 'Fin de période d’essai proche',
+          detail: `${nomSalarie(contrat.salarieId)} · décision à préparer dans ${jours} j.`,
+          urgence: jours <= 3 ? 'risque' : 'attention',
+          onglet: 'contrats'
+        });
+      }
+    });
+
+  const congesEnAttente = demandesConges.filter((demande) => demande.statut === 'Soumise');
+  if (congesEnAttente.length > 0) {
+    alertesRH.push({
+      id: 'conges-en-attente',
+      titre: 'Demandes de congés à traiter',
+      detail: `${congesEnAttente.length} demande(s) en attente de décision.`,
+      urgence: 'attention',
+      onglet: 'conges'
+    });
+  }
+  if (salaries.filter((salarie) => salarie.statut === 'actif').length > bulletinsPeriode.length) {
+    alertesRH.push({
+      id: 'paie-a-preparer',
+      titre: 'Paie du mois incomplète',
+      detail: `${salaries.filter((salarie) => salarie.statut === 'actif').length - bulletinsPeriode.length} bulletin(s) reste(nt) à préparer pour ${formatMois(periodeActive)}.`,
+      urgence: 'attention',
+      onglet: 'preparation_paie'
+    });
+  }
+  const alertesAffichees = alertesRH.slice(0, 4);
+
+  function formatMois(p: string) {
     const moisNoms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     const [annee, m] = p.split('-').map(Number);
     return `${moisNoms[m - 1]} ${annee}`;
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -186,6 +252,35 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Continuer le parcours
             </Button>
           </div>
+        )}
+      </section>
+
+      <section className="bg-white border border-[#ECE3D6] rounded-2xl p-5 shadow-sm" aria-labelledby="alertes-rh-title">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FFF4E5] text-[#B4563B] flex items-center justify-center shrink-0">
+              <BellRing className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 id="alertes-rh-title" className="font-display text-lg font-semibold text-[#1C2459]">Échéances et alertes RH</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Les points à vérifier pour sécuriser votre gestion administrative.</p>
+            </div>
+          </div>
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${alertesRH.length ? 'bg-[#FFF4E5] text-[#B4563B]' : 'bg-[#F2FAF8] text-[#2E9E6B]'}`}>
+            {alertesRH.length ? `${alertesRH.length} alerte(s)` : 'Tout est à jour'}
+          </span>
+        </div>
+        {alertesAffichees.length ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            {alertesAffichees.map((alerte) => (
+              <button key={alerte.id} type="button" onClick={() => onNavigate(alerte.onglet)} className="text-left rounded-xl border border-[#F0E9DF] hover:border-[#C96A4B] hover:bg-[#FFFBF5] p-3 transition-colors flex items-start gap-2.5">
+                <Clock3 className={`w-4 h-4 shrink-0 mt-0.5 ${alerte.urgence === 'risque' ? 'text-[#D64545]' : 'text-[#C98A2B]'}`} />
+                <span><span className="block text-xs font-semibold text-[#1C2459]">{alerte.titre}</span><span className="block text-[11px] leading-snug text-slate-500 mt-0.5">{alerte.detail}</span></span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl bg-[#F2FAF8] px-4 py-3 text-xs text-[#277657] flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Aucune échéance immédiate détectée.</div>
         )}
       </section>
 

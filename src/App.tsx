@@ -268,6 +268,8 @@ export default function App({ userEmail, role, onSignOut }: AppProps) {
               entreprise={entreprise}
               salaries={salaries}
               bulletins={bulletins}
+              contrats={contrats}
+              demandesConges={demandesConges}
               missions={missions}
               periodeActive={periodeActive}
               modePedagogique={modePedagogique}
