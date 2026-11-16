@@ -21,7 +21,7 @@ import {
 import { ClassePedagogique, MissionExercice, MembreClasseLive } from '../../types';
 import { cloudEnabled } from '../../services/cloudSync';
 import { supabase } from '../../services/supabase';
-import { fetchAllTentativesLive, TentativeLive } from '../../services/trainerLive';
+import { fetchAllActivitesRHLive, fetchAllTentativesLive, ActiviteRHLive, TentativeLive } from '../../services/trainerLive';
 import { fetchEffectifLive } from '../../services/classeJoin';
 import {
   exporterSuiviStagiairesCSV,
@@ -68,6 +68,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
   previewData
 }) => {
   const [tentatives, setTentatives] = useState<TentativeLive[]>(previewData?.tentatives ?? []);
+  const [activitesRH, setActivitesRH] = useState<ActiviteRHLive[]>([]);
   const [effectif, setEffectif] = useState<MembreClasseLive[]>(previewData?.effectif ?? []);
   const [chargement, setChargement] = useState(false);
   const [classeFiltre, setClasseFiltre] = useState<string>('toutes');
@@ -98,12 +99,14 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
     if (!cloudEnabled) return;
     setChargement(true);
     try {
-      const [lives, effectifs] = await Promise.all([
+      const [lives, effectifs, activites] = await Promise.all([
         fetchAllTentativesLive(),
-        Promise.all(classesActives.map((c) => fetchEffectifLive(c.id))).then((r) => r.flat())
+        Promise.all(classesActives.map((c) => fetchEffectifLive(c.id))).then((r) => r.flat()),
+        fetchAllActivitesRHLive()
       ]);
       setTentatives(lives);
       setEffectif(effectifs);
+      setActivitesRH(activites);
     } catch (e: any) {
       showNotification(`Chargement du suivi impossible : ${e.message}`, 'error');
     } finally {
@@ -205,6 +208,9 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
         const d = t.dateRemise || t.dateDebut;
         if (d && (!derniere || d > derniere)) derniere = d;
       }
+      for (const activite of activitesRH.filter((activite) => activite.userId === userId)) {
+        if (!derniere || activite.updatedAt > derniere) derniere = activite.updatedAt;
+      }
 
       lignes.push({
         userId,
@@ -221,7 +227,7 @@ export const FormateurDashboard: React.FC<FormateurDashboardProps> = ({
     }
 
     return lignes.sort((a, b) => b.taux - a.taux || a.nom.localeCompare(b.nom));
-  }, [tentatives, effectif, classesActives, missionsTotal]);
+  }, [tentatives, effectif, activitesRH, classesActives, missionsTotal]);
 
   // Filtre par classe
   const suivi = useMemo(
