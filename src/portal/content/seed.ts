@@ -1013,4 +1013,111 @@ export const CONTENUS_DEMO: Contenu[] = [
       { langue: 'fr', url: '/guides/Guide-Formateur-SimulRH.pdf', label: 'Guide du formateur (PDF)', taille: '1,0 Mo' },
     ],
   },
+  {
+    // Article RÉEL, sourcé (actualité fiscale). Optimisé SEO + GEO.
+    id: 'actu-reforme-ir-plf-2027',
+    slug: 'reforme-ir-maroc-salaries-exoneres',
+    type: 'article',
+    rubrique: 'actualites',
+    sousTheme: 'Fiscal',
+    titre: "Réforme de l'IR au Maroc : quels salariés seront exonérés ?",
+    resume:
+      "Selon le PLF 2027, 87,1 % des salariés seraient exonérés d'IR au Maroc, le seuil passant de 40 000 à 60 000 DH. Barème, coût et calendrier de la réforme.",
+    publics: ['etudiant', 'stagiaire', 'professionnel', 'formateur'],
+    niveau: 'intermediaire',
+    statut: 'publie',
+    demo: false,
+    datePublication: '2026-11-16',
+    dateMiseAJour: '2026-11-16',
+    auteur: 'Rédaction SimulRH',
+    tags: ['impôt sur le revenu', 'ir', 'plf 2027', 'paie', 'fiscalité', 'maroc', 'actualités'],
+    imageCouverture: '/portal/articles/reforme-ir-maroc-salaries-exoneres.svg',
+    tarification: 'gratuit',
+    corps: [
+      "## L'essentiel",
+      [
+        "- Selon le projet de loi de finances (PLF) 2027, **87,1 % des salariés seraient exonérés d'IR** (Le Matin, octobre 2026).",
+        "- Le plafond annuel de revenu net imposable exonéré passerait de **40 000 à 60 000 DH** (Le Matin, octobre 2026).",
+        "- Le coût de la réforme est estimé à **5,5 milliards de DH pour 2027**, et à environ 20 milliards de DH sur cinq ans (Le Matin, octobre 2026).",
+        "- À fin juin 2026, les recettes d'IR atteignent **37 milliards de DH** (Hespress, juillet 2026).",
+      ].join('\n'),
+      "## Que prévoit la réforme de l'IR du PLF 2027 ?",
+      "Présenté le 23 octobre 2026, le PLF 2027 prévoit une refonte de l'impôt sur le revenu déployée progressivement **entre 2027 et 2031** (Le Matin, « PLF 2027 : les nouveautés et les enjeux de l'impôt sur le revenu », octobre 2026). Il s'agit d'un **projet**, encore soumis au vote du Parlement : son contenu peut évoluer.",
+      "Le texte relève le seuil d'exonération, assouplit le barème et porte la déduction forfaitaire pour frais professionnels à 45 %, avec un plafond annuel de 35 000 DH, selon les éléments rapportés par Le Matin.",
+      "## Combien de salariés seraient exonérés ?",
+      "Selon le PLF 2027, **87,1 % des salariés** ne paieraient plus d'IR, et le gain mensuel avoisinerait **500 DH la première année** (Le Matin, octobre 2026). La mesure vise surtout les rémunérations modestes et moyennes.",
+      "Le même article évoque l'exonération des rémunérations mensuelles inférieures à 10 000 DH. Ce seuil mensuel est distinct du plafond annuel de 60 000 DH de revenu net imposable : à vérifier dans le texte définitif.",
+      "## Quel serait le nouveau barème de l'IR ?",
+      "En 2027, première année, la tranche exonérée monterait à **60 000 DH** (Le Matin, octobre 2026). Le barème rapporté serait alors le suivant :",
+      [
+        "- **0 %** jusqu'à 60 000 DH ;",
+        "- **10 %** de 60 001 à 80 000 DH ;",
+        "- **20 %** de 80 001 à 100 000 DH ;",
+        "- **34 %** jusqu'à 180 000 DH ;",
+        "- **37 %** au-delà.",
+      ].join('\n'),
+      "Le système actuel compte cinq tranches imposables, avec des taux de 10 à 37 % (Le Matin, 2026). La cible pour 2031 serait un taux marginal ramené de 37 % à **30 %**, avec 10 % jusqu'à 150 000 DH et 20 % jusqu'à 500 000 DH.",
+      "## Quel est le coût de la réforme pour l'État ?",
+      "Le coût est estimé à **5,5 milliards de DH pour 2027** (Le Matin, octobre 2026). L'universitaire cité par le journal l'évalue à environ **20 milliards de DH sur cinq ans**.",
+      "Les recettes fiscales prévues pour 2027 atteignent 423,5 milliards de DH, contre 366,5 milliards inscrits dans la loi de finances 2026, soit une hausse prévisionnelle de 15,6 % (Le Matin, octobre 2026).",
+      "## Où en sont les recettes d'IR en 2026 ?",
+      "À fin juin 2026, les recettes d'IR s'établissent à **37 milliards de DH**, contre 36,3 milliards un an plus tôt, soit +1,9 % (Hespress, 22 juillet 2026). Corrigée de l'opération de régularisation volontaire de janvier 2025 (3,8 milliards de DH), la hausse atteindrait **13,8 %**.",
+      "L'impôt sur les salaires y contribue pour 1,3 milliard de DH de hausse, aux côtés des plus-values sur valeurs mobilières (+1,8 milliard de DH), selon la même source.",
+      "## Que change déjà la loi de finances 2026 pour les salariés ?",
+      "Selon la DGI, la réforme adoptée en 2025 a réduit la charge fiscale des salariés par la révision du barème, et exonère totalement les retraités au titre de leur retraite de base (H24info, note circulaire n° 737, 27 février 2026). La loi de finances n° 50-25 a été publiée au Bulletin officiel le 16 décembre 2025 (Deloitte Société d'Avocats, avril 2026).",
+      "## Ce que cela change pour la paie et les RH",
+      "Tant que le PLF 2027 n'est pas voté, les paramètres en vigueur restent ceux de la loi de finances 2026 : à vérifier au Bulletin officiel avant tout calcul de bulletin. Si la réforme est adoptée, le logiciel de paie devra intégrer le nouveau seuil, le nouveau barème et la déduction pour frais professionnels.",
+      "Pour les stagiaires en RH, suivre ces évolutions fait partie du métier : l'IR retenu à la source figure sur chaque bulletin, et la lecture d'une loi de finances est une compétence à part entière.",
+    ].join('\n\n'),
+    faq: [
+      {
+        question: "Quel est le seuil d'exonération de l'IR prévu en 2027 ?",
+        reponse:
+          "Le PLF 2027 relève le plafond annuel de revenu net imposable exonéré de 40 000 à 60 000 DH (Le Matin, octobre 2026). Ce texte est un projet : il doit encore être voté par le Parlement, et le seuil définitif est à vérifier au Bulletin officiel.",
+      },
+      {
+        question: "Combien de salariés ne paieraient plus d'IR ?",
+        reponse:
+          "Selon le PLF 2027, 87,1 % des salariés seraient exonérés d'IR, avec un gain mensuel d'environ 500 DH la première année (Le Matin, octobre 2026). Le coût pour l'État est estimé à 5,5 milliards de DH pour 2027.",
+      },
+      {
+        question: "Quel sera le taux marginal maximal de l'IR ?",
+        reponse:
+          "Il reste à 37 % au-delà de 180 000 DH en 2027, selon le barème rapporté par Le Matin (octobre 2026). La cible à l'horizon 2031 est un taux marginal de 30 %, dans le cadre d'une réforme déployée sur cinq ans.",
+      },
+      {
+        question: "Les retraités paient-ils l'IR sur leur pension en 2026 ?",
+        reponse:
+          "Selon la DGI, la réforme adoptée en 2025 exonère totalement les retraités au titre de leur retraite de base (H24info, note circulaire n° 737, février 2026). Conditions exactes à vérifier au Bulletin officiel.",
+      },
+    ],
+    sources: [
+      {
+        intitule: "PLF 2027 : les nouveautés et les enjeux de l'impôt sur le revenu expliqués par un universitaire — Le Matin",
+        url: 'https://lematin.ma/economie/impot-sur-le-revenu-les-enjeux-expliques-par-mohammed-kadous/372381',
+        periodeApplication: 'Projet de loi de finances 2027, réforme 2027-2031 (non encore voté)',
+        statutTexte: 'propose',
+        dateVerification: '2026-11-16',
+      },
+      {
+        intitule: 'Impôt sur les sociétés, TVA, IR : les recettes fiscales atteignent près de 198 MMDH — Hespress',
+        url: 'https://fr.hespress.com/482486-impot-sur-les-societes-tva-ir-les-recettes-fiscales-atteignent-pres-de-198-milliards-de-dh.html',
+        periodeApplication: 'Fin juin 2026 (publié le 22 juillet 2026)',
+        dateVerification: '2026-11-16',
+      },
+      {
+        intitule: 'La DGI résume dans une note les mesures fiscales du budget 2026 — H24info',
+        url: 'https://h24info.ma/economie/la-dgi-resume-dans-une-note-les-mesures-fiscales-du-budget-2026/',
+        periodeApplication: 'Loi de finances 2026 (publié le 27 février 2026)',
+        dateVerification: '2026-11-16',
+      },
+      {
+        intitule: 'Maroc : les principales mesures de la Loi de Finances pour 2026 — Deloitte Société d\'Avocats',
+        url: 'https://blog.avocats.deloitte.fr/maroc-les-principales-mesures-de-la-loi-de-finances-pour-2026/',
+        statutTexte: 'en_vigueur',
+        periodeApplication: 'Loi de finances n° 50-25 pour 2026',
+        dateVerification: '2026-11-16',
+      },
+    ],
+  },
 ];
